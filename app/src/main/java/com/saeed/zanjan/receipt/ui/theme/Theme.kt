@@ -14,6 +14,10 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.saeed.zanjan.receipt.presentation.ui.registration.RegistrationScreen
 
 private val DarkColorScheme = darkColorScheme(
     primary = Purple80,
@@ -67,4 +71,30 @@ fun NewReceiptCreatorTheme(
         typography = Typography,
         content = content
     )
+}
+@Composable
+fun AppContent() {
+    // Initialize a NavHostController for navigation
+    val navController = rememberNavController()
+
+    // Create a NavHost with the navController
+    NavHost(navController = navController, startDestination = "registration") {
+        composable("registration") {
+            RegistrationScreen(
+                onSignInClicked = {
+                                  /* Handle sign-in logic */
+                                  },
+                onSignUpClicked = {
+                                  /* Handle sign-up logic */
+                                  }
+               /* onSendOtpClicked = {
+                *//* Handle OTP logic *//*
+                }*/
+            )
+        }
+        composable("other_screen") {
+            // Other screens of your app
+           // Text("Other Screen")
+        }
+    }
 }
