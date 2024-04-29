@@ -23,11 +23,6 @@ fun Navigation(
 
             )
         }
-        composable("otpScreen") {
-           OtpScreen(
-               onSendOtpClicked = {
 
-           })
-        }
     }
 }
