@@ -1,6 +1,7 @@
 package com.saeed.zanjan.receipt.ui.theme
 
 import android.app.Activity
+import android.graphics.fonts.Font
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
@@ -17,7 +18,10 @@ import androidx.core.view.WindowCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.saeed.zanjan.receipt.R
 import com.saeed.zanjan.receipt.presentation.ui.registration.RegistrationScreen
+import androidx.compose.material3.Typography
+import androidx.compose.ui.text.font.FontFamily
 
 private val DarkColorScheme = darkColorScheme(
     primary = Purple80,
@@ -40,6 +44,7 @@ private val LightColorScheme = lightColorScheme(
     onSurface = Color(0xFF1C1B1F),
     */
 )
+
 
 @Composable
 fun NewReceiptCreatorTheme(
