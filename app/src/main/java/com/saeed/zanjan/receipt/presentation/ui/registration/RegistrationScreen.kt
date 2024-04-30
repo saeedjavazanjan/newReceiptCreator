@@ -38,6 +38,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.saeed.zanjan.receipt.domain.RegistrationInfo
 import com.saeed.zanjan.receipt.presentation.components.CustomDropdown
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch // Import launch function
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -65,6 +66,12 @@ fun RegistrationScreen(
     var error by remember { mutableStateOf(false) }
     val jobTypes = listOf("خیاطی", "خشکشویی", "تعمیرات", "سایر")
 
+
+
+    var buttonText by remember { mutableStateOf("ثبت") }
+    var countdownSeconds by remember { mutableStateOf(60) }
+    var countingDown by remember { mutableStateOf(false) }
+
     val snackbarHostState = SnackbarHostState()
     val coroutineScope = rememberCoroutineScope()
 
@@ -84,7 +91,7 @@ fun RegistrationScreen(
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) }
 
-    ){
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -97,8 +104,9 @@ fun RegistrationScreen(
                 selectedTabIndex = if (isSignInTabSelected) 0 else 1,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(56.dp)
-                    .padding(10.dp)        ) {
+                    .height(60.dp)
+                    .padding(10.dp)
+            ) {
                 Tab(
                     selected = isSignInTabSelected,
                     onClick = { isSignInTabSelected = true }
@@ -108,7 +116,7 @@ fun RegistrationScreen(
                             .fillMaxHeight() // Ensure the tab fills the entire height
                             .padding(vertical = 8.dp, horizontal = 16.dp),
                         text = "ورود",
-                        style = MaterialTheme.typography.bodyMedium
+                        style = MaterialTheme.typography.bodyLarge
                     )
                 }
                 Tab(
@@ -120,7 +128,7 @@ fun RegistrationScreen(
                             .fillMaxHeight() // Ensure the tab fills the entire height
                             .padding(vertical = 8.dp, horizontal = 16.dp),
                         text = "ثبت نام",
-                        style = MaterialTheme.typography.bodyMedium
+                        style = MaterialTheme.typography.bodyLarge
                     )
                 }
             }
@@ -131,35 +139,54 @@ fun RegistrationScreen(
                 OutlinedTextField(
                     value = phone,
                     onValueChange = { phoneNumber ->
-                        phone=phoneNumber
+                        phone = phoneNumber
                     },
                     label = { Text("شماره تلفن") },
-                    isError = (phone.isEmpty() || phone.length < 11)&&sendOtpClicked,
+                    isError = (phone.isEmpty() || phone.length < 11) && sendOtpClicked,
 
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
                     modifier = Modifier.fillMaxWidth()
                 )
+
+
+
                 Button(
+                    enabled = !countingDown,
                     onClick = {
+
+
                         // Sign In button clicked
-                        sendOtpClicked=true
+                        sendOtpClicked = true
                         if (phone.isEmpty() || phone.length < 11) {
                             coroutineScope.launch {
                                 snackbarHostState.showSnackbar("شماره تلفن را به درستی وارد کنید")
                             }
 
-                        }else {
-                          //  onSignInClicked(Screen.Otp.route)
-                            isOtpScreenVisible = true
+                        } else {
+                            if (!countingDown) {
+                                coroutineScope.launch {
+                                    countingDown = true
+                                    buttonText = " $countdownSeconds"
+                                    while (countdownSeconds > 0) {
+                                        delay(1000)
+                                        countdownSeconds--
+                                        buttonText = " $countdownSeconds"
+                                    }
+                                    buttonText = "ورود"
+                                    countingDown = false
+                                    countdownSeconds = 60
+                                }
 
+                                isOtpScreenVisible = true
+                            }
                         }
                         // Switch to OTP screen
                         // onSendOtpClicked()
                     },
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("ثبت")
+                    Text(text=buttonText ,style = MaterialTheme.typography.bodyMedium)
                 }
             } else {
                 // Sign Up tab
@@ -178,10 +205,10 @@ fun RegistrationScreen(
                 OutlinedTextField(
                     value = phone,
                     onValueChange = { phoneNumber ->
-                        phone=phoneNumber
+                        phone = phoneNumber
                     },
                     label = { Text("شماره تلفن") },
-                    isError = (phone.isEmpty() || phone.length < 11)&&sendOtpClicked,
+                    isError = (phone.isEmpty() || phone.length < 11) && sendOtpClicked,
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
                     modifier = Modifier.fillMaxWidth()
@@ -193,7 +220,7 @@ fun RegistrationScreen(
                     modifier = Modifier.fillMaxWidth(),
                     isError = error,
 
-                )
+                    )
                 CustomDropdown(
                     items = listOf("خیاطی", "خشکشویی", "تعمیرات", "سایر"),
                     selectedItem = jobType,
@@ -204,36 +231,49 @@ fun RegistrationScreen(
                     modifier = Modifier.fillMaxWidth(),
                     isError = jobType == "" && sendOtpClicked
                 )
+
                 Button(
+                    enabled = !countingDown,
                     onClick = {
-                        sendOtpClicked=true
+                        sendOtpClicked = true
 
                         if (phone.isEmpty() || phone.length < 11) {
                             coroutineScope.launch {
                                 snackbarHostState.showSnackbar("شماره تلفن را به درستی وارد کنید")
                             }
 
-                        }else{
-                            val registrationInfo = RegistrationInfo(
-                                companyName = companyName,
-                                address = address,
-                                phone = phone,
-                                userId = userId,
-                                jobType = jobType
-                            )
-                            // Handle sign-up logic
-                          //  onSignUpClicked(registrationInfo)
-                            isOtpScreenVisible = true
+                        } else {
+                            if (!countingDown) {
+                                coroutineScope.launch {
+                                    countingDown = true
+                                    buttonText = " $countdownSeconds"
+                                    while (countdownSeconds > 0) {
+                                        delay(1000)
+                                        countdownSeconds--
+                                        buttonText = " $countdownSeconds"
+                                    }
+                                    buttonText = "ثبت"
+                                    countingDown = false
+                                    countdownSeconds = 60
+                                }
 
-                            // Switch to OTP screen
-                            //   onSendOtpClicked()
+                                val registrationInfo = RegistrationInfo(
+                                    companyName = companyName,
+                                    address = address,
+                                    phone = phone,
+                                    userId = userId,
+                                    jobType = jobType
+                                )
+                                isOtpScreenVisible = true                            }
+
+
+
                         }
-                        // Sign Up button clicked
 
                     },
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("ثبت")
+                    Text(text=buttonText ,style = MaterialTheme.typography.titleLarge)
                 }
             }
         }
