@@ -1,4 +1,4 @@
-package com.saeed.zanjan.receipt.domain
+package com.saeed.zanjan.receipt.domain.models
 
 data class RegistrationInfo(
     val companyName: String,

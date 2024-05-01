@@ -77,6 +77,7 @@ fun NewReceiptCreatorTheme(
         content = content
     )
 }
+/*
 @Composable
 fun AppContent() {
     // Initialize a NavHostController for navigation
@@ -87,19 +88,26 @@ fun AppContent() {
         composable("registration") {
             RegistrationScreen(
                 onSignInClicked = {
-                                  /* Handle sign-in logic */
+                                  */
+/* Handle sign-in logic *//*
+
                                   },
                 onSignUpClicked = {
-                                  /* Handle sign-up logic */
+                                  */
+/* Handle sign-up logic *//*
+
                                   }
-               /* onSendOtpClicked = {
-                *//* Handle OTP logic *//*
-                }*/
+               */
+/* onSendOtpClicked = {
+                *//*
+*/
+/* Handle OTP logic *//*
+*/
+/*
+                }*//*
+
             )
         }
-        composable("other_screen") {
-            // Other screens of your app
-           // Text("Other Screen")
-        }
+
     }
-}
+}*/
