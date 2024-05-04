@@ -9,4 +9,7 @@ import retrofit2.http.POST
 interface RetrofitService {
     @POST("registration")
     suspend fun register(@Body registrationInfo: RegistrationInfoDto): Response<String>
+
+    @POST("login")
+    suspend fun login(@Body phoneNumber:String):Response<String>
 }

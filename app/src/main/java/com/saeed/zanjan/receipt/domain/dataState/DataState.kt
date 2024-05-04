@@ -20,7 +20,7 @@ data class DataState<out T>(
             message: String,
         ): DataState<T>{
             return DataState(
-                error = message
+                error = message,
             )
         }
 

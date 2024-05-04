@@ -3,7 +3,11 @@ package com.saeed.zanjan.receipt.ui.theme
 import android.app.Activity
 import android.graphics.fonts.Font
 import android.os.Build
+import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
@@ -21,7 +25,10 @@ import androidx.navigation.compose.rememberNavController
 import com.saeed.zanjan.receipt.R
 import com.saeed.zanjan.receipt.presentation.ui.registration.RegistrationScreen
 import androidx.compose.material3.Typography
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
+import com.saeed.zanjan.receipt.presentation.components.CircularIndeterminateProgressBar
 
 private val DarkColorScheme = darkColorScheme(
     primary = Purple80,
@@ -51,6 +58,7 @@ fun NewReceiptCreatorTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,
+    displayProgressBar: Boolean,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
@@ -72,10 +80,29 @@ fun NewReceiptCreatorTheme(
     }
 
     MaterialTheme(
-        colorScheme = colorScheme,
-        typography = Typography,
-        content = content
-    )
+        colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme,
+    ){
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(color = if (!darkTheme) Color.White else Color.Black)
+        ){
+
+            Column{
+             //   ConnectivityMonitor(isNetworkAvailable = isNetworkAvailable)
+                content()
+            }
+
+
+            CircularIndeterminateProgressBar(isDisplayed = displayProgressBar)
+
+         /*   ProcessDialogQueue(
+                dialogQueue = dialogQueue,
+            )*/
+
+        }
+    }
+
 }
 /*
 @Composable
