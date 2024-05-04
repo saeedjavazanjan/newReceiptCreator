@@ -13,6 +13,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Tab
@@ -30,19 +31,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.saeed.zanjan.receipt.domain.models.RegistrationInfo
+import com.saeed.zanjan.receipt.presentation.components.CircularIndeterminateProgressBar
 import com.saeed.zanjan.receipt.presentation.components.CustomDropdown
 import com.saeed.zanjan.receipt.ui.theme.NewReceiptCreatorTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch // Import launch function
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegistrationScreen(
    viewModel:RegistrationViewModel
 ) {
-    NewReceiptCreatorTheme() {
-        val snackbarEvent by viewModel.snackbarEvent.collectAsState()
+    val loading =viewModel.loading.value
+    val registerRequestState=viewModel.registerRequestState.value
+    var countdownEnabled = viewModel.countdownEnabled.value
+    var remainingSeconds =  viewModel.remainingSeconds.value
 
 
         var companyName by remember { mutableStateOf("") }
@@ -63,33 +67,14 @@ fun RegistrationScreen(
 
 
 
-    var buttonText by remember { mutableStateOf("ثبت") }
-    var countdownSeconds by remember { mutableStateOf(60) }
-    var countingDown by remember { mutableStateOf(false) }
 
-    val snackbarHostState = SnackbarHostState()
+        val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
-        val errorMessageState = remember { mutableStateOf<String?>(null) }
-
-        // Observe the error message from the ViewModel and update the state
-        if (snackbarEvent != null) {
-            LaunchedEffect(viewModel) {
-                viewModel.onError = { errorMessage ->
-                    errorMessageState.value = errorMessage
-                }
-            }
-            // Show Snackbar when there is an error
-            errorMessageState.value?.let { errorMessage ->
-                LaunchedEffect(errorMessage) {
-                    snackbarHostState.showSnackbar(errorMessage)
-                }
-                // Reset the error message state
-                errorMessageState.value = null
-            }
-        }
 
 
-
+    NewReceiptCreatorTheme(
+        displayProgressBar=loading
+    ) {
 
     if (isOtpScreenVisible) {
         OtpScreen(
@@ -114,6 +99,9 @@ fun RegistrationScreen(
                     .padding(horizontal = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
+                LaunchedEffect(registerRequestState){
+                    isOtpScreenVisible=registerRequestState
+                }
 
                 // Tabs for sign-in and sign-up
                 TabRow(
@@ -164,54 +152,35 @@ fun RegistrationScreen(
                         modifier = Modifier.fillMaxWidth()
                     )
 
-
-
-                    Button(
-                        enabled = !countingDown,
-                        onClick = {
-
-
-                            // Sign In button clicked
-                            sendOtpClicked = true
-                            if (phone.isEmpty() || phone.length < 11) {
-                                coroutineScope.launch {
-                                    snackbarHostState.showSnackbar("شماره تلفن را به درستی وارد کنید")
-                                }
-
-                            } else {
-                                if (!countingDown) {
+                        Button(
+                            enabled = !countdownEnabled,
+                            onClick = {
+                                // Sign In button clicked
+                                sendOtpClicked = true
+                                if (phone.isEmpty() || phone.length < 11) {
                                     coroutineScope.launch {
-                                        countingDown = true
-                                        buttonText = " $countdownSeconds"
-                                        while (countdownSeconds > 0) {
-                                            delay(1000)
-                                            countdownSeconds--
-                                            buttonText = " $countdownSeconds"
-                                        }
-                                        buttonText = "ثبت"
-                                        countingDown = false
-                                        countdownSeconds = 60
+                                        snackbarHostState.showSnackbar("شماره تلفن را به درستی وارد کنید")
                                     }
-                                    val registrationInfo = RegistrationInfo(
-                                        companyName = companyName,
-                                        address = address,
-                                        phone = phone,
-                                        userId = userId,
-                                        jobType = jobType
+
+                                } else {
+
+
+                                    viewModel.loginRequest(
+                                        phoneNumber = phone,
+                                        snackbarHostState=snackbarHostState
                                     )
-                                    viewModel.registerRequest(
-                                        registrationInfo = registrationInfo
-                                    )
-                                  //  isOtpScreenVisible = true
+
                                 }
-                            }
-                            // Switch to OTP screen
-                            // onSendOtpClicked()
-                        },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(text = buttonText, style = MaterialTheme.typography.bodyLarge)
-                    }
+
+                            },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(text = if (countdownEnabled) " بعد از  $remainingSeconds ثانیه تلاش کنید. " else "ثبت", style = MaterialTheme.typography.bodyLarge)
+                        }
+
+
+
+
                 } else {
                     // Sign Up tab
                     OutlinedTextField(
@@ -257,7 +226,7 @@ fun RegistrationScreen(
                     )
 
                     Button(
-                        enabled = !countingDown,
+                        enabled = !countdownEnabled,
                         onClick = {
                             sendOtpClicked = true
 
@@ -267,19 +236,6 @@ fun RegistrationScreen(
                                 }
 
                             } else {
-                                if (!countingDown) {
-                                    coroutineScope.launch {
-                                        countingDown = true
-                                        buttonText = " $countdownSeconds"
-                                        while (countdownSeconds > 0) {
-                                            delay(1000)
-                                            countdownSeconds--
-                                            buttonText = " $countdownSeconds"
-                                        }
-                                        buttonText = "ثبت"
-                                        countingDown = false
-                                        countdownSeconds = 60
-                                    }
 
                                     val registrationInfo = RegistrationInfo(
                                         companyName = companyName,
@@ -288,20 +244,22 @@ fun RegistrationScreen(
                                         userId = userId,
                                         jobType = jobType
                                     )
-                                    isOtpScreenVisible = true
-                                }
+                                viewModel.registerRequest(
+                                    registrationInfo = registrationInfo,
+                                    snackbarHostState=snackbarHostState
 
-
+                                )
                             }
 
                         },
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text(text = buttonText, style = MaterialTheme.typography.bodyLarge)
+                        Text(text = if (countdownEnabled) " بعد از  $remainingSeconds ثانیه تلاش کنید. " else "ثبت", style = MaterialTheme.typography.bodyLarge)
                     }
                 }
             }
         }
     }
 }
+
 
