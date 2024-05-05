@@ -30,6 +30,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.saeed.zanjan.receipt.domain.models.OtpData
 import com.saeed.zanjan.receipt.domain.models.RegistrationInfo
 import com.saeed.zanjan.receipt.presentation.components.CircularIndeterminateProgressBar
 import com.saeed.zanjan.receipt.presentation.components.CustomDropdown
@@ -47,7 +48,9 @@ fun RegistrationScreen(
     val registerRequestState=viewModel.registerRequestState.value
     var countdownEnabled = viewModel.countdownEnabled.value
     var remainingSeconds =  viewModel.remainingSeconds.value
-
+    NewReceiptCreatorTheme(
+        displayProgressBar=loading
+    ) {
 
         var companyName by remember { mutableStateOf("") }
     var address by remember { mutableStateOf("") }
@@ -63,7 +66,17 @@ fun RegistrationScreen(
     var isOtpScreenVisible by remember { mutableStateOf(false) }
 
     var error by remember { mutableStateOf(false) }
-    val jobTypes = listOf("خیاطی", "خشکشویی", "تعمیرات", "سایر")
+    val jobTypes = listOf(
+        "تعمیرات موبایل",
+        "تعمیرات کامپیوتر",
+        "تعمیرات لوازم برقی",
+        "خیاطی",
+        "جواهر سازی",
+        "عکاسی",
+        "خشکشویی",
+        "قنادی",
+        "سایر مشاغل",
+        )
 
 
 
@@ -72,18 +85,24 @@ fun RegistrationScreen(
     val coroutineScope = rememberCoroutineScope()
 
 
-    NewReceiptCreatorTheme(
-        displayProgressBar=loading
-    ) {
+
 
     if (isOtpScreenVisible) {
         OtpScreen(
-            onSendOtpClicked = {
-                // Implement sending OTP logic here
+            onSendOtpClicked = {enteredOtp->
+                val otpData=OtpData(
+                    phoneNumber = phone,
+                    password = enteredOtp
+                )
+                   viewModel.senOtp(otpData=otpData,
+                       snackbarHostState = snackbarHostState)
+                isOtpScreenVisible = false
+
             },
             onDismiss = {
                 isOtpScreenVisible = false
             }
+
         )
     }
 
@@ -175,7 +194,9 @@ fun RegistrationScreen(
                             },
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            Text(text = if (countdownEnabled) " بعد از  $remainingSeconds ثانیه تلاش کنید. " else "ثبت", style = MaterialTheme.typography.bodyLarge)
+                            Text(
+                                text = if (countdownEnabled) " بعد از  $remainingSeconds ثانیه تلاش کنید. "
+                                else "ثبت", style = MaterialTheme.typography.bodyLarge)
                         }
 
 
@@ -234,7 +255,10 @@ fun RegistrationScreen(
                                 coroutineScope.launch {
                                     snackbarHostState.showSnackbar("شماره تلفن را به درستی وارد کنید")
                                 }
-
+                            } else if (jobType == "") {
+                                    coroutineScope.launch {
+                                        snackbarHostState.showSnackbar("عنوان شغلی را انتخاب کنید")
+                                    }
                             } else {
 
                                     val registrationInfo = RegistrationInfo(
@@ -254,7 +278,9 @@ fun RegistrationScreen(
                         },
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text(text = if (countdownEnabled) " بعد از  $remainingSeconds ثانیه تلاش کنید. " else "ثبت", style = MaterialTheme.typography.bodyLarge)
+                        Text(
+                            text = if (countdownEnabled) " بعد از  $remainingSeconds ثانیه تلاش کنید. "
+                            else "ثبت", style = MaterialTheme.typography.bodyLarge)
                     }
                 }
             }

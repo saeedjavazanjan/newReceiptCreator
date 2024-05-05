@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.saeed.zanjan.receipt.domain.models.OtpData
 import com.saeed.zanjan.receipt.domain.models.RegistrationInfo
 import com.saeed.zanjan.receipt.interactor.UserRegistration
 import com.saeed.zanjan.receipt.network.RetrofitService
@@ -77,18 +78,41 @@ constructor(
                 registerRequestState.value=true
             }
             dataState.error?.let {
-              //  enqueueSnackbar(it ?: "An unknown error occurred")
                 snackbarHostState.showSnackbar(it)
 
             }
         }.catch {
-           // enqueueSnackbar(it.message ?: "خطای ارتباط" ) // Invoke the lambda function in case of an error
             snackbarHostState.showSnackbar("خطای ارتباط")
 
             loading.value=false
         }.launchIn(viewModelScope)
     }
 
+    fun senOtp(
+        otpData: OtpData,
+        snackbarHostState: SnackbarHostState
+    ){
+        userRegistration.otpCheck(
+            otpData=otpData,
+            isNetworkAvailable = connectivityManager.isNetworkAvailable.value
+        ).onEach { dataState ->
+            dataState.loading.let {
+                loading.value=it
+            }
+            dataState.data?.let {
+
+                snackbarHostState.showSnackbar("ورود موفق")
+            }
+            dataState.error?.let {
+                snackbarHostState.showSnackbar(it)
+
+            }
+
+        }.catch {
+
+        }.launchIn(viewModelScope)
+
+    }
 
 
     private fun startCountdownTimer() {

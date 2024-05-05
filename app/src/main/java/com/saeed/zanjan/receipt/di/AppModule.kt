@@ -2,10 +2,12 @@ package com.saeed.zanjan.receipt.di
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.preference.PreferenceManager
 import com.google.gson.GsonBuilder
 import com.saeed.zanjan.receipt.BaseApplication
 import com.saeed.zanjan.receipt.interactor.UserRegistration
 import com.saeed.zanjan.receipt.network.RetrofitService
+import com.saeed.zanjan.receipt.network.model.OtpDataDtoMapper
 import com.saeed.zanjan.receipt.network.model.RegistrationInfoDtoMapper
 import dagger.Module
 import dagger.Provides
@@ -64,7 +66,8 @@ object AppModule {
     @Singleton
     @Provides
     fun provideSharedPreferences(@ApplicationContext context: Context): SharedPreferences {
-        return context.getSharedPreferences("YOUR_PREFERENCE_NAME", Context.MODE_PRIVATE)
+       // return context.getSharedPreferences("YOUR_PREFERENCE_NAME", Context.MODE_PRIVATE)
+       return PreferenceManager.getDefaultSharedPreferences(context)
     }
 
     @Singleton
@@ -75,15 +78,23 @@ object AppModule {
 
     @Singleton
     @Provides
+    fun provideOtpDataDtoMapper():OtpDataDtoMapper{
+        return OtpDataDtoMapper()
+    }
+
+    @Singleton
+    @Provides
     fun provideUserRegistration(
         retrofitService: RetrofitService,
         sharedPreferences: SharedPreferences,
-        dtoMapper: RegistrationInfoDtoMapper
+        registrationDtoMapper: RegistrationInfoDtoMapper,
+        otpDataDtoMapper: OtpDataDtoMapper
     ):UserRegistration{
         return UserRegistration(
             retrofitService=retrofitService,
-            dtoMapper=dtoMapper,
-            sharedPreferences=sharedPreferences
+            registrationDtoMapper=registrationDtoMapper,
+            sharedPreferences=sharedPreferences,
+            otpDataDtoMapper = otpDataDtoMapper
         )
 
     }
