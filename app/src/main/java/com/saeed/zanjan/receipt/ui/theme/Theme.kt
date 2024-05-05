@@ -80,6 +80,7 @@ fun NewReceiptCreatorTheme(
     }
 
     MaterialTheme(
+        typography = Typography,
         colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme,
     ){
         Box(
