@@ -1,5 +1,7 @@
 package com.saeed.zanjan.receipt.presentation.ui.registration
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,6 +32,7 @@ constructor(
     private val rateLimit=60
     val loading = mutableStateOf(false)
     val registerRequestState= mutableStateOf(false)
+    val successLogin= mutableStateOf(false)
     var countdownEnabled =  mutableStateOf(false)
     var remainingSeconds = mutableStateOf(rateLimit)
 
@@ -62,11 +65,11 @@ constructor(
     }
 
     fun loginRequest(
-        phoneNumber:String,
+        otpData: OtpData,
         snackbarHostState: SnackbarHostState
     ){
         userRegistration.loginRequestToServer(
-            phoneNumber=phoneNumber,
+            otpData=otpData,
             isNetworkAvailable =connectivityManager.isNetworkAvailable.value
         ).onEach {dataState->
             dataState.loading.let {
@@ -90,22 +93,28 @@ constructor(
 
     fun senOtp(
         otpData: OtpData,
-        snackbarHostState: SnackbarHostState
+        registrationInfo: RegistrationInfo,
+        snackbarHostState: SnackbarHostState,
+        isSignIn:Boolean,
+        context: Context
     ){
         userRegistration.otpCheck(
             otpData=otpData,
-            isNetworkAvailable = connectivityManager.isNetworkAvailable.value
+            registrationInfo=registrationInfo,
+            isNetworkAvailable = connectivityManager.isNetworkAvailable.value,
+            isSignIn=isSignIn
         ).onEach { dataState ->
             dataState.loading.let {
                 loading.value=it
             }
             dataState.data?.let {
-
+                successLogin.value=true
+                registerRequestState.value=false
                 snackbarHostState.showSnackbar("ورود موفق")
             }
             dataState.error?.let {
-                snackbarHostState.showSnackbar(it)
-
+              //  snackbarHostState.showSnackbar(it)
+          Toast.makeText(context,it,Toast.LENGTH_SHORT).show()
             }
 
         }.catch {

@@ -7,20 +7,22 @@ class RegistrationInfoDtoMapper: DomainMapper<RegistrationInfoDto, RegistrationI
     override fun mapToDomainModel(model: RegistrationInfoDto): RegistrationInfo {
         return RegistrationInfo(
             companyName = model.companyName,
+            password=model.password,
             address = model.address,
-            phone = model.phone,
-            userId = model.userId,
-            jobType = model.jobType
+            phone = model.phoneNumber,
+            userId = model.pageId,
+            jobType = model.jobTitle
         )
     }
 
     override fun mapFromDomainModel(domainModel: RegistrationInfo): RegistrationInfoDto {
         return RegistrationInfoDto(
             companyName = domainModel.companyName,
+            password=domainModel.password,
             address = domainModel.address,
-            phone = domainModel.phone,
-            userId = domainModel.userId,
-            jobType = domainModel.jobType
+            phoneNumber = domainModel.phone,
+            pageId = domainModel.userId,
+            jobTitle = domainModel.jobType
         )
     }
 }

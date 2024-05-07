@@ -28,6 +28,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.saeed.zanjan.receipt.domain.models.OtpData
@@ -35,6 +36,7 @@ import com.saeed.zanjan.receipt.domain.models.RegistrationInfo
 import com.saeed.zanjan.receipt.presentation.components.CircularIndeterminateProgressBar
 import com.saeed.zanjan.receipt.presentation.components.CustomDropdown
 import com.saeed.zanjan.receipt.ui.theme.NewReceiptCreatorTheme
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch // Import launch function
 
@@ -42,15 +44,22 @@ import kotlinx.coroutines.launch // Import launch function
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegistrationScreen(
-   viewModel:RegistrationViewModel
+   viewModel:RegistrationViewModel,
+   navigateToHome:()->Unit
 ) {
     val loading =viewModel.loading.value
     val registerRequestState=viewModel.registerRequestState.value
-    var countdownEnabled = viewModel.countdownEnabled.value
-    var remainingSeconds =  viewModel.remainingSeconds.value
+    val countdownEnabled = viewModel.countdownEnabled.value
+    val remainingSeconds =  viewModel.remainingSeconds.value
+    val successLogin=viewModel.successLogin
     NewReceiptCreatorTheme(
         displayProgressBar=loading
     ) {
+
+        LaunchedEffect(successLogin.value){
+            if(successLogin.value)
+            navigateToHome()
+        }
 
         var companyName by remember { mutableStateOf("") }
     var address by remember { mutableStateOf("") }
@@ -84,8 +93,7 @@ fun RegistrationScreen(
         val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
 
-
-
+        val context= LocalContext.current
 
     if (isOtpScreenVisible) {
         OtpScreen(
@@ -94,9 +102,21 @@ fun RegistrationScreen(
                     phoneNumber = phone,
                     password = enteredOtp
                 )
-                   viewModel.senOtp(otpData=otpData,
-                       snackbarHostState = snackbarHostState)
-                isOtpScreenVisible = false
+                val registrationInfo = RegistrationInfo(
+                    companyName = companyName,
+                    password=enteredOtp,
+                    address = address,
+                    phone = phone,
+                    userId = userId,
+                    jobType = jobType
+                )
+                   viewModel.senOtp(
+                       otpData=otpData,
+                       registrationInfo=registrationInfo,
+                       snackbarHostState = snackbarHostState,
+                       isSignIn=isSignInTabSelected,
+                       context=context
+                   )
 
             },
             onDismiss = {
@@ -161,7 +181,9 @@ fun RegistrationScreen(
                     OutlinedTextField(
                         value = phone,
                         onValueChange = { phoneNumber ->
-                            phone = phoneNumber
+                            if (phoneNumber.length <= 11) {
+                                phone = phoneNumber
+                            }
                         },
                         label = { Text("شماره تلفن") },
                         isError = (phone.isEmpty() || phone.length < 11) && sendOtpClicked,
@@ -183,9 +205,12 @@ fun RegistrationScreen(
 
                                 } else {
 
-
-                                    viewModel.loginRequest(
+                                    val otpData=OtpData(
                                         phoneNumber = phone,
+                                        password = ""
+                                    )
+                                    viewModel.loginRequest(
+                                        otpData = otpData,
                                         snackbarHostState=snackbarHostState
                                     )
 
@@ -206,19 +231,26 @@ fun RegistrationScreen(
                     // Sign Up tab
                     OutlinedTextField(
                         value = companyName,
-                        onValueChange = { companyName = it },
+                        onValueChange = {
+                            if (it.length <= 20)
+                                companyName = it
+                                        },
                         label = { Text("نام مجموعه") },
                         modifier = Modifier.fillMaxWidth()
                     )
                     OutlinedTextField(
                         value = address,
-                        onValueChange = { address = it },
+                        onValueChange = {
+                            if (it.length <= 500)
+                                address = it
+                                        },
                         label = { Text("آدرس") },
                         modifier = Modifier.fillMaxWidth()
                     )
                     OutlinedTextField(
                         value = phone,
                         onValueChange = { phoneNumber ->
+                            if (phoneNumber.length <= 11)
                             phone = phoneNumber
                         },
                         label = { Text("شماره تلفن") },
@@ -229,7 +261,11 @@ fun RegistrationScreen(
                     )
                     OutlinedTextField(
                         value = userId,
-                        onValueChange = { userId = it },
+                        onValueChange = {
+                            if (it.length <= 20)
+                            userId = it
+
+                                        },
                         label = { Text("آیدی پیج کاری") },
                         modifier = Modifier.fillMaxWidth(),
                         isError = error,
@@ -263,6 +299,7 @@ fun RegistrationScreen(
 
                                     val registrationInfo = RegistrationInfo(
                                         companyName = companyName,
+                                        password="",
                                         address = address,
                                         phone = phone,
                                         userId = userId,

@@ -10,12 +10,14 @@ import retrofit2.http.Body
 import retrofit2.http.POST
 
 interface RetrofitService {
-    @POST("registration")
+    @POST("users/signUp")
     suspend fun register(@Body registrationInfo: RegistrationInfoDto): Response<String>
 
-    @POST("login")
-    suspend fun login(@Body phoneNumber:String):Response<String>
+    @POST("users/signIn")
+    suspend fun login(@Body otpData: OtpDataDto):Response<String>
 
-    @POST("otpCheck")
-    suspend fun otpCheck(@Body otpData: OtpDataDto):Response<LoginResponse>
+    @POST("users/signInPasswordCheck")
+    suspend fun signInOtpCheck(@Body otpData: OtpDataDto):Response<LoginResponse>
+    @POST("users/signUpPasswordCheck")
+    suspend fun signUpOtpCheck(@Body registrationInfo: RegistrationInfoDto):Response<LoginResponse>
 }
