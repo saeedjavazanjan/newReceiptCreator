@@ -72,9 +72,14 @@ fun OtpScreen(
                         color = MaterialTheme.colorScheme.onSurface
                     )
                     OutlinedTextField(
+
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         value = otp,
-                        onValueChange = { otp = it },
+                        onValueChange = {
+                            if (it.length <= 4) {
+                                otp = it
+                            }
+                                        },
                         label = {
 
                             Text("رمز دریافتی را وارد کنید",

@@ -2,6 +2,7 @@ package com.saeed.zanjan.receipt.di
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.content.SharedPreferences.Editor
 import android.preference.PreferenceManager
 import com.google.gson.GsonBuilder
 import com.saeed.zanjan.receipt.BaseApplication
@@ -56,7 +57,8 @@ object AppModule {
         return Retrofit.Builder()
             //.baseUrl("https://dev-xf7awpzkvndkoch.api.raw-labs.com/")
             //  .baseUrl("https://food2fork.ca/api/recipe/")
-            .baseUrl("http://10.0.2.2:5198/")
+            //.baseUrl("http://192.168.1.167:5047/")
+            .baseUrl("http://10.0.2.2:5047/")
             .addConverterFactory(GsonConverterFactory.create(GsonBuilder().create()))
             .client(client)
             .build()
@@ -68,6 +70,12 @@ object AppModule {
     fun provideSharedPreferences(@ApplicationContext context: Context): SharedPreferences {
        // return context.getSharedPreferences("YOUR_PREFERENCE_NAME", Context.MODE_PRIVATE)
        return PreferenceManager.getDefaultSharedPreferences(context)
+    }
+
+    @Singleton
+    @Provides
+    fun provideSharedPreferencesEditor(sharedPreferences: SharedPreferences):SharedPreferences.Editor{
+        return sharedPreferences.edit()
     }
 
     @Singleton
@@ -87,6 +95,7 @@ object AppModule {
     fun provideUserRegistration(
         retrofitService: RetrofitService,
         sharedPreferences: SharedPreferences,
+        editor: SharedPreferences.Editor,
         registrationDtoMapper: RegistrationInfoDtoMapper,
         otpDataDtoMapper: OtpDataDtoMapper
     ):UserRegistration{
@@ -94,6 +103,7 @@ object AppModule {
             retrofitService=retrofitService,
             registrationDtoMapper=registrationDtoMapper,
             sharedPreferences=sharedPreferences,
+            editor=editor,
             otpDataDtoMapper = otpDataDtoMapper
         )
 
