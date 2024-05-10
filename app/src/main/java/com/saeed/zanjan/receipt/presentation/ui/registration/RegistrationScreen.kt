@@ -6,7 +6,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -19,6 +21,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -28,6 +31,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -35,10 +39,12 @@ import com.saeed.zanjan.receipt.domain.models.OtpData
 import com.saeed.zanjan.receipt.domain.models.RegistrationInfo
 import com.saeed.zanjan.receipt.presentation.components.CircularIndeterminateProgressBar
 import com.saeed.zanjan.receipt.presentation.components.CustomDropdown
+import com.saeed.zanjan.receipt.ui.theme.CustomColors
 import com.saeed.zanjan.receipt.ui.theme.NewReceiptCreatorTheme
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch // Import launch function
+import okhttp3.internal.wait
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -47,6 +53,9 @@ fun RegistrationScreen(
    viewModel:RegistrationViewModel,
    navigateToHome:()->Unit
 ) {
+
+
+
     val loading =viewModel.loading.value
     val registerRequestState=viewModel.registerRequestState.value
     val countdownEnabled = viewModel.countdownEnabled.value
@@ -190,7 +199,14 @@ fun RegistrationScreen(
 
                         singleLine = true,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(30.dp) ,// Adjust the radius for rounded corners
+                        colors = TextFieldDefaults.outlinedTextFieldColors(
+                            containerColor = Color.Transparent, // Set light gray background
+                            cursorColor = MaterialTheme.colorScheme.primary,
+                            focusedBorderColor = CustomColors.CustomLightGray, // Transparent to clear the outline
+                            unfocusedBorderColor = Color.Transparent // Transparent to clear the outline
+                        ),
                     )
 
                         Button(
@@ -217,11 +233,11 @@ fun RegistrationScreen(
                                 }
 
                             },
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier.fillMaxWidth().height(56.dp)
                         ) {
                             Text(
                                 text = if (countdownEnabled) " بعد از  $remainingSeconds ثانیه تلاش کنید. "
-                                else "ثبت", style = MaterialTheme.typography.bodyLarge)
+                                else "ثبت", style = MaterialTheme.typography.titleLarge)
                         }
 
 
@@ -236,7 +252,14 @@ fun RegistrationScreen(
                                 companyName = it
                                         },
                         label = { Text("نام مجموعه") },
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(30.dp) ,// Adjust the radius for rounded corners
+                        colors = TextFieldDefaults.outlinedTextFieldColors(
+                            containerColor = Color.Transparent, // Set light gray background
+                            cursorColor = MaterialTheme.colorScheme.primary,
+                            focusedBorderColor = CustomColors.CustomLightGray, // Transparent to clear the outline
+                            unfocusedBorderColor = Color.Transparent // Transparent to clear the outline
+                        ),
                     )
                     OutlinedTextField(
                         value = address,
@@ -245,7 +268,14 @@ fun RegistrationScreen(
                                 address = it
                                         },
                         label = { Text("آدرس") },
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(30.dp) ,// Adjust the radius for rounded corners
+                        colors = TextFieldDefaults.outlinedTextFieldColors(
+                            containerColor = Color.Transparent, // Set light gray background
+                            cursorColor = MaterialTheme.colorScheme.primary,
+                            focusedBorderColor = CustomColors.CustomLightGray, // Transparent to clear the outline
+                            unfocusedBorderColor = Color.Transparent // Transparent to clear the outline
+                        ),
                     )
                     OutlinedTextField(
                         value = phone,
@@ -257,7 +287,14 @@ fun RegistrationScreen(
                         isError = (phone.isEmpty() || phone.length < 11) && sendOtpClicked,
                         singleLine = true,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(30.dp) ,// Adjust the radius for rounded corners
+                        colors = TextFieldDefaults.outlinedTextFieldColors(
+                            containerColor = Color.Transparent, // Set light gray background
+                            cursorColor = MaterialTheme.colorScheme.primary,
+                            focusedBorderColor = CustomColors.CustomLightGray, // Transparent to clear the outline
+                            unfocusedBorderColor = Color.Transparent // Transparent to clear the outline
+                        ),
                     )
                     OutlinedTextField(
                         value = userId,
@@ -269,6 +306,13 @@ fun RegistrationScreen(
                         label = { Text("آیدی پیج کاری") },
                         modifier = Modifier.fillMaxWidth(),
                         isError = error,
+                        shape = RoundedCornerShape(30.dp) ,// Adjust the radius for rounded corners
+                        colors = TextFieldDefaults.outlinedTextFieldColors(
+                            containerColor = Color.Transparent, // Set light gray background
+                            cursorColor = MaterialTheme.colorScheme.primary,
+                            focusedBorderColor = CustomColors.CustomLightGray, // Transparent to clear the outline
+                            unfocusedBorderColor = Color.Transparent // Transparent to clear the outline
+                        ),
 
                         )
                     CustomDropdown(
@@ -313,11 +357,11 @@ fun RegistrationScreen(
                             }
 
                         },
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth().height(56.dp)
                     ) {
                         Text(
                             text = if (countdownEnabled) " بعد از  $remainingSeconds ثانیه تلاش کنید. "
-                            else "ثبت", style = MaterialTheme.typography.bodyLarge)
+                            else "ثبت", style = MaterialTheme.typography.titleLarge)
                     }
                 }
             }

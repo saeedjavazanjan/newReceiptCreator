@@ -21,6 +21,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
@@ -29,10 +30,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.saeed.zanjan.receipt.ui.theme.CustomColors
 import com.saeed.zanjan.receipt.ui.theme.NewReceiptCreatorTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -89,7 +92,13 @@ fun OtpScreen(
                         singleLine = true,
                         modifier = Modifier.fillMaxWidth(),
                         isError = (otp.isEmpty() || otp.length < 4) && checkOtpClicked,
-                        textStyle = MaterialTheme.typography.bodySmall
+                        textStyle = MaterialTheme.typography.bodySmall,
+                        colors = TextFieldDefaults.outlinedTextFieldColors(
+                            containerColor = Color.Transparent, // Set light gray background
+                            cursorColor = MaterialTheme.colorScheme.primary,
+                            focusedBorderColor = CustomColors.CustomLightGray, // Transparent to clear the outline
+                            unfocusedBorderColor = Color.Transparent // Transparent to clear the outline
+                        ),
                         )
                     if ((otp.isEmpty() || otp.length < 4) && checkOtpClicked) {
                         Text(
