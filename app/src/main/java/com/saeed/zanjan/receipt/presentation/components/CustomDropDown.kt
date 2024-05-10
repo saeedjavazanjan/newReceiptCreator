@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.ColorScheme
@@ -18,6 +19,7 @@ import androidx.compose.material3.MenuItemColors
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,6 +31,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.saeed.zanjan.receipt.ui.theme.CustomColors
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -40,6 +43,7 @@ fun CustomDropdown(
     modifier: Modifier = Modifier,
     isError:Boolean
 ) {
+
     var expanded by remember { mutableStateOf(false) }
     val focusRequester = FocusRequester()
 
@@ -71,6 +75,13 @@ fun CustomDropdown(
                         expanded = !expanded
                     }
                 },
+            shape = RoundedCornerShape(30.dp) ,// Adjust the radius for rounded corners
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                containerColor = Color.Transparent, // Set light gray background
+                cursorColor = MaterialTheme.colorScheme.primary,
+                focusedBorderColor = CustomColors.CustomLightGray, // Transparent to clear the outline
+                unfocusedBorderColor = Color.Transparent // Transparent to clear the outline
+            ),
         )
 
         DropdownMenu(
@@ -83,7 +94,7 @@ fun CustomDropdown(
         ) {
             items.forEach { item ->
                 DropdownMenuItem(text = {
-                    Text(text = item)
+                    Text(text = item, style = MaterialTheme.typography.bodyMedium)
                 },
                     onClick = {
                         onItemSelected(item)

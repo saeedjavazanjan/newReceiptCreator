@@ -11,8 +11,8 @@ import com.saeed.zanjan.receipt.R
 
 // Set of Material typography styles to start with
 val MontserratFontFamily = FontFamily(
-    Font(R.font.iransans_normal),
-    Font(R.font.iransans_bold, FontWeight.Bold),
+    Font(R.font.rokh),
+   // Font(R.font.iransans_bold, FontWeight.Bold),
 
     )
 
