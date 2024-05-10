@@ -21,7 +21,7 @@ fun Navigation(
     val registrationViewModel:RegistrationViewModel = viewModel()
 
 
-    NavHost(navController = navController, startDestination = Screen.Registration.route) {
+    NavHost(navController = navController, startDestination = Screen.Home.route) {
         composable(Screen.Registration.route) {
             RegistrationScreen(
                viewModel =registrationViewModel,
