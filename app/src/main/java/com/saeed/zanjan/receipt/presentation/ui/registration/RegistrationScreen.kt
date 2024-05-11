@@ -15,7 +15,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Tab
@@ -24,7 +23,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
@@ -37,14 +35,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.saeed.zanjan.receipt.domain.models.OtpData
 import com.saeed.zanjan.receipt.domain.models.RegistrationInfo
-import com.saeed.zanjan.receipt.presentation.components.CircularIndeterminateProgressBar
 import com.saeed.zanjan.receipt.presentation.components.CustomDropdown
 import com.saeed.zanjan.receipt.ui.theme.CustomColors
 import com.saeed.zanjan.receipt.ui.theme.NewReceiptCreatorTheme
-import kotlinx.coroutines.currentCoroutineContext
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch // Import launch function
-import okhttp3.internal.wait
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -204,7 +198,7 @@ fun RegistrationScreen(
                         colors = TextFieldDefaults.outlinedTextFieldColors(
                             containerColor = Color.Transparent, // Set light gray background
                             cursorColor = MaterialTheme.colorScheme.primary,
-                            focusedBorderColor = CustomColors.CustomLightGray, // Transparent to clear the outline
+                            focusedBorderColor = CustomColors.lightGray, // Transparent to clear the outline
                             unfocusedBorderColor = Color.Transparent // Transparent to clear the outline
                         ),
                     )
@@ -257,7 +251,7 @@ fun RegistrationScreen(
                         colors = TextFieldDefaults.outlinedTextFieldColors(
                             containerColor = Color.Transparent, // Set light gray background
                             cursorColor = MaterialTheme.colorScheme.primary,
-                            focusedBorderColor = CustomColors.CustomLightGray, // Transparent to clear the outline
+                            focusedBorderColor = CustomColors.lightGray, // Transparent to clear the outline
                             unfocusedBorderColor = Color.Transparent // Transparent to clear the outline
                         ),
                     )
@@ -273,7 +267,7 @@ fun RegistrationScreen(
                         colors = TextFieldDefaults.outlinedTextFieldColors(
                             containerColor = Color.Transparent, // Set light gray background
                             cursorColor = MaterialTheme.colorScheme.primary,
-                            focusedBorderColor = CustomColors.CustomLightGray, // Transparent to clear the outline
+                            focusedBorderColor = CustomColors.lightGray, // Transparent to clear the outline
                             unfocusedBorderColor = Color.Transparent // Transparent to clear the outline
                         ),
                     )
@@ -292,7 +286,7 @@ fun RegistrationScreen(
                         colors = TextFieldDefaults.outlinedTextFieldColors(
                             containerColor = Color.Transparent, // Set light gray background
                             cursorColor = MaterialTheme.colorScheme.primary,
-                            focusedBorderColor = CustomColors.CustomLightGray, // Transparent to clear the outline
+                            focusedBorderColor = CustomColors.lightGray, // Transparent to clear the outline
                             unfocusedBorderColor = Color.Transparent // Transparent to clear the outline
                         ),
                     )
@@ -310,7 +304,7 @@ fun RegistrationScreen(
                         colors = TextFieldDefaults.outlinedTextFieldColors(
                             containerColor = Color.Transparent, // Set light gray background
                             cursorColor = MaterialTheme.colorScheme.primary,
-                            focusedBorderColor = CustomColors.CustomLightGray, // Transparent to clear the outline
+                            focusedBorderColor = CustomColors.lightGray, // Transparent to clear the outline
                             unfocusedBorderColor = Color.Transparent // Transparent to clear the outline
                         ),
 

@@ -8,17 +8,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MenuItemColors
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -79,7 +76,7 @@ fun CustomDropdown(
             colors = TextFieldDefaults.outlinedTextFieldColors(
                 containerColor = Color.Transparent, // Set light gray background
                 cursorColor = MaterialTheme.colorScheme.primary,
-                focusedBorderColor = CustomColors.CustomLightGray, // Transparent to clear the outline
+                focusedBorderColor = CustomColors.lightGray, // Transparent to clear the outline
                 unfocusedBorderColor = Color.Transparent // Transparent to clear the outline
             ),
         )

@@ -28,6 +28,8 @@ import androidx.compose.material3.Typography
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
+import com.google.accompanist.systemuicontroller.SystemUiController
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.saeed.zanjan.receipt.presentation.components.CircularIndeterminateProgressBar
 
 private val DarkColorScheme = darkColorScheme(
@@ -83,6 +85,10 @@ fun NewReceiptCreatorTheme(
         typography = Typography,
         colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme,
     ){
+        val systemUiController: SystemUiController = rememberSystemUiController()
+
+        systemUiController.isStatusBarVisible = true // Status bar
+        systemUiController.isNavigationBarVisible = true // Navigation bar
         Box(
             modifier = Modifier
                 .fillMaxSize()
