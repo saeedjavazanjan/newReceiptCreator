@@ -68,7 +68,8 @@ fun Home(
         }
     }
     NewReceiptCreatorTheme(
-        displayProgressBar=false
+        displayProgressBar=false,
+        themColor = Color.Transparent
     ) {
     Scaffold(
         /* topBar = {

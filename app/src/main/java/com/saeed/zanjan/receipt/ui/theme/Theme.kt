@@ -61,6 +61,7 @@ fun NewReceiptCreatorTheme(
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,
     displayProgressBar: Boolean,
+    themColor: Color,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
@@ -76,8 +77,8 @@ fun NewReceiptCreatorTheme(
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor = colorScheme.primary.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
+            window.statusBarColor = themColor.toArgb()
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
         }
     }
 
