@@ -56,7 +56,8 @@ fun RegistrationScreen(
     val remainingSeconds =  viewModel.remainingSeconds.value
     val successLogin=viewModel.successLogin
     NewReceiptCreatorTheme(
-        displayProgressBar=loading
+        displayProgressBar=loading,
+        themColor = Color.Transparent
     ) {
 
         LaunchedEffect(successLogin.value){
