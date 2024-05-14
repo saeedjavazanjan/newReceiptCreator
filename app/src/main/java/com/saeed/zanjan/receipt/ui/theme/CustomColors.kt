@@ -8,4 +8,6 @@ object CustomColors {
     val bitterDarkPurple= Color(0xFF232536)
     val lightBlue= Color(0xff328ce2)
     val darkBlue= Color(0xff0056ab)
+    val lightGreen= Color(0x6084E232)
+
 }

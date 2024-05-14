@@ -53,7 +53,8 @@ fun Navigation(
             ReceiptScreen(
                 navType = navBackStackEntry.arguments?.getString("navType") ,
                 receiptId =navBackStackEntry.arguments?.getInt("receiptId") ,
-                receiptCategory =navBackStackEntry.arguments?.getInt("receiptCategory")
+                receiptCategory =navBackStackEntry.arguments?.getInt("receiptCategory"),
+                navController=navController
             )
         }
 
