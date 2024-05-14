@@ -41,7 +41,7 @@ val Typography = Typography(
         fontFamily =CustomFontFamily,
         fontWeight = FontWeight.Medium,
         fontSize = 14.sp,
-        lineHeight = 120.sp,
+        lineHeight = 20.sp,
         letterSpacing = 0.5.sp
     ),
     bodySmall = TextStyle(
