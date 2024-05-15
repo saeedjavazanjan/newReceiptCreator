@@ -8,6 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.saeed.zanjan.receipt.presentation.navigation.Screen
+import com.saeed.zanjan.receipt.presentation.ui.create_receipt.CreateReceiptScreen
 import com.saeed.zanjan.receipt.presentation.ui.home.Home
 import com.saeed.zanjan.receipt.presentation.ui.home.HomeViewModel
 import com.saeed.zanjan.receipt.presentation.ui.receipt.ReceiptScreen
@@ -54,9 +55,16 @@ fun Navigation(
                 navType = navBackStackEntry.arguments?.getString("navType") ,
                 receiptId =navBackStackEntry.arguments?.getInt("receiptId") ,
                 receiptCategory =navBackStackEntry.arguments?.getInt("receiptCategory"),
-                navController=navController
+                navController=navController,
+                onNavigateToEdit = {
+                    navController.navigate(it)
+                }
             )
         }
-
+        composable(Screen.CreateReceipt.route) {
+            CreateReceiptScreen(
+               navController=navController
+            )
+        }
     }
 }
