@@ -6,5 +6,6 @@ sealed class Screen(
     object Registration : Screen("registration")
     object Home : Screen("home")
     object Receipt : Screen("receipt")
+    object CreateReceipt : Screen("createReceipt")
 
 }

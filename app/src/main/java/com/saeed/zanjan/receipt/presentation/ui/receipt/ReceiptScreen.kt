@@ -67,6 +67,8 @@ import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavController
 import com.saeed.zanjan.receipt.R
+import com.saeed.zanjan.receipt.presentation.components.TopBar
+import com.saeed.zanjan.receipt.presentation.navigation.Screen
 import com.saeed.zanjan.receipt.ui.theme.CustomColors
 import com.saeed.zanjan.receipt.ui.theme.NewReceiptCreatorTheme
 import okhttp3.internal.wait
@@ -78,7 +80,8 @@ fun ReceiptScreen(
     navType:String?,
     receiptId:Int?,
     receiptCategory:Int?,
-    navController: NavController
+    navController: NavController,
+    onNavigateToEdit:(String) -> Unit
 ){
 
     NewReceiptCreatorTheme(
@@ -95,7 +98,11 @@ fun ReceiptScreen(
                      )
             }  ,
             bottomBar = {
-            BottomBar()
+            BottomBar(
+                itemClicked = {
+                    onNavigateToEdit(it)
+                }
+            )
             }
         ) {
 
@@ -126,7 +133,9 @@ fun ReceiptScreen(
 }
 
 @Composable
-fun BottomBar(){
+fun BottomBar(
+    itemClicked:(String)->Unit
+){
     Row(
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
@@ -159,6 +168,7 @@ fun BottomBar(){
                         containerColor = CustomColors.lightGray
                     ),
                     onClick = {
+                              itemClicked(Screen.CreateReceipt.route)
                     },
                 ) {
                     Icon(
@@ -245,35 +255,7 @@ fun BottomBar(){
     }
 
 }
-@Composable
-fun TopBar(
-    onBackClicked:()->Unit
-){
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(10.dp)
-    ) {
-        Button(
-            contentPadding = PaddingValues(0.dp),
-            modifier = Modifier
-                .clip(CircleShape)
-                .size(50.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = CustomColors.lightGray
-            ),
-            onClick = {
-                      onBackClicked()
-            },
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.right_arrow_2),
-                tint = CustomColors.darkPurple,
-                contentDescription = null
-            )
-        }
-    }
-}
+
 @Composable
 fun ReceiptCard(modifier: Modifier,receiptCategory:Int?){
     Card(
