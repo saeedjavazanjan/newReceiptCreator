@@ -90,5 +90,11 @@ dependencies {
     //systemUiController
     implementation ("com.google.accompanist:accompanist-systemuicontroller:0.35.0-alpha")
 
+    //jalali_datePicker
+    implementation ("com.github.hamooo90:jalali-datepicker-compose:1.0.0")
+    implementation ("ir.huri:JalaliCalendar:1.3.3")
+
+
+
 
 }
