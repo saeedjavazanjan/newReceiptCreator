@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -47,6 +48,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.KeyboardType
+import com.gmail.hamedvakhide.compose_jalali_datepicker.JalaliDatePickerDialog
 import com.saeed.zanjan.receipt.R
 import com.saeed.zanjan.receipt.presentation.ui.receipt.ConfectioneryItems
 import com.saeed.zanjan.receipt.presentation.ui.receipt.JewelryItems
@@ -55,25 +58,47 @@ import com.saeed.zanjan.receipt.presentation.ui.receipt.OtherJobsItems
 import com.saeed.zanjan.receipt.presentation.ui.receipt.PhotographyItems
 import com.saeed.zanjan.receipt.presentation.ui.receipt.RepairItems
 import com.saeed.zanjan.receipt.presentation.ui.receipt.TailoringItems
+import ir.huri.jcal.JalaliCalendar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateReceiptScreen(
-    navController:NavController
+    navController: NavController
 ) {
+
+    val openReceiveDateDialog = remember { mutableStateOf(false) }
+    val openDeliveryDateDialog = remember { mutableStateOf(false) }
+
     var receiveDate by remember {
         mutableStateOf("")
     }
- val deliveryDate by remember {
+    var deliveryDate by remember {
+        mutableStateOf("")
+    }
+    var customerName by remember {
+        mutableStateOf("")
+    }
+    var phoneNumber by remember {
+        mutableStateOf("")
+    }
+    var productName by remember {
         mutableStateOf("")
     }
 
-val receiptCategory=1
+    var totalAmount by remember {
+        mutableStateOf("")
+    }
+    var payedAmount by remember {
+        mutableStateOf("")
+    }
+
+    val receiptCategory = 1
 
     NewReceiptCreatorTheme(
-        displayProgressBar=false,
+        displayProgressBar = false,
         themColor = CustomColors.lightBlue
     ) {
+
 
         Scaffold(
             containerColor = CustomColors.lightBlue,
@@ -83,12 +108,34 @@ val receiptCategory=1
                         navController.popBackStack()
                     }
                 )
-            }  ,
+            },
             bottomBar = {
                 CrateReceiptBottomBar()
             }
         ) {
+            JalaliDatePickerDialog(
+                openDialog = openDeliveryDateDialog,
+                initialDate = JalaliCalendar(1402, 1, 2),
+                onSelectDay = { //it:JalaliCalendar
+                },
+                onConfirm = {
+                    deliveryDate = "${it.day}/ ${it.month} /${it.year}"
 
+                },
+                backgroundColor = CustomColors.lightGray,
+                textColor = CustomColors.darkPurple
+            )
+            JalaliDatePickerDialog(
+                openDialog = openReceiveDateDialog,
+                initialDate = JalaliCalendar(1402, 1, 2),
+                onSelectDay = { //it:JalaliCalendar
+                },
+                onConfirm = {
+                    receiveDate = "${it.day}/ ${it.month} /${it.year}"
+                },
+                backgroundColor = CustomColors.lightGray,
+                textColor = CustomColors.darkPurple
+            )
             Card(
                 modifier = Modifier
                     .padding(
@@ -97,8 +144,7 @@ val receiptCategory=1
                         top = it.calculateTopPadding(),
                         bottom = 16.dp
                     )
-                    .fillMaxSize()
-                ,
+                    .fillMaxSize(),
                 shape = RoundedCornerShape(16.dp),
                 colors = CardDefaults.cardColors(
                     containerColor = Color.White,
@@ -106,20 +152,19 @@ val receiptCategory=1
                 )
 
             ) {
-                Column (
+                Column(
                     modifier = Modifier
                         .padding(top = 16.dp, start = 16.dp, end = 16.dp)
                         .verticalScroll(rememberScrollState()),
                     verticalArrangement = Arrangement.spacedBy(20.dp)
-                ){
+                ) {
                     Row(
                         modifier = Modifier
                             .padding()
-                            .fillMaxWidth()
-                        ,
+                            .fillMaxWidth(),
                         horizontalArrangement = Arrangement.Center
                     ) {
-                        Column{
+                        Column {
                             Text(
                                 modifier = Modifier,
                                 text = "تاریخ دریافت",
@@ -130,21 +175,24 @@ val receiptCategory=1
                                 modifier = Modifier
                                     .width(150.dp)
                                     .clickable {
-
+                                        openReceiveDateDialog.value = true
                                     },
                                 shape = RoundedCornerShape(30.dp),
-                                readOnly=true,
-                                value ="receiveDate" ,
-                                onValueChange ={receive->
-                                    receiveDate=receive
+                                readOnly = true,
+                                enabled = false,
+                                value = receiveDate,
+                                onValueChange = { receive ->
+                                    receiveDate = receive
                                 },
-                                leadingIcon={
-                                    Icon( painter = painterResource(id = R.drawable.calendar),
+                                leadingIcon = {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.calendar),
                                         tint = CustomColors.gray,
-                                        contentDescription = null)
+                                        contentDescription = null
+                                    )
                                 },
-                                colors =TextFieldDefaults.outlinedTextFieldColors(
-                                    textColor = CustomColors.darkPurple,
+                                colors = TextFieldDefaults.outlinedTextFieldColors(
+                                    disabledTextColor = CustomColors.darkPurple,
                                     containerColor = CustomColors.transparentLightGray,
                                     cursorColor = CustomColors.lightBlue,
                                     focusedBorderColor = CustomColors.lightBlue,
@@ -156,8 +204,7 @@ val receiptCategory=1
                         Spacer(modifier = Modifier.weight(1f))
                         Column {
                             Text(
-                                modifier = Modifier
-                                ,
+                                modifier = Modifier,
                                 text = "موعد تحویل",
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = CustomColors.bitterDarkPurple
@@ -166,21 +213,24 @@ val receiptCategory=1
                                 modifier = Modifier
                                     .width(150.dp)
                                     .clickable {
-
+                                        openDeliveryDateDialog.value = true
                                     },
                                 shape = RoundedCornerShape(30.dp),
-                                readOnly=true,
-                                value ="receiveDate" ,
-                                onValueChange ={receive->
-                                    receiveDate=receive
+                                readOnly = true,
+                                enabled = false,
+                                value = deliveryDate,
+                                onValueChange = { delivery ->
+                                    deliveryDate = delivery
                                 },
-                                leadingIcon={
-                                    Icon( painter = painterResource(id = R.drawable.calendar_checked),
+                                leadingIcon = {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.calendar_checked),
                                         tint = CustomColors.gray,
-                                        contentDescription = null)
+                                        contentDescription = null
+                                    )
                                 },
-                                colors =TextFieldDefaults.outlinedTextFieldColors(
-                                    textColor = CustomColors.darkPurple,
+                                colors = TextFieldDefaults.outlinedTextFieldColors(
+                                    disabledTextColor = CustomColors.darkPurple,
                                     containerColor = CustomColors.transparentLightGray,
                                     cursorColor = CustomColors.lightBlue,
                                     focusedBorderColor = CustomColors.lightBlue,
@@ -197,7 +247,7 @@ val receiptCategory=1
                             .height(2.dp)
                             .padding(horizontal = 5.dp)
                     )
-                    Column{
+                    Column {
                         Text(
                             modifier = Modifier,
                             text = "نام مشتری",
@@ -206,21 +256,21 @@ val receiptCategory=1
                         )
                         OutlinedTextField(
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable {
-
-                                },
-                            value ="" ,
+                                .fillMaxWidth(),
+                            singleLine = true,
+                            value =customerName,
                             shape = RoundedCornerShape(30.dp),
-                            onValueChange ={receive->
-                                receiveDate=receive
+                            onValueChange = { name ->
+                                customerName = name
                             },
-                            leadingIcon={
-                                Icon( painter = painterResource(id = R.drawable.user),
+                            leadingIcon = {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.user),
                                     tint = CustomColors.gray,
-                                    contentDescription = null)
+                                    contentDescription = null
+                                )
                             },
-                            colors =TextFieldDefaults.outlinedTextFieldColors(
+                            colors = TextFieldDefaults.outlinedTextFieldColors(
                                 textColor = CustomColors.darkPurple,
                                 containerColor = CustomColors.transparentLightGray,
                                 cursorColor = CustomColors.lightBlue,
@@ -230,7 +280,7 @@ val receiptCategory=1
                         )
 
                     }
-                    Column{
+                    Column {
                         Text(
                             modifier = Modifier,
                             text = "شماره تلفن",
@@ -240,21 +290,22 @@ val receiptCategory=1
                         OutlinedTextField(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .clickable {
-
-                                },
+                                ,
+                            singleLine = true,
                             shape = RoundedCornerShape(30.dp),
-
-                            value ="" ,
-                            onValueChange ={receive->
-                                receiveDate=receive
+                            keyboardOptions= KeyboardOptions(keyboardType = KeyboardType.Phone),
+                            value = phoneNumber,
+                            onValueChange = { phone ->
+                                phoneNumber = phone
                             },
-                            leadingIcon={
-                                Icon( painter = painterResource(id = R.drawable.call),
+                            leadingIcon = {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.call),
                                     tint = CustomColors.gray,
-                                    contentDescription = null)
+                                    contentDescription = null
+                                )
                             },
-                            colors =TextFieldDefaults.outlinedTextFieldColors(
+                            colors = TextFieldDefaults.outlinedTextFieldColors(
                                 textColor = CustomColors.darkPurple,
                                 containerColor = CustomColors.transparentLightGray,
                                 cursorColor = CustomColors.lightBlue,
@@ -264,7 +315,7 @@ val receiptCategory=1
                         )
 
                     }
-                    Column{
+                    Column {
                         Text(
                             modifier = Modifier,
                             text = "نام کالا",
@@ -273,21 +324,21 @@ val receiptCategory=1
                         )
                         OutlinedTextField(
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable {
-
-                                },
-                            value ="" ,
+                                .fillMaxWidth(),
+                            value = productName,
+                            singleLine = true,
                             shape = RoundedCornerShape(30.dp),
-                            onValueChange ={receive->
-                                receiveDate=receive
+                            onValueChange = { pName ->
+                                productName = pName
                             },
-                            leadingIcon={
-                                Icon( painter = painterResource(id = R.drawable.cart_3),
+                            leadingIcon = {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.cart_3),
                                     tint = CustomColors.gray,
-                                    contentDescription = null)
+                                    contentDescription = null
+                                )
                             },
-                            colors =TextFieldDefaults.outlinedTextFieldColors(
+                            colors = TextFieldDefaults.outlinedTextFieldColors(
                                 textColor = CustomColors.darkPurple,
                                 containerColor = CustomColors.transparentLightGray,
                                 cursorColor = CustomColors.lightBlue,
@@ -304,35 +355,43 @@ val receiptCategory=1
                             .height(2.dp)
                             .padding(horizontal = 5.dp)
                     )
-                    when(receiptCategory){
-                        0->{
+                    when (receiptCategory) {
+                        0 -> {
                             RepairItems()
                         }
-                        1->{
+
+                        1 -> {
                             RepairFields()
                         }
-                        2->{
+
+                        2 -> {
                             RepairItems()
 
                         }
-                        3->{
+
+                        3 -> {
                             TailoringItems()
 
                         }
-                        4->{
+
+                        4 -> {
                             JewelryItems()
                         }
-                        5->{
+
+                        5 -> {
                             PhotographyItems()
                         }
-                        6->{
+
+                        6 -> {
                             LaundryItems()
                         }
-                        7->{
+
+                        7 -> {
                             ConfectioneryItems()
 
                         }
-                        8->{
+
+                        8 -> {
                             OtherJobsItems()
 
                         }
@@ -346,7 +405,7 @@ val receiptCategory=1
                             .height(2.dp)
                             .padding(horizontal = 5.dp)
                     )
-                    Column{
+                    Column {
                         Text(
                             modifier = Modifier,
                             text = "مبلغ کل اعلامی",
@@ -359,17 +418,21 @@ val receiptCategory=1
                                 .clickable {
 
                                 },
-                            value ="" ,
+                            keyboardOptions= KeyboardOptions(keyboardType = KeyboardType.Number),
+                            singleLine = true,
+                            value = totalAmount,
                             shape = RoundedCornerShape(30.dp),
-                            onValueChange ={receive->
-                                receiveDate=receive
+                            onValueChange = { tAmount ->
+                                totalAmount = tAmount
                             },
-                            leadingIcon={
-                                Icon( painter = painterResource(id = R.drawable.credit_card),
+                            leadingIcon = {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.credit_card),
                                     tint = CustomColors.gray,
-                                    contentDescription = null)
+                                    contentDescription = null
+                                )
                             },
-                            colors =TextFieldDefaults.outlinedTextFieldColors(
+                            colors = TextFieldDefaults.outlinedTextFieldColors(
                                 textColor = CustomColors.darkPurple,
                                 containerColor = CustomColors.transparentLightGray,
                                 cursorColor = CustomColors.lightBlue,
@@ -379,7 +442,7 @@ val receiptCategory=1
                         )
 
                     }
-                    Column{
+                    Column {
                         Text(
                             modifier = Modifier,
                             text = "مبلغ پرداخت شده",
@@ -392,17 +455,21 @@ val receiptCategory=1
                                 .clickable {
 
                                 },
-                            value ="" ,
+                            keyboardOptions= KeyboardOptions(keyboardType = KeyboardType.Number),
+                            singleLine = true,
+                            value = payedAmount,
                             shape = RoundedCornerShape(30.dp),
-                            onValueChange ={receive->
-                                receiveDate=receive
+                            onValueChange = { pAmount ->
+                                payedAmount = pAmount
                             },
-                            leadingIcon={
-                                Icon( painter = painterResource(id = R.drawable.paied_card),
+                            leadingIcon = {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.paied_card),
                                     tint = CustomColors.gray,
-                                    contentDescription = null)
+                                    contentDescription = null
+                                )
                             },
-                            colors =TextFieldDefaults.outlinedTextFieldColors(
+                            colors = TextFieldDefaults.outlinedTextFieldColors(
                                 textColor = CustomColors.darkPurple,
                                 containerColor = CustomColors.transparentLightGray,
                                 cursorColor = CustomColors.lightBlue,
@@ -417,17 +484,27 @@ val receiptCategory=1
                 }
             }
 
-            }
         }
+    }
 
 }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RepairFields(){
+fun RepairFields() {
+    var productProblem by remember {
+        mutableStateOf("")
+    }
+    var risks by remember {
+        mutableStateOf("")
+    }
+    var accessories by remember {
+        mutableStateOf("")
+    }
     Column(
         verticalArrangement = Arrangement.spacedBy(20.dp)
-    ){
-        Column{
+    ) {
+        Column {
             Text(
                 modifier = Modifier,
                 text = "مشکل کالا",
@@ -440,16 +517,19 @@ fun RepairFields(){
                     .clickable {
 
                     },
-                value ="" ,
+                value = productProblem,
                 shape = RoundedCornerShape(30.dp),
-                onValueChange ={receive->
+                onValueChange = { problem ->
+                    productProblem=problem
                 },
-                leadingIcon={
-                    Icon( painter = painterResource(id = R.drawable.settings),
+                leadingIcon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.settings),
                         tint = CustomColors.gray,
-                        contentDescription = null)
+                        contentDescription = null
+                    )
                 },
-                colors =TextFieldDefaults.outlinedTextFieldColors(
+                colors = TextFieldDefaults.outlinedTextFieldColors(
                     textColor = CustomColors.darkPurple,
                     containerColor = CustomColors.transparentLightGray,
                     cursorColor = CustomColors.lightBlue,
@@ -459,7 +539,7 @@ fun RepairFields(){
             )
 
         }
-        Column{
+        Column {
             Text(
                 modifier = Modifier,
                 text = "خطرات احتمالی و توضیحات",
@@ -472,16 +552,19 @@ fun RepairFields(){
                     .clickable {
 
                     },
-                value ="bdhh dgrgrg dfvgrgrg dgvrg\nsdvsdvsfdvfdv\nvsdvfdvbfdvb\n" ,
+                value = risks,
                 shape = RoundedCornerShape(30.dp),
-                onValueChange ={receive->
+                onValueChange = { r ->
+                    risks=r
                 },
-                leadingIcon={
-                    Icon( painter = painterResource(id = R.drawable.alarm),
+                leadingIcon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.alarm),
                         tint = CustomColors.gray,
-                        contentDescription = null)
+                        contentDescription = null
+                    )
                 },
-                colors =TextFieldDefaults.outlinedTextFieldColors(
+                colors = TextFieldDefaults.outlinedTextFieldColors(
                     textColor = CustomColors.darkPurple,
                     containerColor = CustomColors.transparentLightGray,
                     cursorColor = CustomColors.lightBlue,
@@ -491,7 +574,7 @@ fun RepairFields(){
             )
 
         }
-        Column{
+        Column {
             Text(
                 modifier = Modifier,
                 text = "لوازم همراه",
@@ -504,16 +587,19 @@ fun RepairFields(){
                     .clickable {
 
                     },
-                value ="" ,
+                value = accessories,
                 shape = RoundedCornerShape(30.dp),
-                onValueChange ={receive->
+                onValueChange = { acc ->
+                    accessories=acc
                 },
-                leadingIcon={
-                    Icon( painter = painterResource(id = R.drawable.cart_1),
+                leadingIcon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.cart_1),
                         tint = CustomColors.gray,
-                        contentDescription = null)
+                        contentDescription = null
+                    )
                 },
-                colors =TextFieldDefaults.outlinedTextFieldColors(
+                colors = TextFieldDefaults.outlinedTextFieldColors(
                     textColor = CustomColors.darkPurple,
                     containerColor = CustomColors.transparentLightGray,
                     cursorColor = CustomColors.lightBlue,
@@ -527,18 +613,19 @@ fun RepairFields(){
 
     }
 }
+
 @Composable
-fun CrateReceiptBottomBar(){
+fun CrateReceiptBottomBar() {
     Row(
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.fillMaxWidth()
     ) {
         Card(
-            modifier=Modifier.padding(30.dp),
-            elevation=CardDefaults.cardElevation(20.dp),
-            shape= CircleShape,
-            colors=CardDefaults.cardColors(
+            modifier = Modifier.padding(30.dp),
+            elevation = CardDefaults.cardElevation(20.dp),
+            shape = CircleShape,
+            colors = CardDefaults.cardColors(
                 containerColor = Color.White,
                 contentColor = Color.White
             )
@@ -595,7 +682,6 @@ fun CrateReceiptBottomBar(){
                     }
 
                 }
-
 
 
             }
