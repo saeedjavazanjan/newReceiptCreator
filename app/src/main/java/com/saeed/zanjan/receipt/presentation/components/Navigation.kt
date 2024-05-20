@@ -9,10 +9,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.saeed.zanjan.receipt.presentation.navigation.Screen
 import com.saeed.zanjan.receipt.presentation.ui.create_receipt.CreateReceiptScreen
+import com.saeed.zanjan.receipt.presentation.ui.create_receipt.CreateReceiptViewModel
 import com.saeed.zanjan.receipt.presentation.ui.home.Home
 import com.saeed.zanjan.receipt.presentation.ui.home.HomeViewModel
 import com.saeed.zanjan.receipt.presentation.ui.receipt.ReceiptScreen
-import com.saeed.zanjan.receipt.presentation.ui.registration.OtpScreen
 import com.saeed.zanjan.receipt.presentation.ui.registration.RegistrationScreen
 import com.saeed.zanjan.receipt.presentation.ui.registration.RegistrationViewModel
 
@@ -25,7 +25,7 @@ fun Navigation(
 ) {
     val registrationViewModel:RegistrationViewModel = viewModel()
     val homeViewModel:HomeViewModel= viewModel()
-
+    val createReceiptViewModel:CreateReceiptViewModel= viewModel()
     NavHost(navController = navController, startDestination = Screen.Home.route) {
         composable(Screen.Registration.route) {
             RegistrationScreen(
@@ -63,7 +63,8 @@ fun Navigation(
         }
         composable(Screen.CreateReceipt.route) {
             CreateReceiptScreen(
-               navController=navController
+               navController=navController,
+                viewModel=createReceiptViewModel
             )
         }
     }
