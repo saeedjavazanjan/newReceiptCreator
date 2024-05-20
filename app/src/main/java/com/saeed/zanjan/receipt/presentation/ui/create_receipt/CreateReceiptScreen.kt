@@ -63,7 +63,8 @@ import ir.huri.jcal.JalaliCalendar
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateReceiptScreen(
-    navController: NavController
+    navController: NavController,
+    viewModel: CreateReceiptViewModel
 ) {
 
     val openReceiveDateDialog = remember { mutableStateOf(false) }
