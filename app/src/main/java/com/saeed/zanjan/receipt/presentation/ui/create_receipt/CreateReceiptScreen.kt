@@ -92,7 +92,72 @@ fun CreateReceiptScreen(
         mutableStateOf("")
     }
 
-    val receiptCategory = 1
+    //repair
+    var productProblem by remember {
+        mutableStateOf("")
+    }
+    var risks by remember {
+        mutableStateOf("")
+    }
+    var accessories by remember {
+        mutableStateOf("")
+    }
+
+    //tailoring
+    var details by remember {
+        mutableStateOf("")
+    }
+    var sizes by remember {
+        mutableStateOf("")
+    }
+
+    //jewelry
+    var jewelryProductProblem by remember {
+        mutableStateOf("")
+    }
+    var explainOfOrder by remember {
+        mutableStateOf("")
+    }
+    var detailsOfJewelry by remember {
+        mutableStateOf("")
+    }
+
+    //photography
+    var photoNumber by remember {
+        mutableStateOf("")
+    }
+    var photoSize by remember {
+        mutableStateOf("")
+    }
+
+    //laundry
+    var typeOfLaundryOrder by remember {
+        mutableStateOf("")
+    }
+    var detailsOfLaundryOrder by remember {
+        mutableStateOf("")
+    }
+
+    //confectionery
+    var explainOfConfectioneryOrder by remember {
+        mutableStateOf("")
+    }
+    var detailsOfConfectioneryOrder by remember {
+        mutableStateOf("")
+    }
+    var weightOfOrder by remember {
+        mutableStateOf("")
+    }
+
+    //otherJobs
+    var countOfOrder by remember {
+        mutableStateOf("")
+    }
+    var detailsOfOtherOrder by remember {
+        mutableStateOf("")
+    }
+
+    val receiptCategory =5
 
     NewReceiptCreatorTheme(
         displayProgressBar = false,
@@ -110,7 +175,11 @@ fun CreateReceiptScreen(
                 )
             },
             bottomBar = {
-                CrateReceiptBottomBar()
+                CrateReceiptBottomBar(
+                    saveData = {
+
+                    }
+                )
             }
         ) {
             JalaliDatePickerDialog(
@@ -258,7 +327,7 @@ fun CreateReceiptScreen(
                             modifier = Modifier
                                 .fillMaxWidth(),
                             singleLine = true,
-                            value =customerName,
+                            value = customerName,
                             shape = RoundedCornerShape(30.dp),
                             onValueChange = { name ->
                                 customerName = name
@@ -289,11 +358,10 @@ fun CreateReceiptScreen(
                         )
                         OutlinedTextField(
                             modifier = Modifier
-                                .fillMaxWidth()
-                                ,
+                                .fillMaxWidth(),
                             singleLine = true,
                             shape = RoundedCornerShape(30.dp),
-                            keyboardOptions= KeyboardOptions(keyboardType = KeyboardType.Phone),
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
                             value = phoneNumber,
                             onValueChange = { phone ->
                                 phoneNumber = phone
@@ -357,43 +425,142 @@ fun CreateReceiptScreen(
                     )
                     when (receiptCategory) {
                         0 -> {
-                            RepairItems()
+                            RepairFields(
+                                productProblem = productProblem,
+                                risks = risks,
+                                accessories = accessories,
+                                pProblemSetValue = {
+                                    productProblem = it
+                                },
+                                risksSetValue = {
+                                    risks = it
+                                },
+                                accessoriesSetValue = {
+                                    accessories = it
+                                }
+
+                            )
                         }
 
                         1 -> {
-                            RepairFields()
+                            RepairFields(
+                                productProblem = productProblem,
+                                risks = risks,
+                                accessories = accessories,
+                                pProblemSetValue = {
+                                    productProblem = it
+                                },
+                                risksSetValue = {
+                                    risks = it
+                                },
+                                accessoriesSetValue = {
+                                    accessories = it
+                                }
+                            )
                         }
 
                         2 -> {
-                            RepairItems()
+                            RepairFields(
+                                productProblem = productProblem,
+                                risks = risks,
+                                accessories = accessories,
+                                pProblemSetValue = {
+                                    productProblem = it
+                                },
+                                risksSetValue = {
+                                    risks = it
+                                },
+                                accessoriesSetValue = {
+                                    accessories = it
+                                }
+                            )
 
                         }
 
                         3 -> {
-                            TailoringItems()
-
+                            TailoringFields(
+                                details = details,
+                                sizes = sizes,
+                                detailsSetValue = {
+                                    details = it
+                                },
+                                sizesSetValue = {
+                                    sizes = it
+                                }
+                            )
                         }
 
                         4 -> {
-                            JewelryItems()
+                            JewelryFields(
+                                jewelryProblem = jewelryProductProblem,
+                                explainOfOrder = explainOfOrder,
+                                detailsOfProduct = detailsOfJewelry,
+                                jewelryProblemSetValue = {
+                                    jewelryProductProblem = it
+                                },
+                                explainOfOrderSetValue = {
+                                    explainOfOrder = it
+                                },
+                                detailOfProductSetValue = {
+                                    detailsOfJewelry = it
+                                }
+                            )
                         }
 
                         5 -> {
-                            PhotographyItems()
+                            PhotographyFields(
+                                photoNumber = photoNumber,
+                                photoSize = photoSize,
+                                photoNumberSetValue = {
+                                    phoneNumber = it
+                                },
+                                photoSizeSetValue = {
+                                    photoSize = it
+                                }
+                            )
                         }
 
                         6 -> {
-                            LaundryItems()
+                            LaundryFields(
+                                typeOfLaundryOrder = typeOfLaundryOrder,
+                                detailsOfLaundryOrder = detailsOfLaundryOrder,
+                                typeOfLaundryOrderSetValue = {
+                                    typeOfLaundryOrder = it
+                                },
+                                detailsOfLaundryOrderSetValue = {
+                                    detailsOfLaundryOrder = it
+                                }
+                            )
                         }
 
                         7 -> {
-                            ConfectioneryItems()
-
+                            ConfectioneryFields(
+                                explainOfConfectioneryOrder = explainOfConfectioneryOrder,
+                                detailsOfConfectioneryOrder = detailsOfConfectioneryOrder,
+                                weightOfOrder = weightOfOrder,
+                                explainOfConfectioneryOrderSetValue = {
+                                    explainOfConfectioneryOrder = it
+                                },
+                                detailsOfConfectioneryOrderSetValue = {
+                                    detailsOfConfectioneryOrder = it
+                                },
+                                weightOfOrderSetValue = {
+                                    weightOfOrder = it
+                                }
+                            )
                         }
 
                         8 -> {
-                            OtherJobsItems()
-
+                            OtherJobsFields(
+                                countOfOrder =countOfOrder ,
+                                detailsOfOtherOrder =detailsOfOtherOrder ,
+                                countOfOrderSetValue ={
+                                                      countOfOrder=it
+                                } ,
+                                detailsOfOtherOrderSetValue = {
+                                    detailsOfOtherOrder=it
+                                }
+                            )
                         }
 
                     }
@@ -418,7 +585,7 @@ fun CreateReceiptScreen(
                                 .clickable {
 
                                 },
-                            keyboardOptions= KeyboardOptions(keyboardType = KeyboardType.Number),
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                             singleLine = true,
                             value = totalAmount,
                             shape = RoundedCornerShape(30.dp),
@@ -455,7 +622,7 @@ fun CreateReceiptScreen(
                                 .clickable {
 
                                 },
-                            keyboardOptions= KeyboardOptions(keyboardType = KeyboardType.Number),
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                             singleLine = true,
                             value = payedAmount,
                             shape = RoundedCornerShape(30.dp),
@@ -491,16 +658,16 @@ fun CreateReceiptScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RepairFields() {
-    var productProblem by remember {
-        mutableStateOf("")
-    }
-    var risks by remember {
-        mutableStateOf("")
-    }
-    var accessories by remember {
-        mutableStateOf("")
-    }
+fun RepairFields(
+    productProblem: String,
+    risks: String,
+    accessories: String,
+    pProblemSetValue: (String) -> Unit,
+    risksSetValue: (String) -> Unit,
+    accessoriesSetValue: (String) -> Unit
+
+) {
+
     Column(
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
@@ -520,7 +687,7 @@ fun RepairFields() {
                 value = productProblem,
                 shape = RoundedCornerShape(30.dp),
                 onValueChange = { problem ->
-                    productProblem=problem
+                    pProblemSetValue(problem)
                 },
                 leadingIcon = {
                     Icon(
@@ -555,7 +722,8 @@ fun RepairFields() {
                 value = risks,
                 shape = RoundedCornerShape(30.dp),
                 onValueChange = { r ->
-                    risks=r
+
+                    risksSetValue(r)
                 },
                 leadingIcon = {
                     Icon(
@@ -590,11 +758,11 @@ fun RepairFields() {
                 value = accessories,
                 shape = RoundedCornerShape(30.dp),
                 onValueChange = { acc ->
-                    accessories=acc
+                    accessoriesSetValue(acc)
                 },
                 leadingIcon = {
                     Icon(
-                        painter = painterResource(id = R.drawable.cart_1),
+                        painter = painterResource(id = R.drawable.bag),
                         tint = CustomColors.gray,
                         contentDescription = null
                     )
@@ -614,8 +782,599 @@ fun RepairFields() {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CrateReceiptBottomBar() {
+fun TailoringFields(
+    details: String,
+    sizes: String,
+    detailsSetValue: (String) -> Unit,
+    sizesSetValue: (String) -> Unit
+) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(20.dp)
+    ) {
+        Column {
+            Text(
+                modifier = Modifier,
+                text = "مشخصات",
+                style = MaterialTheme.typography.bodyMedium,
+                color = CustomColors.bitterDarkPurple
+            )
+            OutlinedTextField(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+
+                    },
+                value = details,
+                shape = RoundedCornerShape(30.dp),
+                onValueChange = { det ->
+                    detailsSetValue(det)
+                },
+                leadingIcon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.document_align_right_2),
+                        tint = CustomColors.gray,
+                        contentDescription = null
+                    )
+                },
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    textColor = CustomColors.darkPurple,
+                    containerColor = CustomColors.transparentLightGray,
+                    cursorColor = CustomColors.lightBlue,
+                    focusedBorderColor = CustomColors.lightBlue,
+                    unfocusedBorderColor = CustomColors.lightGray
+                )
+            )
+
+        }
+        Column {
+            Text(
+                modifier = Modifier,
+                text = "اندازه ها",
+                style = MaterialTheme.typography.bodyMedium,
+                color = CustomColors.bitterDarkPurple
+            )
+            OutlinedTextField(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+
+                    },
+                value = sizes,
+                shape = RoundedCornerShape(30.dp),
+                onValueChange = { s ->
+                    sizesSetValue(s)
+                },
+                leadingIcon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ticket),
+                        tint = CustomColors.gray,
+                        contentDescription = null
+                    )
+                },
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    textColor = CustomColors.darkPurple,
+                    containerColor = CustomColors.transparentLightGray,
+                    cursorColor = CustomColors.lightBlue,
+                    focusedBorderColor = CustomColors.lightBlue,
+                    unfocusedBorderColor = CustomColors.lightGray
+                )
+            )
+
+        }
+
+
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun JewelryFields(
+    jewelryProblem: String,
+    explainOfOrder: String,
+    detailsOfProduct: String,
+    jewelryProblemSetValue: (String) -> Unit,
+    explainOfOrderSetValue: (String) -> Unit,
+    detailOfProductSetValue: (String) -> Unit,
+) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(20.dp)
+    ) {
+        Column {
+            Text(
+                modifier = Modifier,
+                text = "مشکل محصول",
+                style = MaterialTheme.typography.bodyMedium,
+                color = CustomColors.bitterDarkPurple
+            )
+            OutlinedTextField(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+
+                    },
+                value = jewelryProblem,
+                shape = RoundedCornerShape(30.dp),
+                onValueChange = { problem ->
+                    jewelryProblemSetValue(problem)
+                },
+                leadingIcon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.settings),
+                        tint = CustomColors.gray,
+                        contentDescription = null
+                    )
+                },
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    textColor = CustomColors.darkPurple,
+                    containerColor = CustomColors.transparentLightGray,
+                    cursorColor = CustomColors.lightBlue,
+                    focusedBorderColor = CustomColors.lightBlue,
+                    unfocusedBorderColor = CustomColors.lightGray
+                )
+            )
+
+        }
+        Column {
+            Text(
+                modifier = Modifier,
+                text = "توضیحات سفارش ساخت",
+                style = MaterialTheme.typography.bodyMedium,
+                color = CustomColors.bitterDarkPurple
+            )
+            OutlinedTextField(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+
+                    },
+                value = explainOfOrder,
+                shape = RoundedCornerShape(30.dp),
+                onValueChange = { explain ->
+                    explainOfOrderSetValue(explain)
+                },
+                leadingIcon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.document_align_right_2),
+                        tint = CustomColors.gray,
+                        contentDescription = null
+                    )
+                },
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    textColor = CustomColors.darkPurple,
+                    containerColor = CustomColors.transparentLightGray,
+                    cursorColor = CustomColors.lightBlue,
+                    focusedBorderColor = CustomColors.lightBlue,
+                    unfocusedBorderColor = CustomColors.lightGray
+                )
+            )
+
+        }
+        Column {
+            Text(
+                modifier = Modifier,
+                text = "مشخصات محصول تعمیری",
+                style = MaterialTheme.typography.bodyMedium,
+                color = CustomColors.bitterDarkPurple
+            )
+            OutlinedTextField(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                value = detailsOfProduct,
+                shape = RoundedCornerShape(30.dp),
+                onValueChange = { det ->
+                    detailOfProductSetValue(det)
+                },
+                leadingIcon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.document_align_right_2),
+                        tint = CustomColors.gray,
+                        contentDescription = null
+                    )
+                },
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    textColor = CustomColors.darkPurple,
+                    containerColor = CustomColors.transparentLightGray,
+                    cursorColor = CustomColors.lightBlue,
+                    focusedBorderColor = CustomColors.lightBlue,
+                    unfocusedBorderColor = CustomColors.lightGray
+                )
+            )
+
+        }
+
+
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun PhotographyFields(
+    photoNumber: String,
+    photoSize: String,
+    photoNumberSetValue: (String) -> Unit,
+    photoSizeSetValue: (String) -> Unit
+) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(20.dp)
+    ) {
+        Column {
+            Text(
+                modifier = Modifier,
+                text = "تعداد سفارش",
+                style = MaterialTheme.typography.bodyMedium,
+                color = CustomColors.bitterDarkPurple
+            )
+            OutlinedTextField(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+
+                    },
+                value = photoNumber,
+                shape = RoundedCornerShape(30.dp),
+                onValueChange = { number ->
+                    photoNumberSetValue(number)
+                },
+                leadingIcon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.camera),
+                        tint = CustomColors.gray,
+                        contentDescription = null
+                    )
+                },
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    textColor = CustomColors.darkPurple,
+                    containerColor = CustomColors.transparentLightGray,
+                    cursorColor = CustomColors.lightBlue,
+                    focusedBorderColor = CustomColors.lightBlue,
+                    unfocusedBorderColor = CustomColors.lightGray
+                )
+            )
+
+        }
+        Column {
+            Text(
+                modifier = Modifier,
+                text = "توضیحات و اندازه ها ",
+                style = MaterialTheme.typography.bodyMedium,
+                color = CustomColors.bitterDarkPurple
+            )
+            OutlinedTextField(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+
+                    },
+                value = photoSize,
+                shape = RoundedCornerShape(30.dp),
+                onValueChange = { size ->
+                    photoSizeSetValue(size)
+                },
+                leadingIcon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.document_align_right_2),
+                        tint = CustomColors.gray,
+                        contentDescription = null
+                    )
+                },
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    textColor = CustomColors.darkPurple,
+                    containerColor = CustomColors.transparentLightGray,
+                    cursorColor = CustomColors.lightBlue,
+                    focusedBorderColor = CustomColors.lightBlue,
+                    unfocusedBorderColor = CustomColors.lightGray
+                )
+            )
+
+        }
+
+
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun LaundryFields(
+    typeOfLaundryOrder: String,
+    detailsOfLaundryOrder: String,
+    typeOfLaundryOrderSetValue: (String) -> Unit,
+    detailsOfLaundryOrderSetValue: (String) -> Unit
+) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(20.dp)
+    ) {
+        Column {
+            Text(
+                modifier = Modifier,
+                text = "نوع سفارش",
+                style = MaterialTheme.typography.bodyMedium,
+                color = CustomColors.bitterDarkPurple
+            )
+            OutlinedTextField(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+
+                    },
+                value = typeOfLaundryOrder,
+                shape = RoundedCornerShape(30.dp),
+                onValueChange = { type ->
+                    typeOfLaundryOrderSetValue(type)
+                },
+                leadingIcon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.color_palette),
+                        tint = CustomColors.gray,
+                        contentDescription = null
+                    )
+                },
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    textColor = CustomColors.darkPurple,
+                    containerColor = CustomColors.transparentLightGray,
+                    cursorColor = CustomColors.lightBlue,
+                    focusedBorderColor = CustomColors.lightBlue,
+                    unfocusedBorderColor = CustomColors.lightGray
+                )
+            )
+
+        }
+        Column {
+            Text(
+                modifier = Modifier,
+                text = "توضیحات سفارش",
+                style = MaterialTheme.typography.bodyMedium,
+                color = CustomColors.bitterDarkPurple
+            )
+            OutlinedTextField(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+
+                    },
+                value = detailsOfLaundryOrder,
+                shape = RoundedCornerShape(30.dp),
+                onValueChange = { det ->
+                    detailsOfLaundryOrderSetValue(det)
+                },
+                leadingIcon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.document_align_right_2),
+                        tint = CustomColors.gray,
+                        contentDescription = null
+                    )
+                },
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    textColor = CustomColors.darkPurple,
+                    containerColor = CustomColors.transparentLightGray,
+                    cursorColor = CustomColors.lightBlue,
+                    focusedBorderColor = CustomColors.lightBlue,
+                    unfocusedBorderColor = CustomColors.lightGray
+                )
+            )
+
+        }
+
+
+    }
+
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ConfectioneryFields(
+    explainOfConfectioneryOrder: String,
+    detailsOfConfectioneryOrder: String,
+    weightOfOrder: String,
+    explainOfConfectioneryOrderSetValue: (String) -> Unit,
+    detailsOfConfectioneryOrderSetValue: (String) -> Unit,
+    weightOfOrderSetValue: (String) -> Unit,
+) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(20.dp)
+    ) {
+        Column {
+            Text(
+                modifier = Modifier,
+                text = "توضیحات سفارش",
+                style = MaterialTheme.typography.bodyMedium,
+                color = CustomColors.bitterDarkPurple
+            )
+            OutlinedTextField(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+
+                    },
+                value = explainOfConfectioneryOrder,
+                shape = RoundedCornerShape(30.dp),
+                onValueChange = { explain ->
+                    explainOfConfectioneryOrderSetValue(explain)
+                },
+                leadingIcon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.document_align_right_2),
+                        tint = CustomColors.gray,
+                        contentDescription = null
+                    )
+                },
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    textColor = CustomColors.darkPurple,
+                    containerColor = CustomColors.transparentLightGray,
+                    cursorColor = CustomColors.lightBlue,
+                    focusedBorderColor = CustomColors.lightBlue,
+                    unfocusedBorderColor = CustomColors.lightGray
+                )
+            )
+
+        }
+        Column {
+            Text(
+                modifier = Modifier,
+                text = "مشخصات",
+                style = MaterialTheme.typography.bodyMedium,
+                color = CustomColors.bitterDarkPurple
+            )
+            OutlinedTextField(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+
+                    },
+                value = detailsOfConfectioneryOrder,
+                shape = RoundedCornerShape(30.dp),
+                onValueChange = { det ->
+
+                    detailsOfConfectioneryOrderSetValue(det)
+                },
+                leadingIcon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.document_align_right_2),
+                        tint = CustomColors.gray,
+                        contentDescription = null
+                    )
+                },
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    textColor = CustomColors.darkPurple,
+                    containerColor = CustomColors.transparentLightGray,
+                    cursorColor = CustomColors.lightBlue,
+                    focusedBorderColor = CustomColors.lightBlue,
+                    unfocusedBorderColor = CustomColors.lightGray
+                )
+            )
+
+        }
+        Column {
+            Text(
+                modifier = Modifier,
+                text = "وزن",
+                style = MaterialTheme.typography.bodyMedium,
+                color = CustomColors.bitterDarkPurple
+            )
+            OutlinedTextField(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+
+                    },
+                value = weightOfOrder,
+                shape = RoundedCornerShape(30.dp),
+                onValueChange = { weight ->
+                    weightOfOrderSetValue(weight)
+                },
+                leadingIcon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.scales),
+                        tint = CustomColors.gray,
+                        contentDescription = null
+                    )
+                },
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    textColor = CustomColors.darkPurple,
+                    containerColor = CustomColors.transparentLightGray,
+                    cursorColor = CustomColors.lightBlue,
+                    focusedBorderColor = CustomColors.lightBlue,
+                    unfocusedBorderColor = CustomColors.lightGray
+                )
+            )
+
+        }
+
+
+    }
+}
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun OtherJobsFields(
+    countOfOrder:String,
+    detailsOfOtherOrder:String,
+    countOfOrderSetValue: (String)->Unit,
+    detailsOfOtherOrderSetValue:(String)->Unit
+){
+    Column(
+        verticalArrangement = Arrangement.spacedBy(20.dp)
+    ) {
+        Column {
+            Text(
+                modifier = Modifier,
+                text = "تعداد سفارش",
+                style = MaterialTheme.typography.bodyMedium,
+                color = CustomColors.bitterDarkPurple
+            )
+            OutlinedTextField(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+
+                    },
+                value = countOfOrder,
+                shape = RoundedCornerShape(30.dp),
+                onValueChange = { count ->
+                    countOfOrderSetValue(count)
+                },
+                leadingIcon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.count_order),
+                        tint = CustomColors.gray,
+                        contentDescription = null
+                    )
+                },
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    textColor = CustomColors.darkPurple,
+                    containerColor = CustomColors.transparentLightGray,
+                    cursorColor = CustomColors.lightBlue,
+                    focusedBorderColor = CustomColors.lightBlue,
+                    unfocusedBorderColor = CustomColors.lightGray
+                )
+            )
+
+        }
+        Column {
+            Text(
+                modifier = Modifier,
+                text = "توضیحات سفارش",
+                style = MaterialTheme.typography.bodyMedium,
+                color = CustomColors.bitterDarkPurple
+            )
+            OutlinedTextField(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+
+                    },
+                value = detailsOfOtherOrder,
+                shape = RoundedCornerShape(30.dp),
+                onValueChange = { det ->
+                    detailsOfOtherOrderSetValue(det)
+                },
+                leadingIcon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.document_align_right_2),
+                        tint = CustomColors.gray,
+                        contentDescription = null
+                    )
+                },
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    textColor = CustomColors.darkPurple,
+                    containerColor = CustomColors.transparentLightGray,
+                    cursorColor = CustomColors.lightBlue,
+                    focusedBorderColor = CustomColors.lightBlue,
+                    unfocusedBorderColor = CustomColors.lightGray
+                )
+            )
+
+        }
+
+
+    }
+
+}
+
+@Composable
+fun CrateReceiptBottomBar(
+    saveData: () -> Unit
+) {
     Row(
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
@@ -648,6 +1407,7 @@ fun CrateReceiptBottomBar() {
                             containerColor = CustomColors.lightGray
                         ),
                         onClick = {
+                            saveData()
                         },
                     ) {
                         Icon(
