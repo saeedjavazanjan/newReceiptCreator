@@ -23,7 +23,6 @@ class CreateReceiptViewModel
     fun saveInDatabase(
         repairsReceipt: RepairsReceipt,
         snackbarHostState: SnackbarHostState,
-        context: Context
     ){
         saveReceiptInDatabase.
         saveRepairReceipt(repairsReceipt).onEach {dataState ->

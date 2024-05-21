@@ -10,6 +10,9 @@ object CustomColors {
     val bitterDarkPurple= Color(0xFF232536)
     val lightBlue= Color(0xff328ce2)
     val darkBlue= Color(0xff0056ab)
-    val lightGreen= Color(0x6084E232)
+    val readyForDelivery= Color(0xFFD3E5CF)
+    val delivered= Color(0xFFCECECD)
+    val inProses= Color(0xFFFFC2A6)
+    val problem= Color(0xFFFF8BA0)
 
 }
