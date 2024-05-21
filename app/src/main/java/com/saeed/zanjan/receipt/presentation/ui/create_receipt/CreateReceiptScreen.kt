@@ -29,6 +29,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -47,10 +49,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import com.gmail.hamedvakhide.compose_jalali_datepicker.JalaliDatePickerDialog
 import com.saeed.zanjan.receipt.R
+import com.saeed.zanjan.receipt.domain.models.RepairsReceipt
 import com.saeed.zanjan.receipt.presentation.ui.receipt.ConfectioneryItems
 import com.saeed.zanjan.receipt.presentation.ui.receipt.JewelryItems
 import com.saeed.zanjan.receipt.presentation.ui.receipt.LaundryItems
@@ -66,6 +70,8 @@ fun CreateReceiptScreen(
     navController: NavController,
     viewModel: CreateReceiptViewModel
 ) {
+    val snackbarHostState = remember { SnackbarHostState() }
+    val context= LocalContext.current
 
     val openReceiveDateDialog = remember { mutableStateOf(false) }
     val openDeliveryDateDialog = remember { mutableStateOf(false) }
@@ -158,7 +164,7 @@ fun CreateReceiptScreen(
         mutableStateOf("")
     }
 
-    val receiptCategory =5
+    val receiptCategory =1
 
     NewReceiptCreatorTheme(
         displayProgressBar = false,
@@ -167,6 +173,7 @@ fun CreateReceiptScreen(
 
 
         Scaffold(
+            snackbarHost = { SnackbarHost(snackbarHostState) },
             containerColor = CustomColors.lightBlue,
             topBar = {
                 TopBar(
@@ -178,6 +185,31 @@ fun CreateReceiptScreen(
             bottomBar = {
                 CrateReceiptBottomBar(
                     saveData = {
+                        when(receiptCategory){
+                            1->{
+                               val repairsReceipt=RepairsReceipt(
+                                   id=0,
+                                   status = 0,
+                                   name = customerName,
+                                   phone = phoneNumber,
+                                   loanerName = productName,
+                                   loanerProblems = productProblem,
+                                   risks = risks,
+                                   deliveryTime = deliveryDate,
+                                   receiptTime = receiveDate,
+                                   accessories = accessories,
+                                   cost = totalAmount,
+                                   prepayment = payedAmount
+
+                               )
+                                viewModel.saveInDatabase(
+                                    repairsReceipt = repairsReceipt,
+                                    snackbarHostState = snackbarHostState,
+                                    context=context
+                                )
+                            }
+
+                        }
 
                     }
                 )

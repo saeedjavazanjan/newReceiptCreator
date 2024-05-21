@@ -2,10 +2,14 @@ package com.saeed.zanjan.receipt.di
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.content.SharedPreferences.Editor
 import android.preference.PreferenceManager
+import androidx.room.Room
 import com.google.gson.GsonBuilder
 import com.saeed.zanjan.receipt.BaseApplication
+import com.saeed.zanjan.receipt.cash.ReceiptDao
+import com.saeed.zanjan.receipt.cash.database.AppDatabase
+import com.saeed.zanjan.receipt.cash.model.RepairsMapper
+import com.saeed.zanjan.receipt.interactor.SaveReceiptInDatabase
 import com.saeed.zanjan.receipt.interactor.UserRegistration
 import com.saeed.zanjan.receipt.network.RetrofitService
 import com.saeed.zanjan.receipt.network.model.OtpDataDtoMapper
@@ -108,4 +112,39 @@ object AppModule {
         )
 
     }
+    @Singleton
+    @Provides
+    fun provideDb(@ApplicationContext context: Context): AppDatabase {
+        return Room
+            .databaseBuilder(context, AppDatabase::class.java, AppDatabase.DATABASE_NAME)
+            .allowMainThreadQueries()
+            .fallbackToDestructiveMigration()
+            .addMigrations(AppDatabase.MIGRATION_1_2)
+            .build()
+    }
+
+    @Singleton
+    @Provides
+    fun provideRecipeDao(db: AppDatabase): ReceiptDao{
+        return db.receiptDao()
+    }
+
+    @Singleton
+    @Provides
+    fun provideRepairsMapper(): RepairsMapper {
+        return RepairsMapper()
+    }
+
+    @Singleton
+    @Provides
+    fun provideReceiptSaver(
+        repairsMapper: RepairsMapper,
+        receiptDao: ReceiptDao
+    ):SaveReceiptInDatabase{
+        return SaveReceiptInDatabase(
+           receiptDao=receiptDao,
+            entityMapper = repairsMapper
+        )
+    }
+
 }
