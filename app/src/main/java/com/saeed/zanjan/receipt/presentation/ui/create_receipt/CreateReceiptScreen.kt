@@ -55,6 +55,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import com.gmail.hamedvakhide.compose_jalali_datepicker.JalaliDatePickerDialog
 import com.saeed.zanjan.receipt.R
 import com.saeed.zanjan.receipt.domain.models.RepairsReceipt
+import com.saeed.zanjan.receipt.presentation.components.StatusDialog
 import com.saeed.zanjan.receipt.presentation.ui.receipt.ConfectioneryItems
 import com.saeed.zanjan.receipt.presentation.ui.receipt.JewelryItems
 import com.saeed.zanjan.receipt.presentation.ui.receipt.LaundryItems
@@ -71,11 +72,16 @@ fun CreateReceiptScreen(
     viewModel: CreateReceiptViewModel
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
-    val context= LocalContext.current
+    val loading=viewModel.loading.value
 
     val openReceiveDateDialog = remember { mutableStateOf(false) }
     val openDeliveryDateDialog = remember { mutableStateOf(false) }
+    val openStatusDialog= remember { mutableStateOf(false) }
 
+
+    var status by remember {
+        mutableStateOf(0)
+    }
     var receiveDate by remember {
         mutableStateOf("")
     }
@@ -167,7 +173,7 @@ fun CreateReceiptScreen(
     val receiptCategory =1
 
     NewReceiptCreatorTheme(
-        displayProgressBar = false,
+        displayProgressBar = loading,
         themColor = CustomColors.lightBlue
     ) {
 
@@ -205,16 +211,32 @@ fun CreateReceiptScreen(
                                 viewModel.saveInDatabase(
                                     repairsReceipt = repairsReceipt,
                                     snackbarHostState = snackbarHostState,
-                                    context=context
                                 )
                             }
 
                         }
 
+                    },
+                    openStatusDialog = {
+                        openStatusDialog.value=true
                     }
                 )
             }
         ) {
+            if(openStatusDialog.value){
+                StatusDialog(
+                    onDismiss = {
+                        openStatusDialog.value=false
+                    },
+                    onStatusSelected = {selectedStatus->
+                        status=selectedStatus
+                        openStatusDialog.value=false
+
+                    }
+                )
+            }
+
+
             JalaliDatePickerDialog(
                 openDialog = openDeliveryDateDialog,
                 initialDate = JalaliCalendar(1402, 1, 2),
@@ -1406,7 +1428,8 @@ fun OtherJobsFields(
 
 @Composable
 fun CrateReceiptBottomBar(
-    saveData: () -> Unit
+    saveData: () -> Unit,
+    openStatusDialog:()->Unit
 ) {
     Row(
         horizontalArrangement = Arrangement.Center,
@@ -1465,6 +1488,7 @@ fun CrateReceiptBottomBar(
                             containerColor = CustomColors.lightGray
                         ),
                         onClick = {
+                                  openStatusDialog()
                         },
                     ) {
                         Icon(
@@ -1480,4 +1504,5 @@ fun CrateReceiptBottomBar(
             }
         }
     }
+
 }
