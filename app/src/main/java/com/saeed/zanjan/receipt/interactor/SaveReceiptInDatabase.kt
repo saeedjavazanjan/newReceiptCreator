@@ -1,8 +1,7 @@
 package com.saeed.zanjan.receipt.interactor
 
 import com.saeed.zanjan.receipt.cash.ReceiptDao
-import com.saeed.zanjan.receipt.cash.model.RepairsEntity
-import com.saeed.zanjan.receipt.cash.model.RepairsMapper
+import com.saeed.zanjan.receipt.cash.model.RepairsEntityMapper
 import com.saeed.zanjan.receipt.domain.dataState.DataState
 import com.saeed.zanjan.receipt.domain.models.RepairsReceipt
 import kotlinx.coroutines.flow.Flow
@@ -10,7 +9,7 @@ import kotlinx.coroutines.flow.flow
 
 class SaveReceiptInDatabase(
     val receiptDao: ReceiptDao,
-    val entityMapper:RepairsMapper
+    val entityMapper:RepairsEntityMapper
 ) {
 
 
