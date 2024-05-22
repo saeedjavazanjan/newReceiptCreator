@@ -8,7 +8,7 @@ import com.google.gson.GsonBuilder
 import com.saeed.zanjan.receipt.BaseApplication
 import com.saeed.zanjan.receipt.cash.ReceiptDao
 import com.saeed.zanjan.receipt.cash.database.AppDatabase
-import com.saeed.zanjan.receipt.cash.model.RepairsMapper
+import com.saeed.zanjan.receipt.cash.model.RepairsEntityMapper
 import com.saeed.zanjan.receipt.interactor.SaveReceiptInDatabase
 import com.saeed.zanjan.receipt.interactor.UserRegistration
 import com.saeed.zanjan.receipt.network.RetrofitService
@@ -131,14 +131,14 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideRepairsMapper(): RepairsMapper {
-        return RepairsMapper()
+    fun provideRepairsMapper(): RepairsEntityMapper {
+        return RepairsEntityMapper()
     }
 
     @Singleton
     @Provides
     fun provideReceiptSaver(
-        repairsMapper: RepairsMapper,
+        repairsMapper: RepairsEntityMapper,
         receiptDao: ReceiptDao
     ):SaveReceiptInDatabase{
         return SaveReceiptInDatabase(
