@@ -73,11 +73,11 @@ fun CreateReceiptScreen(
     viewModel: CreateReceiptViewModel
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
-    val loading=viewModel.loading.value
+    val loading = viewModel.loading.value
 
     val openReceiveDateDialog = remember { mutableStateOf(false) }
     val openDeliveryDateDialog = remember { mutableStateOf(false) }
-    val openStatusDialog= remember { mutableStateOf(false) }
+    val openStatusDialog = remember { mutableStateOf(false) }
 
 
     var status by remember {
@@ -171,7 +171,7 @@ fun CreateReceiptScreen(
         mutableStateOf("")
     }
 
-    val receiptCategory =1
+    val receiptCategory = 1
 
     NewReceiptCreatorTheme(
         displayProgressBar = loading,
@@ -191,24 +191,25 @@ fun CreateReceiptScreen(
             },
             bottomBar = {
                 CrateReceiptBottomBar(
+                    status = status,
                     saveData = {
-                        when(receiptCategory){
-                            1->{
-                               val repairsReceipt=RepairsReceipt(
-                                   id=0,
-                                   status = 0,
-                                   name = customerName,
-                                   phone = phoneNumber,
-                                   loanerName = productName,
-                                   loanerProblems = productProblem,
-                                   risks = risks,
-                                   deliveryTime = deliveryDate,
-                                   receiptTime = receiveDate,
-                                   accessories = accessories,
-                                   cost = totalAmount,
-                                   prepayment = payedAmount
+                        when (receiptCategory) {
+                            1 -> {
+                                val repairsReceipt = RepairsReceipt(
+                                    id = 0,
+                                    status = 0,
+                                    name = customerName,
+                                    phone = phoneNumber,
+                                    loanerName = productName,
+                                    loanerProblems = productProblem,
+                                    risks = risks,
+                                    deliveryTime = deliveryDate,
+                                    receiptTime = receiveDate,
+                                    accessories = accessories,
+                                    cost = totalAmount,
+                                    prepayment = payedAmount
 
-                               )
+                                )
                                 viewModel.saveInDatabase(
                                     repairsReceipt = repairsReceipt,
                                     snackbarHostState = snackbarHostState,
@@ -219,19 +220,19 @@ fun CreateReceiptScreen(
 
                     },
                     openStatusDialog = {
-                        openStatusDialog.value=true
+                        openStatusDialog.value = true
                     }
                 )
             }
         ) {
-            if(openStatusDialog.value){
+            if (openStatusDialog.value) {
                 StatusDialog(
                     onDismiss = {
-                        openStatusDialog.value=false
+                        openStatusDialog.value = false
                     },
-                    onStatusSelected = {selectedStatus->
-                        status=selectedStatus
-                        openStatusDialog.value=false
+                    onStatusSelected = { selectedStatus ->
+                        status = selectedStatus
+                        openStatusDialog.value = false
 
                     }
                 )
@@ -608,13 +609,13 @@ fun CreateReceiptScreen(
 
                         8 -> {
                             OtherJobsFields(
-                                countOfOrder =countOfOrder ,
-                                detailsOfOtherOrder =detailsOfOtherOrder ,
-                                countOfOrderSetValue ={
-                                                      countOfOrder=it
-                                } ,
+                                countOfOrder = countOfOrder,
+                                detailsOfOtherOrder = detailsOfOtherOrder,
+                                countOfOrderSetValue = {
+                                    countOfOrder = it
+                                },
                                 detailsOfOtherOrderSetValue = {
-                                    detailsOfOtherOrder=it
+                                    detailsOfOtherOrder = it
                                 }
                             )
                         }
@@ -1340,14 +1341,15 @@ fun ConfectioneryFields(
 
     }
 }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OtherJobsFields(
-    countOfOrder:String,
-    detailsOfOtherOrder:String,
-    countOfOrderSetValue: (String)->Unit,
-    detailsOfOtherOrderSetValue:(String)->Unit
-){
+    countOfOrder: String,
+    detailsOfOtherOrder: String,
+    countOfOrderSetValue: (String) -> Unit,
+    detailsOfOtherOrderSetValue: (String) -> Unit
+) {
     Column(
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
@@ -1407,7 +1409,8 @@ fun OtherJobsFields(
                 leadingIcon = {
                     Icon(
                         painter = painterResource(id = R.drawable.document_align_right_2),
-                        tint = CustomColors.gray,
+                        tint =CustomColors.gray
+                       ,
                         contentDescription = null
                     )
                 },
@@ -1429,8 +1432,9 @@ fun OtherJobsFields(
 
 @Composable
 fun CrateReceiptBottomBar(
+    status: Int,
     saveData: () -> Unit,
-    openStatusDialog:()->Unit
+    openStatusDialog: () -> Unit
 ) {
     Row(
         horizontalArrangement = Arrangement.Center,
@@ -1486,10 +1490,16 @@ fun CrateReceiptBottomBar(
                             .size(50.dp)
                             .padding(3.dp),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = CustomColors.lightGray
+                            containerColor = when (status) {
+                                0 -> CustomColors.inProses
+                                1 -> CustomColors.delivered
+                                2 -> CustomColors.problem
+                                3 -> CustomColors.readyForDelivery
+                                else -> CustomColors.gray
+                            }
                         ),
                         onClick = {
-                                  openStatusDialog()
+                            openStatusDialog()
                         },
                     ) {
                         Icon(
