@@ -1,12 +1,12 @@
 package com.saeed.zanjan.receipt.presentation.ui.create_receipt
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -32,9 +32,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -42,29 +42,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.saeed.zanjan.receipt.presentation.components.TopBar
-import com.saeed.zanjan.receipt.presentation.ui.receipt.BottomBar
 import com.saeed.zanjan.receipt.ui.theme.CustomColors
 import com.saeed.zanjan.receipt.ui.theme.NewReceiptCreatorTheme
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import com.gmail.hamedvakhide.compose_jalali_datepicker.JalaliDatePickerDialog
 import com.saeed.zanjan.receipt.R
 import com.saeed.zanjan.receipt.domain.models.RepairsReceipt
+import com.saeed.zanjan.receipt.presentation.components.ExitDialog
+import com.saeed.zanjan.receipt.presentation.components.SendSmsDialog
 import com.saeed.zanjan.receipt.presentation.components.StatusDialog
-import com.saeed.zanjan.receipt.presentation.ui.receipt.ConfectioneryItems
-import com.saeed.zanjan.receipt.presentation.ui.receipt.JewelryItems
-import com.saeed.zanjan.receipt.presentation.ui.receipt.LaundryItems
-import com.saeed.zanjan.receipt.presentation.ui.receipt.OtherJobsItems
-import com.saeed.zanjan.receipt.presentation.ui.receipt.PhotographyItems
-import com.saeed.zanjan.receipt.presentation.ui.receipt.RepairItems
-import com.saeed.zanjan.receipt.presentation.ui.receipt.TailoringItems
 import ir.huri.jcal.JalaliCalendar
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -72,13 +66,28 @@ fun CreateReceiptScreen(
     navController: NavController,
     viewModel: CreateReceiptViewModel
 ) {
+
     val snackbarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
+
+
     val loading = viewModel.loading.value
+    val dataSaveStatus = viewModel.dataSaveStatus.value
+    val dataSaveStatusForSMS = viewModel.dataSaveStatusForSMS.value
 
     val openReceiveDateDialog = remember { mutableStateOf(false) }
     val openDeliveryDateDialog = remember { mutableStateOf(false) }
     val openStatusDialog = remember { mutableStateOf(false) }
+    val openExitDialog = remember { mutableStateOf(false) }
+    val openSendSMSDialog = remember { mutableStateOf(false) }
 
+    LaunchedEffect(Unit){
+        viewModel.dataSaveStatus.value=false
+        viewModel.dataSaveStatusForSMS.value=false
+    }
+    var saveClicked by remember {
+        mutableStateOf(false)
+    }
 
     var status by remember {
         mutableStateOf(0)
@@ -105,6 +114,7 @@ fun CreateReceiptScreen(
     var payedAmount by remember {
         mutableStateOf("")
     }
+
 
     //repair
     var productProblem by remember {
@@ -185,7 +195,10 @@ fun CreateReceiptScreen(
             topBar = {
                 TopBar(
                     onBackClicked = {
+                        if(dataSaveStatus)
                         navController.popBackStack()
+                        else
+                            openExitDialog.value=true
                     }
                 )
             },
@@ -193,27 +206,36 @@ fun CreateReceiptScreen(
                 CrateReceiptBottomBar(
                     status = status,
                     saveData = {
-                        when (receiptCategory) {
-                            1 -> {
-                                val repairsReceipt = RepairsReceipt(
-                                    id = 0,
-                                    status = 0,
-                                    name = customerName,
-                                    phone = phoneNumber,
-                                    loanerName = productName,
-                                    loanerProblems = productProblem,
-                                    risks = risks,
-                                    deliveryTime = deliveryDate,
-                                    receiptTime = receiveDate,
-                                    accessories = accessories,
-                                    cost = totalAmount,
-                                    prepayment = payedAmount
+                        saveClicked=true
+                        if(phoneNumber==""|| phoneNumber.length<11){
+                            coroutineScope.launch {
+                                snackbarHostState.showSnackbar("لطفا شماره تلفن را به درستی وارد کنید")
 
-                                )
-                                viewModel.saveInDatabase(
-                                    repairsReceipt = repairsReceipt,
-                                    snackbarHostState = snackbarHostState,
-                                )
+                            }
+                        }else{
+                            when (receiptCategory) {
+                                1 -> {
+                                    val repairsReceipt = RepairsReceipt(
+                                        id = 0,
+                                        status = 0,
+                                        name = customerName,
+                                        phone = phoneNumber,
+                                        loanerName = productName,
+                                        loanerProblems = productProblem,
+                                        risks = risks,
+                                        deliveryTime = deliveryDate,
+                                        receiptTime = receiveDate,
+                                        accessories = accessories,
+                                        cost = totalAmount,
+                                        prepayment = payedAmount
+
+                                    )
+                                    viewModel.saveInDatabase(
+                                        repairsReceipt = repairsReceipt,
+                                        snackbarHostState = snackbarHostState,
+                                    )
+                                }
+
                             }
 
                         }
@@ -225,6 +247,21 @@ fun CreateReceiptScreen(
                 )
             }
         ) {
+
+            if(openExitDialog.value){
+                ExitDialog(onDismiss = {
+
+                                       openExitDialog.value=false
+                                       },
+                    onExitClicked ={
+                        openExitDialog.value=false
+                        navController.popBackStack()
+                    }
+                )
+
+            }
+
+
             if (openStatusDialog.value) {
                 StatusDialog(
                     onDismiss = {
@@ -238,6 +275,26 @@ fun CreateReceiptScreen(
                 )
             }
 
+            LaunchedEffect(dataSaveStatusForSMS) {
+                if (dataSaveStatusForSMS) {
+                    openSendSMSDialog.value = true
+                }
+            }
+
+            if(openSendSMSDialog.value){
+                SendSmsDialog(
+                    onDismiss = {
+                        openSendSMSDialog.value=false
+                        viewModel.dataSaveStatusForSMS.value=false
+                    },
+                    description ="آیا قصد ارسال رسید پیامکی را دارید؟" ,
+                    sendClicked = {
+                        openSendSMSDialog.value=false
+                        viewModel.dataSaveStatusForSMS.value=false
+
+                    }
+                )
+            }
 
             JalaliDatePickerDialog(
                 openDialog = openDeliveryDateDialog,
@@ -417,6 +474,7 @@ fun CreateReceiptScreen(
                             modifier = Modifier
                                 .fillMaxWidth(),
                             singleLine = true,
+                            isError = (phoneNumber.isEmpty() || phoneNumber.length < 11) && saveClicked,
                             shape = RoundedCornerShape(30.dp),
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
                             value = phoneNumber,
@@ -710,7 +768,13 @@ fun CreateReceiptScreen(
 
         }
     }
+    BackHandler {
+        if(dataSaveStatus)
+            navController.popBackStack()
+        else
+            openExitDialog.value=true
 
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
