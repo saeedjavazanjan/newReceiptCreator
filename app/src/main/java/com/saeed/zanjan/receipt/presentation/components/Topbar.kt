@@ -19,7 +19,7 @@ import com.saeed.zanjan.receipt.ui.theme.CustomColors
 
 @Composable
 fun TopBar(
-    onBackClicked:()->Unit
+    onBackClicked:()->Unit,
 ){
     Row(
         modifier = Modifier
