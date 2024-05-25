@@ -28,14 +28,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.saeed.zanjan.receipt.R
 import com.saeed.zanjan.receipt.ui.theme.CustomColors
+
 @Composable
 fun StatusDialog(
     onDismiss: () -> Unit,
-    onStatusSelected:(Int)->Unit
-    ){
+    onStatusSelected: (Int) -> Unit
+) {
     Dialog(
         onDismissRequest = onDismiss,
-        ) {
+    ) {
         Surface(
             modifier = Modifier.widthIn(max = 400.dp),
             shape = RoundedCornerShape(8.dp)
@@ -48,12 +49,14 @@ fun StatusDialog(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 Card(
-                    modifier=Modifier.fillMaxWidth().clickable {
-                                                               onStatusSelected(3)
-                    },
-                    elevation= CardDefaults.cardElevation(10.dp),
-                    shape= CircleShape,
-                    colors= CardDefaults.cardColors(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            onStatusSelected(3)
+                        },
+                    elevation = CardDefaults.cardElevation(10.dp),
+                    shape = CircleShape,
+                    colors = CardDefaults.cardColors(
                         containerColor = CustomColors.readyForDelivery,
                         contentColor = CustomColors.readyForDelivery
                     ),
@@ -61,7 +64,7 @@ fun StatusDialog(
 
                     ) {
                     Row(
-                        verticalAlignment=Alignment.CenterVertically,
+                        verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
                             .padding(5.dp)
                     ) {
@@ -72,22 +75,25 @@ fun StatusDialog(
                         )
                         Spacer(modifier = Modifier.size(10.dp))
 
-                        Text(text = "آماده تحویل",
+                        Text(
+                            text = "آماده تحویل",
                             style = MaterialTheme.typography.bodyMedium,
                             color = Color.White
                         )
                     }
-                    
-                    
+
+
                 }
                 Card(
-                    modifier=Modifier.fillMaxWidth().clickable {
-                        onStatusSelected(0)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            onStatusSelected(0)
 
-                    },
-                    elevation= CardDefaults.cardElevation(10.dp),
-                    shape= CircleShape,
-                    colors= CardDefaults.cardColors(
+                        },
+                    elevation = CardDefaults.cardElevation(10.dp),
+                    shape = CircleShape,
+                    colors = CardDefaults.cardColors(
                         containerColor = CustomColors.inProses,
                         contentColor = CustomColors.inProses
                     ),
@@ -95,7 +101,7 @@ fun StatusDialog(
 
                     ) {
                     Row(
-                        verticalAlignment=Alignment.CenterVertically,
+                        verticalAlignment = Alignment.CenterVertically,
 
                         modifier = Modifier
                             .padding(5.dp)
@@ -107,20 +113,23 @@ fun StatusDialog(
                         )
                         Spacer(modifier = Modifier.size(10.dp))
 
-                        Text(text = "در حال انجام",
+                        Text(
+                            text = "در حال انجام",
                             style = MaterialTheme.typography.bodyMedium,
                             color = Color.White
                         )
                     }
                 }
                 Card(
-                    modifier=Modifier.fillMaxWidth().clickable {
-                        onStatusSelected(2)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            onStatusSelected(2)
 
-                    },
-                    elevation= CardDefaults.cardElevation(10.dp),
-                    shape= CircleShape,
-                    colors= CardDefaults.cardColors(
+                        },
+                    elevation = CardDefaults.cardElevation(10.dp),
+                    shape = CircleShape,
+                    colors = CardDefaults.cardColors(
                         containerColor = CustomColors.problem,
                         contentColor = CustomColors.problem
                     ),
@@ -128,7 +137,7 @@ fun StatusDialog(
 
                     ) {
                     Row(
-                        verticalAlignment=Alignment.CenterVertically,
+                        verticalAlignment = Alignment.CenterVertically,
 
                         modifier = Modifier
                             .padding(5.dp)
@@ -140,20 +149,23 @@ fun StatusDialog(
                         )
                         Spacer(modifier = Modifier.size(10.dp))
 
-                        Text(text = "مشکل در روند سفارش",
+                        Text(
+                            text = "مشکل در روند سفارش",
                             style = MaterialTheme.typography.bodyMedium,
                             color = Color.White
                         )
                     }
                 }
                 Card(
-                    modifier=Modifier.fillMaxWidth().clickable {
-                        onStatusSelected(1)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            onStatusSelected(1)
 
-                    },
-                    elevation= CardDefaults.cardElevation(10.dp),
-                    shape= CircleShape,
-                    colors= CardDefaults.cardColors(
+                        },
+                    elevation = CardDefaults.cardElevation(10.dp),
+                    shape = CircleShape,
+                    colors = CardDefaults.cardColors(
                         containerColor = CustomColors.delivered,
                         contentColor = CustomColors.delivered
                     ),
@@ -161,7 +173,7 @@ fun StatusDialog(
 
                     ) {
                     Row(
-                        verticalAlignment=Alignment.CenterVertically,
+                        verticalAlignment = Alignment.CenterVertically,
 
                         modifier = Modifier
                             .padding(5.dp)
@@ -172,7 +184,8 @@ fun StatusDialog(
                             contentDescription = null
                         )
                         Spacer(modifier = Modifier.size(10.dp))
-                        Text(text = "تحویل داده شده",
+                        Text(
+                            text = "تحویل داده شده",
                             style = MaterialTheme.typography.bodyMedium,
                             color = Color.White
                         )
