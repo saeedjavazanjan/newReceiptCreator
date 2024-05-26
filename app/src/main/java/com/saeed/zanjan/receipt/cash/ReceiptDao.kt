@@ -4,25 +4,51 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.saeed.zanjan.receipt.cash.model.ConfectioneryEntity
+import com.saeed.zanjan.receipt.cash.model.JewelryEntity
+import com.saeed.zanjan.receipt.cash.model.LaundryEntity
+import com.saeed.zanjan.receipt.cash.model.OtherJobsEntity
+import com.saeed.zanjan.receipt.cash.model.PhotographyEntity
 import com.saeed.zanjan.receipt.cash.model.RepairsEntity
+import com.saeed.zanjan.receipt.cash.model.TailoringEntity
 
 
 @Dao
 interface ReceiptDao {
-    @Insert (onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertConfectioneryReceipt(conf: ConfectioneryEntity): Long
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertJewelryReceipt(jew: JewelryEntity): Long
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertLaundryReceipt(laundry: LaundryEntity): Long
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertOtherJobsReceipt(other: OtherJobsEntity): Long
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertPhotoReceipt(photo: PhotographyEntity): Long
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertRepairReceipt(repair: RepairsEntity): Long
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertTailoringReceipt(tailor: TailoringEntity): Long
+
+
     @Query("SELECT * FROM repairs")
     fun getAll(): List<RepairsEntity>
-   /* @Insert (onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertUserData(userData: UserDataEntity)
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertComment(comment: CommentEntity)
-*/
- /*   @Transaction
-    @Query("SELECT * FROM posts WHERE id = :postId")
-    suspend fun getPostWithComment(postId: Int): List<CommentsByPostId>
+    /* @Insert (onConflict = OnConflictStrategy.REPLACE)
+     suspend fun insertUserData(userData: UserDataEntity)
+     @Insert(onConflict = OnConflictStrategy.REPLACE)
+     suspend fun insertComment(comment: CommentEntity)
+ */
+    /*   @Transaction
+       @Query("SELECT * FROM posts WHERE id = :postId")
+       suspend fun getPostWithComment(postId: Int): List<CommentsByPostId>
 
-   *//* @Transaction
+      *//* @Transaction
     @Query("SELECT * FROM userData WHERE userid = :userID")
     suspend fun getUserFollowers(userID: Int): List<FollowersByConsideredUserId>
 
@@ -76,7 +102,8 @@ interface ReceiptDao {
     @Query("DELETE FROM posts WHERE id = :primaryKey")
     suspend fun deleteSew(primaryKey: Int): Int
 
-    *//**
+    */
+    /**
      * Retrieve recipes for a particular page.
      * Ex: page = 2 retrieves recipes from 30-60.
      * Ex: page = 3 retrieves recipes from 60-90
@@ -106,7 +133,8 @@ interface ReceiptDao {
         pageSize: Int = FOLLOWERS_OR_FOLLOWING_PAGINATION_PAGE_SIZE
     ): List<FollowersEntity>
 
-    *//**
+    */
+    /**
      * Same as 'searchRecipes' function, but no query.
      *//*
     @Query("""
@@ -136,7 +164,8 @@ interface ReceiptDao {
         pageSize: Int = FOLLOWERS_OR_FOLLOWING_PAGINATION_PAGE_SIZE
     ): List<FollowingEntity>
 
-    *//**
+    */
+    /**
      * Restore Recipes after process death
      *//*
     @Query("""
@@ -175,7 +204,8 @@ interface ReceiptDao {
         pageSize: Int = FOLLOWERS_OR_FOLLOWING_PAGINATION_PAGE_SIZE
     ): List<FollowingEntity>
 
-    *//**
+    */
+    /**
      * Same as 'restoreRecipes' function, but no query.
      *//*
     @Query("""

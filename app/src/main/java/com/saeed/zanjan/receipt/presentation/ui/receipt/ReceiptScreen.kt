@@ -43,6 +43,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.saeed.zanjan.receipt.R
+import com.saeed.zanjan.receipt.presentation.components.BottomBar
 import com.saeed.zanjan.receipt.presentation.components.TopBar
 import com.saeed.zanjan.receipt.presentation.navigation.Screen
 import com.saeed.zanjan.receipt.ui.theme.CustomColors
@@ -107,129 +108,7 @@ fun ReceiptScreen(
 
 }
 
-@Composable
-fun BottomBar(
-    itemClicked:(String)->Unit
-){
-    Row(
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Card(
-            modifier=Modifier.padding(20.dp),
-            elevation=CardDefaults.cardElevation(20.dp),
-            shape= CircleShape,
-            colors=CardDefaults.cardColors(
-                containerColor = Color.White,
-                contentColor = Color.White
-            )
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .padding(6.dp)
-                    .wrapContentWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
 
-                Button(
-                    contentPadding = PaddingValues(0.dp),
-                    modifier = Modifier
-                        .clip(CircleShape)
-                        .size(50.dp)
-                        .padding(3.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = CustomColors.lightGray
-                    ),
-                    onClick = {
-                              itemClicked(Screen.CreateReceipt.route)
-                    },
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.edit),
-                        tint = CustomColors.darkPurple,
-                        contentDescription = null
-                    )
-                }
-                Button(
-                    contentPadding = PaddingValues(0.dp),
-                    modifier = Modifier
-                        .clip(CircleShape)
-                        .size(50.dp)
-                        .padding(3.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = CustomColors.lightGray
-                    ),
-                    onClick = {
-                    },
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.share),
-                        tint = CustomColors.darkPurple,
-                        contentDescription = null
-                    )
-                }
-                Button(
-                    contentPadding = PaddingValues(0.dp),
-                    modifier = Modifier
-                        .clip(CircleShape)
-                        .size(50.dp)
-                        .padding(3.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = CustomColors.lightGray
-                    ),
-                    onClick = {
-                    },
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.key),
-                        tint = CustomColors.darkPurple,
-                        contentDescription = null
-                    )
-                }
-                Button(
-                    contentPadding = PaddingValues(0.dp),
-                    modifier = Modifier
-                        .clip(CircleShape)
-                        .size(50.dp)
-                        .padding(3.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = CustomColors.lightGray
-                    ),
-                    onClick = {
-                    },
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.signeture),
-                        tint = CustomColors.darkPurple,
-                        contentDescription = null
-                    )
-                }
-                Button(
-                    contentPadding = PaddingValues(0.dp),
-                    modifier = Modifier
-                        .clip(CircleShape)
-                        .size(50.dp)
-                        .padding(3.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = CustomColors.lightGray
-                    ),
-                    onClick = {
-                    },
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.delete),
-                        tint = CustomColors.darkPurple,
-                        contentDescription = null
-                    )
-                }
-            }
-
-        }
-    }
-
-}
 
 @Composable
 fun ReceiptCard(modifier: Modifier,receiptCategory:Int?){

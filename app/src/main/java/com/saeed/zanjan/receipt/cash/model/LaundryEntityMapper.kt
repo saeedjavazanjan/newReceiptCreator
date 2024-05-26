@@ -1,5 +1,6 @@
 package com.saeed.zanjan.receipt.cash.model
 
+import com.saeed.zanjan.receipt.domain.models.GeneralReceipt
 import com.saeed.zanjan.receipt.domain.models.LaundryReceipt
 import com.saeed.zanjan.receipt.domain.models.RepairsReceipt
 import com.saeed.zanjan.receipt.domain.util.DomainMapper
@@ -36,5 +37,21 @@ class LaundryEntityMapper: DomainMapper<LaundryEntity, LaundryReceipt?> {
             domainModel.prepayment
         )
 
+    }
+
+    override fun generalMapper(generalReceipt: GeneralReceipt): LaundryEntity {
+        return LaundryEntity(
+            generalReceipt!!.id,
+            generalReceipt.status,
+            generalReceipt.name,
+            generalReceipt.phone,
+            generalReceipt.orderName,
+            generalReceipt.laundryOrderType,
+            generalReceipt.laundryDescription,
+            generalReceipt.deliveryTime,
+            generalReceipt.receiptTime,
+            generalReceipt.cost,
+            generalReceipt.prepayment
+        )
     }
 }

@@ -1,5 +1,6 @@
 package com.saeed.zanjan.receipt.cash.model
 
+import com.saeed.zanjan.receipt.domain.models.GeneralReceipt
 import com.saeed.zanjan.receipt.domain.models.OtherJobsReceipt
 import com.saeed.zanjan.receipt.domain.models.RepairsReceipt
 import com.saeed.zanjan.receipt.domain.util.DomainMapper
@@ -36,5 +37,21 @@ class OtherJobsEntityMapper: DomainMapper<OtherJobsEntity, OtherJobsReceipt?> {
             domainModel.prepayment
         )
 
+    }
+
+    override fun generalMapper(generalReceipt: GeneralReceipt): OtherJobsEntity {
+        return OtherJobsEntity(
+            generalReceipt!!.id,
+            generalReceipt.status,
+            generalReceipt.name,
+            generalReceipt.phone,
+            generalReceipt.orderName,
+            generalReceipt.otherJobsDescription,
+            generalReceipt.otherJobsOrderNumber,
+            generalReceipt.deliveryTime,
+            generalReceipt.receiptTime,
+            generalReceipt.cost,
+            generalReceipt.prepayment
+        )
     }
 }

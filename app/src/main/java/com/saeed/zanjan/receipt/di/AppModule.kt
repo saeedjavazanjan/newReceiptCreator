@@ -8,7 +8,13 @@ import com.google.gson.GsonBuilder
 import com.saeed.zanjan.receipt.BaseApplication
 import com.saeed.zanjan.receipt.cash.ReceiptDao
 import com.saeed.zanjan.receipt.cash.database.AppDatabase
+import com.saeed.zanjan.receipt.cash.model.ConfectioneryEntityMapper
+import com.saeed.zanjan.receipt.cash.model.JewelryEntityMapper
+import com.saeed.zanjan.receipt.cash.model.LaundryEntityMapper
+import com.saeed.zanjan.receipt.cash.model.OtherJobsEntityMapper
+import com.saeed.zanjan.receipt.cash.model.PhotographyEntityMapper
 import com.saeed.zanjan.receipt.cash.model.RepairsEntityMapper
+import com.saeed.zanjan.receipt.cash.model.TailoringEntityMapper
 import com.saeed.zanjan.receipt.interactor.SaveReceiptInDatabase
 import com.saeed.zanjan.receipt.interactor.UserRegistration
 import com.saeed.zanjan.receipt.network.RetrofitService
@@ -131,19 +137,62 @@ object AppModule {
 
     @Singleton
     @Provides
+    fun provideConfectioneryMapper(): ConfectioneryEntityMapper {
+        return ConfectioneryEntityMapper()
+    }
+ @Singleton
+    @Provides
+    fun provideJewelryMapper(): JewelryEntityMapper {
+        return JewelryEntityMapper()
+    }
+ @Singleton
+    @Provides
+    fun provideLaundryMapper(): LaundryEntityMapper {
+        return LaundryEntityMapper()
+    }
+ @Singleton
+    @Provides
+    fun provideOtherJobsMapper(): OtherJobsEntityMapper {
+        return OtherJobsEntityMapper()
+    }
+ @Singleton
+    @Provides
+    fun providePhotoMapper(): PhotographyEntityMapper {
+        return PhotographyEntityMapper()
+    }
+ @Singleton
+    @Provides
     fun provideRepairsMapper(): RepairsEntityMapper {
         return RepairsEntityMapper()
+    }
+ @Singleton
+    @Provides
+    fun provideTailoringMapper(): TailoringEntityMapper {
+        return TailoringEntityMapper()
     }
 
     @Singleton
     @Provides
     fun provideReceiptSaver(
+        confectioneryEntityMapper: ConfectioneryEntityMapper,
+        jewelryEntityMapper: JewelryEntityMapper,
+        laundryEntityMapper: LaundryEntityMapper,
+        otherJobsEntityMapper: OtherJobsEntityMapper,
+        photographyEntityMapper: PhotographyEntityMapper,
         repairsMapper: RepairsEntityMapper,
+        tailoringEntityMapper: TailoringEntityMapper,
         receiptDao: ReceiptDao
     ):SaveReceiptInDatabase{
         return SaveReceiptInDatabase(
            receiptDao=receiptDao,
-            entityMapper = repairsMapper
+            conEntityMapper = confectioneryEntityMapper,
+            jewEntityMapper=jewelryEntityMapper,
+            laEntityMapper=laundryEntityMapper,
+            otherEntityMapper=otherJobsEntityMapper,
+            photoEntityMapper=photographyEntityMapper,
+            tailorEntityMapper=tailoringEntityMapper,
+            repairEntityMapper = repairsMapper,
+
         )
     }
 

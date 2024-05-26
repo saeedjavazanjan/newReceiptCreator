@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 class SendSms(
-    val sharedPreferences: SharedPreferences
+  //  val sharedPreferences: SharedPreferences
 ) {
 
 
@@ -18,7 +18,7 @@ class SendSms(
 
     ): Flow<DataState<String>> = flow {
         emit(DataState.loading())
-        val companyName=sharedPreferences.getString("COMPANY","رسید ساز")
+        val companyName=""//sharedPreferences.getString("COMPANY","رسید ساز")
         val massageText: String
         try {
             val smsManager = SmsManager.getDefault()

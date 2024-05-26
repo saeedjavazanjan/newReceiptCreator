@@ -6,6 +6,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.saeed.zanjan.receipt.domain.models.GeneralReceipt
 import com.saeed.zanjan.receipt.domain.models.RepairsReceipt
 import com.saeed.zanjan.receipt.interactor.SaveReceiptInDatabase
 import com.saeed.zanjan.receipt.interactor.SendSms
@@ -18,20 +19,19 @@ import javax.inject.Inject
 class CreateReceiptViewModel
 @Inject constructor(
     val saveReceiptInDatabase: SaveReceiptInDatabase,
-    val sendSms: SendSms
+   // val sendSms: SendSms
 ) : ViewModel() {
 
     val loading = mutableStateOf(false)
     val dataSaveStatus = mutableStateOf(false)
-
-    //this will true after snackBar show
     val dataSaveStatusForSMS = mutableStateOf(false)
 
     fun saveInDatabase(
-        repairsReceipt: RepairsReceipt,
+        generalReceipt: GeneralReceipt,
         snackbarHostState: SnackbarHostState,
+        receiptCategory:Int
     ) {
-        saveReceiptInDatabase.saveRepairReceipt(repairsReceipt).onEach { dataState ->
+        saveReceiptInDatabase.saveRepairReceipt(generalReceipt,receiptCategory).onEach { dataState ->
 
             dataState.loading.let {
                 loading.value = it
@@ -51,7 +51,7 @@ class CreateReceiptViewModel
 
     }
 
-    private fun repairSendMessage(
+ /*   private fun repairSendMessage(
         repairsReceipt: RepairsReceipt,
     ) {
         sendSms.repairSendSMS(
@@ -71,6 +71,9 @@ class CreateReceiptViewModel
 
         }.launchIn(viewModelScope)
 
-    }
-
+    }*/
+fun restartState(){
+    dataSaveStatus.value=false
+    dataSaveStatusForSMS.value=false
+}
 }

@@ -1,5 +1,6 @@
 package com.saeed.zanjan.receipt.cash.model
 
+import com.saeed.zanjan.receipt.domain.models.GeneralReceipt
 import com.saeed.zanjan.receipt.domain.models.TailoringReceipt
 import com.saeed.zanjan.receipt.domain.util.DomainMapper
 
@@ -34,6 +35,22 @@ class TailoringEntityMapper :DomainMapper<TailoringEntity,TailoringReceipt>{
             domainModel.sizes,
             domainModel.cost,
             domainModel.prepayment
+        )
+    }
+
+    override fun generalMapper(generalReceipt: GeneralReceipt): TailoringEntity {
+        return TailoringEntity(
+            generalReceipt.id,
+            generalReceipt.status,
+            generalReceipt.name,
+            generalReceipt.phone,
+            generalReceipt.orderName,
+            generalReceipt.tailoringOrderSpecification,
+            generalReceipt.deliveryTime,
+            generalReceipt.receiptTime,
+            generalReceipt.tailoringSizes,
+            generalReceipt.cost,
+            generalReceipt.prepayment
         )
     }
 }
