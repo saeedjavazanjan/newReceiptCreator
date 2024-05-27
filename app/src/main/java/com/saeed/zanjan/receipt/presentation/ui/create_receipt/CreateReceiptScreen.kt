@@ -84,6 +84,7 @@ fun CreateReceiptScreen(
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
 
+    var generalReceipt = GeneralReceipt()
 
     val loading = viewModel.loading.value
     val dataSaveStatus = viewModel.dataSaveStatus.value
@@ -196,7 +197,6 @@ fun CreateReceiptScreen(
         mutableStateOf("")
     }
 
-    val receiptCategory = 1
 
     NewReceiptCreatorTheme(
         displayProgressBar = loading,
@@ -239,8 +239,7 @@ fun CreateReceiptScreen(
 
                                 }
                             } else {
-                                val generalReceipt = GeneralReceipt(
-                                    id = 0,
+                                 generalReceipt = GeneralReceipt(
                                     status = status,
                                     name = customerName,
                                     phone = phoneNumber,
@@ -270,7 +269,6 @@ fun CreateReceiptScreen(
                                 viewModel.saveInDatabase(
                                     generalReceipt=generalReceipt,
                                     snackbarHostState = snackbarHostState,
-                                    receiptCategory = receiptCategory
                                 )
 
                             }
@@ -325,7 +323,7 @@ fun CreateReceiptScreen(
                     },
                     description = "آیا قصد ارسال رسید پیامکی را دارید؟",
                     sendClicked = {
-                        val generalReceipt = GeneralReceipt(
+                         generalReceipt = GeneralReceipt(
                             id = 0,
                             status = status,
                             name = customerName,
@@ -353,6 +351,8 @@ fun CreateReceiptScreen(
                             tailoringOrderSpecification =details,
                             tailoringSizes =sizes
                         )
+
+                        viewModel.sendMessage(generalReceipt)
 
                         openSendSMSDialog.value = false
 
@@ -396,7 +396,7 @@ fun CreateReceiptScreen(
                             top = it.calculateTopPadding(),
                         )
                         .fillMaxSize(),
-                    receiptCategory = receiptCategory
+                    receiptCategory = viewModel.receiptCategory
                 )
             } else {
                 Card(
@@ -618,7 +618,7 @@ fun CreateReceiptScreen(
                                 .height(2.dp)
                                 .padding(horizontal = 5.dp)
                         )
-                        when (receiptCategory) {
+                        when (viewModel.receiptCategory) {
                             0 -> {
                                 RepairFields(
                                     productProblem = productProblem,

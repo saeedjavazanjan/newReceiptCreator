@@ -1,5 +1,6 @@
 package com.saeed.zanjan.receipt.network.model
 
+import com.saeed.zanjan.receipt.domain.models.GeneralReceipt
 import com.saeed.zanjan.receipt.domain.models.OtpData
 import com.saeed.zanjan.receipt.domain.util.DomainMapper
 
@@ -17,6 +18,15 @@ class OtpDataDtoMapper:DomainMapper<OtpDataDto,OtpData> {
         return OtpDataDto(
             phoneNumber = domainModel.phoneNumber,
             password = domainModel.password
+        )
+    }
+
+
+    //only implemented for run app
+    override fun generalMapper(generalReceipt: GeneralReceipt): OtpDataDto {
+        return OtpDataDto(
+            phoneNumber = "",
+            password = ""
         )
     }
 }

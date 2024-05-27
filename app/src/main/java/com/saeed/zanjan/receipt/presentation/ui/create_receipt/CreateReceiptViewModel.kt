@@ -19,17 +19,21 @@ import javax.inject.Inject
 class CreateReceiptViewModel
 @Inject constructor(
     val saveReceiptInDatabase: SaveReceiptInDatabase,
-   // val sendSms: SendSms
+    val sendSms: SendSms,
+    sharedPreferences: SharedPreferences
 ) : ViewModel() {
+
+    val receiptCategory=1//sharedPreferences.getInt("JOB_SUBJECT",-1)
 
     val loading = mutableStateOf(false)
     val dataSaveStatus = mutableStateOf(false)
     val dataSaveStatusForSMS = mutableStateOf(false)
 
+    val smsSenState = mutableStateOf("")
+
     fun saveInDatabase(
         generalReceipt: GeneralReceipt,
         snackbarHostState: SnackbarHostState,
-        receiptCategory:Int
     ) {
         saveReceiptInDatabase.saveRepairReceipt(generalReceipt,receiptCategory).onEach { dataState ->
 
@@ -51,27 +55,30 @@ class CreateReceiptViewModel
 
     }
 
- /*   private fun repairSendMessage(
-        repairsReceipt: RepairsReceipt,
+     fun sendMessage(
+        generalReceipt: GeneralReceipt,
     ) {
         sendSms.repairSendSMS(
-            repairsReceipt
+            generalReceipt,
+            receiptCategory
         ).onEach { dataState ->
 
             dataState.loading.let {
                 loading.value=it
             }
             dataState.data?.let {
+                smsSenState.value=it
 
             }
 
             dataState.error?.let {
+                smsSenState.value=it
 
             }
 
         }.launchIn(viewModelScope)
 
-    }*/
+    }
 fun restartState(){
     dataSaveStatus.value=false
     dataSaveStatusForSMS.value=false

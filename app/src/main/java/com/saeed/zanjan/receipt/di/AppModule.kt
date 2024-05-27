@@ -16,6 +16,7 @@ import com.saeed.zanjan.receipt.cash.model.PhotographyEntityMapper
 import com.saeed.zanjan.receipt.cash.model.RepairsEntityMapper
 import com.saeed.zanjan.receipt.cash.model.TailoringEntityMapper
 import com.saeed.zanjan.receipt.interactor.SaveReceiptInDatabase
+import com.saeed.zanjan.receipt.interactor.SendSms
 import com.saeed.zanjan.receipt.interactor.UserRegistration
 import com.saeed.zanjan.receipt.network.RetrofitService
 import com.saeed.zanjan.receipt.network.model.OtpDataDtoMapper
@@ -193,6 +194,16 @@ object AppModule {
             tailorEntityMapper=tailoringEntityMapper,
             repairEntityMapper = repairsMapper,
 
+        )
+    }
+
+    @Singleton
+    @Provides
+    fun provideSmsSender(
+        sharedPreferences: SharedPreferences
+    ):SendSms{
+        return SendSms(
+            sharedPreferences=sharedPreferences
         )
     }
 
