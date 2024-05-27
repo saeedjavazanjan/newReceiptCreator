@@ -1,5 +1,6 @@
 package com.saeed.zanjan.receipt.network.model
 
+import com.saeed.zanjan.receipt.domain.models.GeneralReceipt
 import com.saeed.zanjan.receipt.domain.models.RegistrationInfo
 import com.saeed.zanjan.receipt.domain.util.DomainMapper
 
@@ -23,6 +24,19 @@ class RegistrationInfoDtoMapper: DomainMapper<RegistrationInfoDto, RegistrationI
             phoneNumber = domainModel.phone,
             pageId = domainModel.userId,
             jobTitle = domainModel.jobType
+        )
+    }
+
+
+    //only implemented for run app
+    override fun generalMapper(generalReceipt: GeneralReceipt): RegistrationInfoDto {
+        return RegistrationInfoDto(
+            companyName = "",
+            password="",
+            address = "",
+            phoneNumber = "",
+            pageId ="",
+            jobTitle = ""
         )
     }
 }
