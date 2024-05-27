@@ -58,6 +58,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.core.content.ContextCompat
 import com.gmail.hamedvakhide.compose_jalali_datepicker.JalaliDatePickerDialog
 import com.saeed.zanjan.receipt.R
@@ -70,6 +71,7 @@ import com.saeed.zanjan.receipt.presentation.components.SmsPermissionScreen
 import com.saeed.zanjan.receipt.presentation.components.StatusDialog
 import com.saeed.zanjan.receipt.presentation.navigation.Screen
 import com.saeed.zanjan.receipt.presentation.ui.receipt.ReceiptCard
+import com.saeed.zanjan.receipt.utils.NumberFormat
 import ir.huri.jcal.JalaliCalendar
 import kotlinx.coroutines.launch
 
@@ -124,12 +126,8 @@ fun CreateReceiptScreen(
         mutableStateOf("")
     }
 
-    var totalAmount by remember {
-        mutableStateOf("")
-    }
-    var payedAmount by remember {
-        mutableStateOf("")
-    }
+    var totalAmount by remember { mutableStateOf(TextFieldValue("")) }
+    var payedAmount by remember { mutableStateOf(TextFieldValue("")) }
 
 
     //repair
@@ -246,8 +244,8 @@ fun CreateReceiptScreen(
                                     orderName = productName,
                                     deliveryTime = deliveryDate,
                                     receiptTime = receiveDate,
-                                    cost = totalAmount,
-                                    prepayment = payedAmount,
+                                    cost = totalAmount.text,
+                                    prepayment = payedAmount.text,
                                     confectioneryOrderSpecification =explainOfConfectioneryOrder,
                                     confectioneryOrderWeight =weightOfOrder,
                                     confectioneryDescription =detailsOfConfectioneryOrder,
@@ -331,8 +329,8 @@ fun CreateReceiptScreen(
                             orderName = productName,
                             deliveryTime = deliveryDate,
                             receiptTime = receiveDate,
-                            cost = totalAmount,
-                            prepayment = payedAmount,
+                            cost = totalAmount.text,
+                            prepayment = payedAmount.text,
                             confectioneryOrderSpecification =explainOfConfectioneryOrder,
                             confectioneryOrderWeight =weightOfOrder,
                             confectioneryDescription =detailsOfConfectioneryOrder,
@@ -770,7 +768,7 @@ fun CreateReceiptScreen(
                         Column {
                             Text(
                                 modifier = Modifier,
-                                text = "مبلغ کل اعلامی",
+                                text = "مبلغ کل اعلامی(تومان)",
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = CustomColors.bitterDarkPurple
                             )
@@ -785,7 +783,7 @@ fun CreateReceiptScreen(
                                 value = totalAmount,
                                 shape = RoundedCornerShape(30.dp),
                                 onValueChange = { tAmount ->
-                                    totalAmount = tAmount
+                                    totalAmount = NumberFormat.formatNumber(tAmount)
                                 },
                                 leadingIcon = {
                                     Icon(
@@ -807,7 +805,7 @@ fun CreateReceiptScreen(
                         Column {
                             Text(
                                 modifier = Modifier,
-                                text = "مبلغ پرداخت شده",
+                                text = "مبلغ پرداخت شده(تومان)",
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = CustomColors.bitterDarkPurple
                             )
@@ -822,7 +820,7 @@ fun CreateReceiptScreen(
                                 value = payedAmount,
                                 shape = RoundedCornerShape(30.dp),
                                 onValueChange = { pAmount ->
-                                    payedAmount = pAmount
+                                    payedAmount = NumberFormat.formatNumber(pAmount)
                                 },
                                 leadingIcon = {
                                     Icon(
