@@ -39,19 +39,5 @@ class LaundryEntityMapper: DomainMapper<LaundryEntity, LaundryReceipt?> {
 
     }
 
-    override fun generalMapper(generalReceipt: GeneralReceipt): LaundryEntity {
-        return LaundryEntity(
-            generalReceipt!!.id,
-            generalReceipt.status,
-            generalReceipt.name,
-            generalReceipt.phone,
-            generalReceipt.orderName,
-            generalReceipt.laundryOrderType,
-            generalReceipt.laundryDescription,
-            generalReceipt.deliveryTime,
-            generalReceipt.receiptTime,
-            generalReceipt.cost,
-            generalReceipt.prepayment
-        )
-    }
+
 }

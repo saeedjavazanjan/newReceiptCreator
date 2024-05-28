@@ -126,8 +126,8 @@ fun CreateReceiptScreen(
         mutableStateOf("")
     }
 
-    var totalAmount by remember { mutableStateOf(TextFieldValue("")) }
-    var payedAmount by remember { mutableStateOf(TextFieldValue("")) }
+    var totalAmount by remember { mutableStateOf(TextFieldValue("0")) }
+    var payedAmount by remember { mutableStateOf(TextFieldValue("0")) }
 
 
     //repair

@@ -29,14 +29,5 @@ class RegistrationInfoDtoMapper: DomainMapper<RegistrationInfoDto, RegistrationI
 
 
     //only implemented for run app
-    override fun generalMapper(generalReceipt: GeneralReceipt): RegistrationInfoDto {
-        return RegistrationInfoDto(
-            companyName = "",
-            password="",
-            address = "",
-            phoneNumber = "",
-            pageId ="",
-            jobTitle = ""
-        )
-    }
+
 }

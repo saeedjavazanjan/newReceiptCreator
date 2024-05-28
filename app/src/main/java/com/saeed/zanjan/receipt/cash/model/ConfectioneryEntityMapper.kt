@@ -41,20 +41,5 @@ class ConfectioneryEntityMapper: DomainMapper<ConfectioneryEntity, Confectionery
 
     }
 
-    override fun generalMapper(generalReceipt: GeneralReceipt): ConfectioneryEntity {
-        return ConfectioneryEntity(
-            generalReceipt!!.id,
-            generalReceipt.status,
-            generalReceipt.name,
-            generalReceipt.phone,
-            generalReceipt.orderName,
-            generalReceipt.confectioneryOrderSpecification,
-            generalReceipt.confectioneryOrderWeight,
-            generalReceipt.confectioneryDescription,
-            generalReceipt.deliveryTime,
-            generalReceipt.receiptTime,
-            generalReceipt.cost,
-            generalReceipt.prepayment
-        )
-    }
+
 }

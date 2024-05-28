@@ -41,20 +41,5 @@ class JewelryEntityMapper: DomainMapper<JewelryEntity, JewelryReceipt?> {
 
     }
 
-    override fun generalMapper(generalReceipt: GeneralReceipt): JewelryEntity {
-        return JewelryEntity(
-            generalReceipt!!.id,
-            generalReceipt.status,
-            generalReceipt.name,
-            generalReceipt.phone,
-            generalReceipt.orderName,
-            generalReceipt.jewelryOrderSpecification,
-            generalReceipt.jewelryLoanerProblems,
-            generalReceipt.jewelryLoanerSpecification,
-            generalReceipt.deliveryTime,
-            generalReceipt.receiptTime,
-            generalReceipt.cost,
-            generalReceipt.prepayment
-        )
-    }
+
 }

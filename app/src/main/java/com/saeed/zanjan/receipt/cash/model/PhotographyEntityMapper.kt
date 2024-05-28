@@ -39,19 +39,5 @@ class PhotographyEntityMapper: DomainMapper<PhotographyEntity, PhotographyReceip
 
     }
 
-    override fun generalMapper(generalReceipt: GeneralReceipt): PhotographyEntity {
-        return PhotographyEntity(
-            generalReceipt!!.id,
-            generalReceipt.status,
-            generalReceipt.name,
-            generalReceipt.phone,
-            generalReceipt.orderName,
-            generalReceipt.photographyOrderSize,
-            generalReceipt.photographyOrderNumber,
-            generalReceipt.deliveryTime,
-            generalReceipt.receiptTime,
-            generalReceipt.cost,
-            generalReceipt.prepayment
-        )
-    }
+
 }

@@ -9,6 +9,7 @@ import com.saeed.zanjan.receipt.BaseApplication
 import com.saeed.zanjan.receipt.cash.ReceiptDao
 import com.saeed.zanjan.receipt.cash.database.AppDatabase
 import com.saeed.zanjan.receipt.cash.model.ConfectioneryEntityMapper
+import com.saeed.zanjan.receipt.cash.model.EntitiesGeneralMapper
 import com.saeed.zanjan.receipt.cash.model.JewelryEntityMapper
 import com.saeed.zanjan.receipt.cash.model.LaundryEntityMapper
 import com.saeed.zanjan.receipt.cash.model.OtherJobsEntityMapper
@@ -135,6 +136,7 @@ object AppModule {
     fun provideRecipeDao(db: AppDatabase): ReceiptDao{
         return db.receiptDao()
     }
+/*
 
     @Singleton
     @Provides
@@ -171,28 +173,24 @@ object AppModule {
     fun provideTailoringMapper(): TailoringEntityMapper {
         return TailoringEntityMapper()
     }
+*/
+
+
+    @Singleton
+    @Provides
+    fun provideGeneralMapper(): EntitiesGeneralMapper {
+        return EntitiesGeneralMapper()
+    }
 
     @Singleton
     @Provides
     fun provideReceiptSaver(
-        confectioneryEntityMapper: ConfectioneryEntityMapper,
-        jewelryEntityMapper: JewelryEntityMapper,
-        laundryEntityMapper: LaundryEntityMapper,
-        otherJobsEntityMapper: OtherJobsEntityMapper,
-        photographyEntityMapper: PhotographyEntityMapper,
-        repairsMapper: RepairsEntityMapper,
-        tailoringEntityMapper: TailoringEntityMapper,
-        receiptDao: ReceiptDao
+        receiptDao: ReceiptDao,
+        generalMapper: EntitiesGeneralMapper
     ):SaveReceiptInDatabase{
         return SaveReceiptInDatabase(
            receiptDao=receiptDao,
-            conEntityMapper = confectioneryEntityMapper,
-            jewEntityMapper=jewelryEntityMapper,
-            laEntityMapper=laundryEntityMapper,
-            otherEntityMapper=otherJobsEntityMapper,
-            photoEntityMapper=photographyEntityMapper,
-            tailorEntityMapper=tailoringEntityMapper,
-            repairEntityMapper = repairsMapper,
+            generalMapper=generalMapper
 
         )
     }

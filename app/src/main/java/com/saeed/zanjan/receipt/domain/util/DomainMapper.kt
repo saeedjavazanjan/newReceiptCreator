@@ -8,5 +8,4 @@ interface DomainMapper <T, DomainModel>{
 
     fun mapFromDomainModel(domainModel: DomainModel): T
 
-    fun generalMapper(generalReceipt:GeneralReceipt):T
 }

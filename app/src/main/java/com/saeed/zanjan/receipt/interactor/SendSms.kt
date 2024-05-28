@@ -11,119 +11,67 @@ class SendSms(
     val sharedPreferences: SharedPreferences
 ) {
 
-
+    val companyName=sharedPreferences.getString("COMPANY","")
+    val companyPhone=sharedPreferences.getString("PHONE","")
+    val link=sharedPreferences.getString("LINK","")
+    val smsManager = SmsManager.getDefault()
+    private lateinit var generalReceipt: GeneralReceipt
 
     fun repairSendSMS(
-        generalReceipt: GeneralReceipt,
+        genReceipt: GeneralReceipt,
         receiptCategory:Int
 
     ): Flow<DataState<String>> = flow {
-        emit(DataState.loading())
-        val companyName=sharedPreferences.getString("COMPANY","")
-        val companyPhone=sharedPreferences.getString("PHONE","")
-        val link=sharedPreferences.getString("LINK","")
 
-        val smsManager = SmsManager.getDefault()
+        generalReceipt =genReceipt
+        emit(DataState.loading())
+
         var result=0
         when (receiptCategory) {
                 0 -> {
                     //repair
-                    result=repairSmsPattern(
-                        generalReceipt,
-                        companyName,
-                        smsManager,
-                        companyPhone,
-                        link
-                    )
+                    result=repairSmsPattern()
                 }
 
                 1 -> {
                     //repair
-                    result=repairSmsPattern(
-                        generalReceipt,
-                        companyName,
-                        smsManager,
-                        companyPhone,
-                        link
-                    )
+                    result=repairSmsPattern()
                 }
 
                 2 -> {
                     //  repair
-                    result=repairSmsPattern(
-                        generalReceipt,
-                        companyName,
-                        smsManager,
-                        companyPhone,
-                        link
-                    )
+                    result=repairSmsPattern()
                 }
 
                 3 -> {
                     //tailoring
-                    result=tailoringSmsPattern(
-                        generalReceipt,
-                        companyName,
-                        companyPhone,
-                        smsManager,
-                        link
-                    )
+                    result=tailoringSmsPattern()
 
                 }
 
                 4 -> {
                     //jewelry
-                    result=jewelrySmsPattern(
-                        generalReceipt,
-                        companyName,
-                        companyPhone,
-                        smsManager,
-                        link
-                    )
+                    result=jewelrySmsPattern()
                 }
 
                 5 -> {
                     //photo
-                    result=photographySmsPattern(
-                        generalReceipt,
-                        companyName,
-                        companyPhone,
-                        smsManager,
-                        link
-                    )
+                    result=photographySmsPattern()
                 }
 
                 6 -> {
                     //laundry
-                    result=laundrySmsPattern(
-                        generalReceipt,
-                        companyName,
-                        companyPhone,
-                        smsManager,
-                        link
-                    )
+                    result=laundrySmsPattern()
                 }
 
                 7 -> {
                     //confectionery
-                    result=confectionerySmsPattern(
-                        generalReceipt,
-                        companyName,
-                        companyPhone,
-                        smsManager,
-                        link
-                    )
+                    result=confectionerySmsPattern()
                 }
 
                 8 -> {
                     //otherJobs
-                    result=otherJobsSmsPattern(
-                        generalReceipt,
-                        companyName,
-                        companyPhone,
-                        smsManager,
-                        link
-                    )
+                    result=otherJobsSmsPattern()
 
                 }
 
@@ -142,14 +90,7 @@ class SendSms(
     }
 
 
-    private fun repairSmsPattern(
-        generalReceipt: GeneralReceipt,
-        companyName:String?,
-        smsManager:SmsManager,
-        companyPhone: String?,
-        link:String?
-
-    ):Int{
+    private fun repairSmsPattern():Int{
         val massageText: String
          try {
              when (generalReceipt.status) {
@@ -202,14 +143,7 @@ class SendSms(
           }
 
     }
-    private fun confectionerySmsPattern(
-        generalReceipt: GeneralReceipt,
-        companyName:String?,
-        companyPhone:String?,
-        smsManager:SmsManager,
-        link:String?
-
-    ):Int{
+    private fun confectionerySmsPattern():Int{
         val massageText: String
          try {
              when (generalReceipt.status) {
@@ -261,14 +195,7 @@ class SendSms(
           }
 
     }
-    private fun jewelrySmsPattern(
-        generalReceipt: GeneralReceipt,
-        companyName:String?,
-        companyPhone:String?,
-        smsManager:SmsManager,
-        link:String?
-
-    ):Int{
+    private fun jewelrySmsPattern():Int{
         val massageText: String
          try {
              when (generalReceipt.status) {
@@ -322,14 +249,7 @@ class SendSms(
           }
 
     }
- private fun laundrySmsPattern(
-        generalReceipt: GeneralReceipt,
-        companyName:String?,
-        companyPhone:String?,
-        smsManager:SmsManager,
-        link:String?
-
-    ):Int{
+ private fun laundrySmsPattern():Int{
         val massageText: String
          try {
              when (generalReceipt.status) {
@@ -384,14 +304,7 @@ class SendSms(
           }
 
     }
-    private fun otherJobsSmsPattern(
-        generalReceipt: GeneralReceipt,
-        companyName:String?,
-        companyPhone:String?,
-        smsManager:SmsManager,
-        link:String?
-
-    ):Int{
+    private fun otherJobsSmsPattern():Int{
         val massageText: String
          try {
              when (generalReceipt.status) {
@@ -447,14 +360,7 @@ class SendSms(
           }
 
     }
-    private fun photographySmsPattern(
-        generalReceipt: GeneralReceipt,
-        companyName:String?,
-        companyPhone:String?,
-        smsManager:SmsManager,
-        link:String?
-
-    ):Int{
+    private fun photographySmsPattern():Int{
         val massageText: String
          try {
              when (generalReceipt.status) {
@@ -509,14 +415,7 @@ class SendSms(
           }
 
     }
-  private fun tailoringSmsPattern(
-        generalReceipt: GeneralReceipt,
-        companyName:String?,
-        companyPhone:String?,
-        smsManager:SmsManager,
-        link:String?
-
-    ):Int{
+  private fun tailoringSmsPattern():Int{
         val massageText: String
          try {
              when (generalReceipt.status) {
