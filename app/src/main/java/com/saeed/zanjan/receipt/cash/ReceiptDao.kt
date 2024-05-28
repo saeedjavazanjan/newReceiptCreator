@@ -37,8 +37,23 @@ interface ReceiptDao {
     suspend fun insertTailoringReceipt(tailor: TailoringEntity): Long
 
 
-    @Query("SELECT * FROM repairs")
-    fun getAll(): List<RepairsEntity>
+    @Query("SELECT * FROM confectionery")
+    fun getAllConfectioneryReceipts(): List<ConfectioneryEntity>
+     @Query("SELECT * FROM jewelry")
+    fun getAllJewelryReceipts(): List<JewelryEntity>
+     @Query("SELECT * FROM laundry")
+    fun getAllLaundryReceipts(): List<LaundryEntity>
+     @Query("SELECT * FROM otherJobs")
+    fun getAllOtherJobsReceipts(): List<OtherJobsEntity>
+     @Query("SELECT * FROM photography")
+    fun getAllPhotographyReceipts(): List<PhotographyEntity>
+     @Query("SELECT * FROM repairs")
+    fun getAllRepairsEntity(): List<RepairsEntity>
+     @Query("SELECT * FROM tailoring")
+    fun getAllTailoringReceipts(): List<TailoringEntity>
+
+
+
     /* @Insert (onConflict = OnConflictStrategy.REPLACE)
      suspend fun insertUserData(userData: UserDataEntity)
      @Insert(onConflict = OnConflictStrategy.REPLACE)
