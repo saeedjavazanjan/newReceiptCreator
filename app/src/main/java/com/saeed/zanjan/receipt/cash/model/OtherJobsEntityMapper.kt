@@ -39,19 +39,5 @@ class OtherJobsEntityMapper: DomainMapper<OtherJobsEntity, OtherJobsReceipt?> {
 
     }
 
-    override fun generalMapper(generalReceipt: GeneralReceipt): OtherJobsEntity {
-        return OtherJobsEntity(
-            generalReceipt!!.id,
-            generalReceipt.status,
-            generalReceipt.name,
-            generalReceipt.phone,
-            generalReceipt.orderName,
-            generalReceipt.otherJobsDescription,
-            generalReceipt.otherJobsOrderNumber,
-            generalReceipt.deliveryTime,
-            generalReceipt.receiptTime,
-            generalReceipt.cost,
-            generalReceipt.prepayment
-        )
-    }
+
 }

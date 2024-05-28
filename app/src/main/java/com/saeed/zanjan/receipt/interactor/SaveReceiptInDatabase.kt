@@ -2,6 +2,7 @@ package com.saeed.zanjan.receipt.interactor
 
 import com.saeed.zanjan.receipt.cash.ReceiptDao
 import com.saeed.zanjan.receipt.cash.model.ConfectioneryEntityMapper
+import com.saeed.zanjan.receipt.cash.model.EntitiesGeneralMapper
 import com.saeed.zanjan.receipt.cash.model.JewelryEntityMapper
 import com.saeed.zanjan.receipt.cash.model.LaundryEntityMapper
 import com.saeed.zanjan.receipt.cash.model.OtherJobsEntityMapper
@@ -15,13 +16,7 @@ import kotlinx.coroutines.flow.flow
 
 class SaveReceiptInDatabase(
     val receiptDao: ReceiptDao,
-    private val conEntityMapper:ConfectioneryEntityMapper,
-    private val jewEntityMapper:JewelryEntityMapper,
-    private val laEntityMapper:LaundryEntityMapper,
-    private val otherEntityMapper:OtherJobsEntityMapper,
-    private val photoEntityMapper:PhotographyEntityMapper,
-    private val tailorEntityMapper:TailoringEntityMapper,
-    private val repairEntityMapper:RepairsEntityMapper,
+   val generalMapper: EntitiesGeneralMapper
 ) {
 
 
@@ -37,55 +32,55 @@ class SaveReceiptInDatabase(
             when (receiptCategory) {
                 0 -> {
                    //repair
-                    result=receiptDao.insertRepairReceipt(repairEntityMapper.generalMapper(generalReceipt))
+                    result=receiptDao.insertRepairReceipt(generalMapper.mapToRepairsEntity(generalReceipt))
 
                 }
 
                 1 -> {
                   //repair
-                    result=receiptDao.insertRepairReceipt(repairEntityMapper.generalMapper(generalReceipt))
+                    result=receiptDao.insertRepairReceipt(generalMapper.mapToRepairsEntity(generalReceipt))
 
                 }
 
                 2 -> {
                  //  repair
-                    result=receiptDao.insertRepairReceipt(repairEntityMapper.generalMapper(generalReceipt))
+                    result=receiptDao.insertRepairReceipt(generalMapper.mapToRepairsEntity(generalReceipt))
 
                 }
 
                 3 -> {
                    //tailoring
-                    result=receiptDao.insertTailoringReceipt(tailorEntityMapper.generalMapper(generalReceipt))
+                    result=receiptDao.insertTailoringReceipt(generalMapper.mapToTailoringEntity(generalReceipt))
 
                 }
 
                 4 -> {
                     //jewelry
-                    result=receiptDao.insertJewelryReceipt(jewEntityMapper.generalMapper(generalReceipt))
+                    result=receiptDao.insertJewelryReceipt(generalMapper.mapToJewelryEntity(generalReceipt))
 
                 }
 
                 5 -> {
                    //photo
-                    result=receiptDao.insertPhotoReceipt(photoEntityMapper.generalMapper(generalReceipt))
+                    result=receiptDao.insertPhotoReceipt(generalMapper.mapToPhotographyEntity(generalReceipt))
 
                 }
 
                 6 -> {
                    //laundry
-                    result=receiptDao.insertLaundryReceipt(laEntityMapper.generalMapper(generalReceipt))
+                    result=receiptDao.insertLaundryReceipt(generalMapper.mapLaundryEntity(generalReceipt))
 
                 }
 
                 7 -> {
                    //confectionery
-                    result=receiptDao.insertConfectioneryReceipt(conEntityMapper.generalMapper(generalReceipt))
+                    result=receiptDao.insertConfectioneryReceipt(generalMapper.mapToConfectioneryEntity(generalReceipt))
 
                 }
 
                 8 -> {
                    //otherJobs
-                    result=receiptDao.insertOtherJobsReceipt(otherEntityMapper.generalMapper(generalReceipt))
+                    result=receiptDao.insertOtherJobsReceipt(generalMapper.mapToOtherJobsEntity(generalReceipt))
 
                 }
 

@@ -40,21 +40,5 @@ class RepairsEntityMapper: DomainMapper<RepairsEntity, RepairsReceipt?> {
 
     }
 
-    override fun generalMapper(generalReceipt: GeneralReceipt): RepairsEntity {
-        return RepairsEntity(
-            generalReceipt!!.id,
-            generalReceipt.status,
-            generalReceipt.name,
-            generalReceipt.phone,
-            generalReceipt.orderName,
-            generalReceipt.repairLoanerProblems,
-            generalReceipt.repairRisks,
-            generalReceipt.deliveryTime,
-            generalReceipt.receiptTime,
-            generalReceipt.repairAccessories,
-            generalReceipt.cost,
-            generalReceipt.prepayment
-        )
 
-    }
 }

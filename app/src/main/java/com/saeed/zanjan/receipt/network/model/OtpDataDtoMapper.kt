@@ -22,11 +22,4 @@ class OtpDataDtoMapper:DomainMapper<OtpDataDto,OtpData> {
     }
 
 
-    //only implemented for run app
-    override fun generalMapper(generalReceipt: GeneralReceipt): OtpDataDto {
-        return OtpDataDto(
-            phoneNumber = "",
-            password = ""
-        )
-    }
 }

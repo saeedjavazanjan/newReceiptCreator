@@ -38,19 +38,5 @@ class TailoringEntityMapper :DomainMapper<TailoringEntity,TailoringReceipt>{
         )
     }
 
-    override fun generalMapper(generalReceipt: GeneralReceipt): TailoringEntity {
-        return TailoringEntity(
-            generalReceipt.id,
-            generalReceipt.status,
-            generalReceipt.name,
-            generalReceipt.phone,
-            generalReceipt.orderName,
-            generalReceipt.tailoringOrderSpecification,
-            generalReceipt.deliveryTime,
-            generalReceipt.receiptTime,
-            generalReceipt.tailoringSizes,
-            generalReceipt.cost,
-            generalReceipt.prepayment
-        )
-    }
+
 }
