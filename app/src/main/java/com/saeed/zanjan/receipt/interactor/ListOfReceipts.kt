@@ -111,6 +111,9 @@ class ListOfReceipts(
                     }
                     emit(DataState.success(list))
                 }
+                else->{
+                    emit(DataState.error("خطای دریافت دسته بندی"))
+                }
 
             }
 
