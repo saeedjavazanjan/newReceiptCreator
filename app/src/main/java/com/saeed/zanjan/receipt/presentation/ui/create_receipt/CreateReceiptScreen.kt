@@ -86,11 +86,13 @@ fun CreateReceiptScreen(
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
 
-    var generalReceipt = GeneralReceipt()
+    var generalReceipt by remember{mutableStateOf( GeneralReceipt())}
 
     val loading = viewModel.loading.value
     val dataSaveStatus = viewModel.dataSaveStatus.value
     val dataSaveStatusForSMS = viewModel.dataSaveStatusForSMS.value
+
+    val savedReceiptId=viewModel.savedReceiptId.value
 
     val openReceiveDateDialog = remember { mutableStateOf(false) }
     val openDeliveryDateDialog = remember { mutableStateOf(false) }
@@ -322,7 +324,7 @@ fun CreateReceiptScreen(
                     description = "آیا قصد ارسال رسید پیامکی را دارید؟",
                     sendClicked = {
                          generalReceipt = GeneralReceipt(
-                            id = 0,
+                            id = savedReceiptId.toInt(),
                             status = status,
                             name = customerName,
                             phone = phoneNumber,

@@ -25,7 +25,7 @@ class SaveReceiptInDatabase(
     fun saveRepairReceipt(
         generalReceipt: GeneralReceipt,
         receiptCategory:Int
-    ):Flow<DataState<String>> = flow {
+    ):Flow<DataState<Long>> = flow {
         emit(DataState.loading())
         try {
             var result=-1L
@@ -87,7 +87,7 @@ class SaveReceiptInDatabase(
             }
 
             if(result>0)
-            emit(DataState.success("با موفقیت ذخیره شد"))
+            emit(DataState.success(result))
             else
                 emit(DataState.error("خطای ثبت اطلاعات"))
 

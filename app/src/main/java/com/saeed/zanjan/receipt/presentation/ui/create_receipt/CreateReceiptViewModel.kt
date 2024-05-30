@@ -29,8 +29,9 @@ class CreateReceiptViewModel
     val dataSaveStatus = mutableStateOf(false)
     val dataSaveStatusForSMS = mutableStateOf(false)
 
-    val smsSenState = mutableStateOf("")
+    val savedReceiptId= mutableStateOf(-1L)
 
+    val smsSenState = mutableStateOf("")
     fun saveInDatabase(
         generalReceipt: GeneralReceipt,
         snackbarHostState: SnackbarHostState,
@@ -41,9 +42,9 @@ class CreateReceiptViewModel
                 loading.value = it
             }
             dataState.data?.let {
+                savedReceiptId.value=it
                 dataSaveStatus.value = true
                 snackbarHostState.showSnackbar("با موفقیت ذخیره شد")
-
                 dataSaveStatusForSMS.value = true
             }
             dataState.error?.let {

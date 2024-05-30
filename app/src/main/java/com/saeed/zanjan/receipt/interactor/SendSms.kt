@@ -99,12 +99,16 @@ class SendSms(
                              generalReceipt.name + " در روند سفارش شما مشکلی به وجود آمده جهت اطلاعات بیشتر با شماره " +
                              companyPhone + "تماس بگیرید."+
                              System.getProperty("line.separator")+
+                             "شماره رسید:" + generalReceipt.id+ System.getProperty("line.separator") +
+
                              link
 
                  3 -> massageText =
                      companyName + System.getProperty("line.separator") + "با سلام.مشتری عزیز  " +
                              generalReceipt.name + "  سفارش شما آماده تحویل است ."+
                              System.getProperty("line.separator") +
+                             "شماره رسید:" + generalReceipt.id+ System.getProperty("line.separator") +
+
                              link
 
                  else -> {
@@ -118,6 +122,7 @@ class SendSms(
                                  System.getProperty("line.separator") +
                                  "جمع هزینه:" + generalReceipt.cost +" تومان" + System.getProperty("line.separator") +
                                  "پرداخت شده:" + generalReceipt.prepayment+" تومان" + System.getProperty("line.separator") +
+                                 "شماره رسید:" + generalReceipt.id+ System.getProperty("line.separator") +
                                  link
                      smsManager.sendTextMessage(
                          generalReceipt.phone,
@@ -151,12 +156,16 @@ class SendSms(
                      companyName + System.getProperty("line.separator") + "با سلام.مشتری عزیز" +
                              generalReceipt.name + " در روند سفارش شما مشکلی به وجود آمده جهت اطلاعات بیشتر با شماره " +
                              companyPhone + "تماس بگیرید."+ System.getProperty("line.separator") +
+                             "شماره رسید:" + generalReceipt.id+ System.getProperty("line.separator") +
+
                              link
 
                  3 -> massageText =
                      companyName + System.getProperty("line.separator") + "با سلام.مشتری عزیز  " +
                              generalReceipt.name + "  سفارش شما آماده تحویل است ."+
                              System.getProperty("line.separator") +
+                             "شماره رسید:" + generalReceipt.id+ System.getProperty("line.separator") +
+
                              link
 
                  else -> {
@@ -170,6 +179,7 @@ class SendSms(
                                  System.getProperty("line.separator") +
                                  "جمع هزینه:" + generalReceipt.cost +" تومان" + System.getProperty("line.separator") +
                                  "پرداخت شده:" + generalReceipt.prepayment+" تومان" + System.getProperty("line.separator") +
+                                 "شماره رسید:" + generalReceipt.id+ System.getProperty("line.separator") +
                                  link
                      smsManager.sendTextMessage(
                          generalReceipt.phone,
@@ -204,12 +214,16 @@ class SendSms(
                              "با سلام.مشتری عزیز" + generalReceipt.name +
                              " در روند سفارش شما مشکلی به وجود آمده جهت اطلاعات بیشتر با شماره " +
                              companyPhone + "تماس بگیرید."+ System.getProperty("line.separator") +
+                             "شماره رسید:" + generalReceipt.id+ System.getProperty("line.separator") +
+
                              link
 
                  3 -> massageText =
                      companyName + System.getProperty("line.separator") +
                              "با سلام.مشتری عزیز  " + generalReceipt.name +
                              "  سفارش شما آماده تحویل است ."+ System.getProperty("line.separator") +
+                             "شماره رسید:" + generalReceipt.id+ System.getProperty("line.separator") +
+
                              link
 
                  else -> {
@@ -223,6 +237,7 @@ class SendSms(
                                  System.getProperty("line.separator") +
                                  "جمع هزینه:" + generalReceipt.cost +" تومان" + System.getProperty("line.separator") +
                                  "پرداخت شده:" + generalReceipt.prepayment+" تومان" + System.getProperty("line.separator") +
+                                 "شماره رسید:" + generalReceipt.id+ System.getProperty("line.separator") +
                                  link
                      smsManager.sendTextMessage(
                          generalReceipt.phone,
@@ -259,7 +274,9 @@ class SendSms(
                              "با سلام.مشتری عزیز" + generalReceipt.name +
                              " در روند سفارش شما مشکلی به وجود آمده جهت اطلاعات بیشتر با شماره "+
                              companyPhone + "تماس بگیرید."+ System.getProperty("line.separator") +
-                         link
+                             "شماره رسید:" + generalReceipt.id+ System.getProperty("line.separator") +
+
+                             link
 
                  3 -> massageText =
                      companyName +
@@ -267,6 +284,8 @@ class SendSms(
                              "با سلام.مشتری عزیز  " + generalReceipt.name +
                              "  سفارش شما آماده تحویل است ."+
                              System.getProperty("line.separator") +
+                             "شماره رسید:" + generalReceipt.id+ System.getProperty("line.separator") +
+
                              link
 
                  else -> {
@@ -279,6 +298,8 @@ class SendSms(
                                  System.getProperty("line.separator") +
                                  "جمع هزینه:" + generalReceipt.cost +" تومان" + System.getProperty("line.separator") +
                                  "پرداخت شده:" + generalReceipt.prepayment+" تومان" + System.getProperty("line.separator") +
+                                 "شماره رسید:" + generalReceipt.id+ System.getProperty("line.separator") +
+
                                  link
                      smsManager.sendTextMessage(
                          generalReceipt.phone,
@@ -314,6 +335,8 @@ class SendSms(
                              "با سلام.مشتری عزیز" + generalReceipt.name +
                              " در روند سفارش شما مشکلی به وجود آمده جهت اطلاعات بیشتر با شماره " +
                              companyPhone + "تماس بگیرید."+ System.getProperty("line.separator") +
+                             "شماره رسید:" + generalReceipt.id+ System.getProperty("line.separator") +
+
                              link
 
                  3 -> massageText =
@@ -322,6 +345,8 @@ class SendSms(
                              "با سلام.مشتری عزیز  " + generalReceipt.name +
                              "  سفارش شما آماده تحویل است ."+
                              System.getProperty("line.separator") +
+                             "شماره رسید:" + generalReceipt.id+ System.getProperty("line.separator") +
+
                              link
 
                  else -> {
@@ -334,6 +359,7 @@ class SendSms(
                                  System.getProperty("line.separator") +
                                  "جمع هزینه:" + generalReceipt.cost +" تومان" + System.getProperty("line.separator") +
                                  "پرداخت شده:" + generalReceipt.prepayment+" تومان" + System.getProperty("line.separator") +
+                                 "شماره رسید:" + generalReceipt.id+ System.getProperty("line.separator") +
                                  link
 
                      smsManager.sendTextMessage(
@@ -370,6 +396,7 @@ class SendSms(
                              "با سلام.مشتری عزیز" + generalReceipt.name +
                              " در روند سفارش شما مشکلی به وجود آمده جهت اطلاعات بیشتر با شماره " +
                              companyPhone + "تماس بگیرید."+ System.getProperty("line.separator") +
+                             "شماره رسید:" + generalReceipt.id+ System.getProperty("line.separator") +
                              link
 
                  3 -> massageText =
@@ -377,6 +404,8 @@ class SendSms(
                              System.getProperty("line.separator") +
                              "با سلام.مشتری عزیز  " + generalReceipt.name +
                              "  سفارش شما آماده تحویل است ."+ System.getProperty("line.separator") +
+                             "شماره رسید:" + generalReceipt.id+ System.getProperty("line.separator") +
+
                              link
 
                  else -> {
@@ -389,6 +418,7 @@ class SendSms(
                                  System.getProperty("line.separator") +
                                  "جمع هزینه:" + generalReceipt.cost +" تومان" + System.getProperty("line.separator") +
                                  "پرداخت شده:"+ generalReceipt.prepayment+" تومان" + System.getProperty("line.separator") +
+                                 "شماره رسید:" + generalReceipt.id+ System.getProperty("line.separator") +
                                  link
 
                      smsManager.sendTextMessage(
@@ -425,12 +455,16 @@ class SendSms(
                              generalReceipt.name +
                              " در روند سفارش شما مشکلی به وجود آمده جهت اطلاعات بیشتر با شماره " +
                              companyPhone + "تماس بگیرید."+ System.getProperty("line.separator") +
+                             "شماره رسید:" + generalReceipt.id+ System.getProperty("line.separator") +
+
                              link
 
                  3 -> massageText =
                      companyName + System.getProperty("line.separator") +
                              "با سلام.مشتری عزیز  " + generalReceipt.name +
                              "  سفارش شما آماده تحویل است ."+ System.getProperty("line.separator") +
+                             "شماره رسید:" + generalReceipt.id+ System.getProperty("line.separator") +
+
                              link
 
                  else -> {
@@ -442,6 +476,7 @@ class SendSms(
                                  System.getProperty("line.separator") +
                                  "جمع هزینه:" + generalReceipt.cost+" تومان" + System.getProperty("line.separator") +
                                  "پرداخت شده:" + generalReceipt.prepayment+ " تومان" +System.getProperty("line.separator") +
+                                 "شماره رسید:" + generalReceipt.id+ System.getProperty("line.separator") +
                                  link
 
 
