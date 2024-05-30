@@ -66,11 +66,11 @@ import com.saeed.zanjan.receipt.domain.models.GeneralReceipt
 import com.saeed.zanjan.receipt.domain.models.RepairsReceipt
 import com.saeed.zanjan.receipt.presentation.components.BottomBar
 import com.saeed.zanjan.receipt.presentation.components.ExitDialog
+import com.saeed.zanjan.receipt.presentation.components.ReceiptCard
 import com.saeed.zanjan.receipt.presentation.components.SendSmsDialog
 import com.saeed.zanjan.receipt.presentation.components.SmsPermissionScreen
 import com.saeed.zanjan.receipt.presentation.components.StatusDialog
 import com.saeed.zanjan.receipt.presentation.navigation.Screen
-import com.saeed.zanjan.receipt.presentation.ui.receipt.ReceiptCard
 import com.saeed.zanjan.receipt.utils.NumberFormat
 import ir.huri.jcal.JalaliCalendar
 import kotlinx.coroutines.launch
@@ -394,7 +394,8 @@ fun CreateReceiptScreen(
                             top = it.calculateTopPadding(),
                         )
                         .fillMaxSize(),
-                    receiptCategory = viewModel.receiptCategory
+                    receiptCategory = viewModel.receiptCategory,
+                    generalReceipt=generalReceipt
                 )
             } else {
                 Card(

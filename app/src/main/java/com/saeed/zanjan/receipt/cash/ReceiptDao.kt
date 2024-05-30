@@ -39,20 +39,44 @@ interface ReceiptDao {
 
     @Query("SELECT * FROM confectionery")
     fun getAllConfectioneryReceipts(): List<ConfectioneryEntity>
-     @Query("SELECT * FROM jewelry")
+
+    @Query("SELECT * FROM jewelry")
     fun getAllJewelryReceipts(): List<JewelryEntity>
-     @Query("SELECT * FROM laundry")
+
+    @Query("SELECT * FROM laundry")
     fun getAllLaundryReceipts(): List<LaundryEntity>
-     @Query("SELECT * FROM otherJobs")
+
+    @Query("SELECT * FROM otherJobs")
     fun getAllOtherJobsReceipts(): List<OtherJobsEntity>
-     @Query("SELECT * FROM photography")
+
+    @Query("SELECT * FROM photography")
     fun getAllPhotographyReceipts(): List<PhotographyEntity>
-     @Query("SELECT * FROM repairs")
+
+    @Query("SELECT * FROM repairs")
     fun getAllRepairsEntity(): List<RepairsEntity>
-     @Query("SELECT * FROM tailoring")
+
+    @Query("SELECT * FROM tailoring")
     fun getAllTailoringReceipts(): List<TailoringEntity>
 
 
+    @Query("SELECT * FROM confectionery WHERE id = :Id")
+    suspend fun getConfectioneryReceipt(Id: Int): ConfectioneryEntity
+    @Query("SELECT * FROM jewelry WHERE id = :Id")
+    suspend fun getJewelryReceipt(Id: Int): JewelryEntity
+
+    @Query("SELECT * FROM laundry WHERE id = :Id")
+    suspend fun getLaundryReceipt(Id: Int): LaundryEntity
+
+    @Query("SELECT * FROM otherJobs WHERE id = :Id")
+    suspend fun getOtherJobsReceipt(Id: Int): OtherJobsEntity
+
+    @Query("SELECT * FROM photography WHERE id = :Id")
+    suspend fun getPhotographyReceipt(Id: Int): PhotographyEntity
+
+    @Query("SELECT * FROM repairs WHERE id = :Id")
+    suspend fun getRepairsReceipt(Id: Int): RepairsEntity
+    @Query("SELECT * FROM tailoring WHERE id = :Id")
+    suspend fun getTailoringReceipt(Id: Int): TailoringEntity
 
     /* @Insert (onConflict = OnConflictStrategy.REPLACE)
      suspend fun insertUserData(userData: UserDataEntity)
