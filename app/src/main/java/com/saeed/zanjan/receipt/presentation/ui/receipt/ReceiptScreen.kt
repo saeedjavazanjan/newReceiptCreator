@@ -53,18 +53,17 @@ import com.saeed.zanjan.receipt.ui.theme.NewReceiptCreatorTheme
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun ReceiptScreen(
-    navType:String?,
     receiptId:Int?,
-    receiptCategory:Int?,
     navController: NavController,
     onNavigateToEdit:(String) -> Unit
 ){
+    val receiptCategory=0
+
 
     NewReceiptCreatorTheme(
         displayProgressBar=false,
         themColor = CustomColors.lightBlue
     ) {
-
         Scaffold(
             topBar = {
                      TopBar(

@@ -16,6 +16,7 @@ import com.saeed.zanjan.receipt.cash.model.OtherJobsEntityMapper
 import com.saeed.zanjan.receipt.cash.model.PhotographyEntityMapper
 import com.saeed.zanjan.receipt.cash.model.RepairsEntityMapper
 import com.saeed.zanjan.receipt.cash.model.TailoringEntityMapper
+import com.saeed.zanjan.receipt.interactor.ListOfReceipts
 import com.saeed.zanjan.receipt.interactor.SaveReceiptInDatabase
 import com.saeed.zanjan.receipt.interactor.SendSms
 import com.saeed.zanjan.receipt.interactor.UserRegistration
@@ -204,5 +205,15 @@ object AppModule {
             sharedPreferences=sharedPreferences
         )
     }
-
+    @Singleton
+    @Provides
+    fun provideListOfReceipts(
+        receiptDao: ReceiptDao,
+        generalMapper: EntitiesGeneralMapper
+    ): ListOfReceipts {
+        return ListOfReceipts(
+            receiptDao=receiptDao,
+            generalMapper=generalMapper
+        )
+    }
 }
