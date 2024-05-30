@@ -44,17 +44,12 @@ fun Navigation(
             )
         }
 
-        composable(route = Screen.Receipt.route + "/{receiptId}/{navType}/{receiptCategory}",
+        composable(route = Screen.Receipt.route + "/{receiptId}",
             arguments = listOf(
-                navArgument("receiptId") { type = NavType.IntType },
-                navArgument("navType") { type = NavType.StringType },
-                navArgument("receiptCategory") { type = NavType.IntType },
-
+                navArgument("receiptId") { type = NavType.IntType }
             )) {navBackStackEntry->
             ReceiptScreen(
-                navType = navBackStackEntry.arguments?.getString("navType") ,
                 receiptId =navBackStackEntry.arguments?.getInt("receiptId") ,
-                receiptCategory =navBackStackEntry.arguments?.getInt("receiptCategory"),
                 navController=navController,
                 onNavigateToEdit = {
                     navController.navigate(it)

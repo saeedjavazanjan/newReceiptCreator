@@ -132,7 +132,11 @@ fun Home(
                         .weight(1f)
                         .padding(),
                     receiptCategory = viewModel.receiptCategory,
-                    receipts = receiptsList.value
+                    receipts = receiptsList.value,
+                    navigateToScreen={
+                        val route = Screen.Receipt.route + "/${it}"
+                        navigateToReceiptScreen(route)
+                    }
                 )
 
             }
@@ -153,7 +157,8 @@ fun Home(
 fun ListOfReceipts(
     modifier: Modifier,
     receiptCategory:Int,
-    receipts:List<GeneralReceipt>
+    receipts:List<GeneralReceipt>,
+    navigateToScreen:(Int)->Unit
 
 ){
     LazyColumn(
@@ -166,7 +171,11 @@ fun ListOfReceipts(
 
             ReceiptListCard(
                 receiptCategory =receiptCategory,
-                //receipt =rec
+                receipt =rec,
+                onReceiptClickListener = {
+                    navigateToScreen(it)
+
+                }
             )
 
         }
