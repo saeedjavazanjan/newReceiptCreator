@@ -13,6 +13,7 @@ import com.saeed.zanjan.receipt.presentation.ui.create_receipt.CreateReceiptView
 import com.saeed.zanjan.receipt.presentation.ui.home.Home
 import com.saeed.zanjan.receipt.presentation.ui.home.HomeViewModel
 import com.saeed.zanjan.receipt.presentation.ui.receipt.ReceiptScreen
+import com.saeed.zanjan.receipt.presentation.ui.receipt.ReceiptViewModel
 import com.saeed.zanjan.receipt.presentation.ui.registration.RegistrationScreen
 import com.saeed.zanjan.receipt.presentation.ui.registration.RegistrationViewModel
 
@@ -26,6 +27,7 @@ fun Navigation(
     val registrationViewModel:RegistrationViewModel = viewModel()
     val homeViewModel:HomeViewModel= viewModel()
     val createReceiptViewModel:CreateReceiptViewModel= viewModel()
+    val receiptViewMode:ReceiptViewModel= viewModel()
     NavHost(navController = navController, startDestination = Screen.Home.route) {
         composable(Screen.Registration.route) {
             RegistrationScreen(
@@ -40,6 +42,10 @@ fun Navigation(
                 viewModel=homeViewModel,
                 navigateToReceiptScreen = {
                     navController.navigate(it)
+                },
+                navigateToCreateReceiptScreen = {
+                    navController.navigate(Screen.CreateReceipt.route)
+
                 }
             )
         }
@@ -49,6 +55,7 @@ fun Navigation(
                 navArgument("receiptId") { type = NavType.IntType }
             )) {navBackStackEntry->
             ReceiptScreen(
+                viewModel=receiptViewMode,
                 receiptId =navBackStackEntry.arguments?.getInt("receiptId") ,
                 navController=navController,
                 onNavigateToEdit = {

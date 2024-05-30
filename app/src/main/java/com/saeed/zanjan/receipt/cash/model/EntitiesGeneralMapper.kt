@@ -3,7 +3,7 @@ package com.saeed.zanjan.receipt.cash.model
 import com.saeed.zanjan.receipt.domain.models.GeneralReceipt
 import com.saeed.zanjan.receipt.domain.util.GeneralMapper
 
-class EntitiesGeneralMapper:GeneralMapper {
+class EntitiesGeneralMapper : GeneralMapper {
     override fun mapToConfectioneryEntity(generalReceipt: GeneralReceipt): ConfectioneryEntity {
         return ConfectioneryEntity(
             generalReceipt!!.id,
@@ -89,19 +89,20 @@ class EntitiesGeneralMapper:GeneralMapper {
 
     override fun mapToRepairsEntity(generalReceipt: GeneralReceipt): RepairsEntity {
         return RepairsEntity(
-            generalReceipt!!.id,
-            generalReceipt.status,
-            generalReceipt.name,
-            generalReceipt.phone,
-            generalReceipt.orderName,
-            generalReceipt.repairLoanerProblems,
-            generalReceipt.repairRisks,
-            generalReceipt.deliveryTime,
-            generalReceipt.receiptTime,
-            generalReceipt.repairAccessories,
-            generalReceipt.cost,
-            generalReceipt.prepayment
-        )    }
+            id = generalReceipt!!.id,
+            status = generalReceipt.status,
+            name = generalReceipt.name,
+            phone = generalReceipt.phone,
+            loanerName = generalReceipt.orderName,
+            loanerProblems = generalReceipt.repairLoanerProblems,
+            risks = generalReceipt.repairRisks,
+            deliveryTime = generalReceipt.deliveryTime,
+            receiptTime = generalReceipt.receiptTime,
+            accessories = generalReceipt.repairAccessories,
+            cost = generalReceipt.cost,
+            prepayment = generalReceipt.prepayment
+        )
+    }
 
     override fun mapToTailoringEntity(generalReceipt: GeneralReceipt): TailoringEntity {
         return TailoringEntity(
@@ -121,109 +122,116 @@ class EntitiesGeneralMapper:GeneralMapper {
 
     override fun mapFromConfectioneryEntity(model: ConfectioneryEntity): GeneralReceipt {
         return GeneralReceipt(
-            model!!.id,
-            model.status,
-            model.name,
-            model.phone,
-            model.orderName,
-            model.orderSpecification,
-            model.orderWeight,
-            model.description,
-            model.deliveryTime,
-            model.receiptTime,
-            model.cost,
-            model.prepayment
-        )    }
+            id = model!!.id,
+            status = model.status,
+            name = model.name,
+            phone = model.phone,
+            orderName = model.orderName,
+            confectioneryOrderSpecification = model.orderSpecification,
+            confectioneryOrderWeight = model.orderWeight,
+            confectioneryDescription = model.description,
+            deliveryTime = model.deliveryTime,
+            receiptTime = model.receiptTime,
+            cost = model.cost,
+            prepayment = model.prepayment
+        )
+    }
 
     override fun mapFromJewelryEntity(model: JewelryEntity): GeneralReceipt {
         return GeneralReceipt(
-            model!!.id,
-            model.status,
-            model.name,
-            model.phone,
-            model.loanerName,
-            model.orderSpecification,
-            model.loanerProblems,
-            model.loanerSpecification,
-            model.deliveryTime,
-            model.receiptTime,
-            model.cost,
-            model.prepayment
-        )     }
+            id = model!!.id,
+            status = model.status,
+            name = model.name,
+            phone = model.phone,
+            orderName = model.loanerName,
+            jewelryOrderSpecification = model.orderSpecification,
+            jewelryLoanerProblems = model.loanerProblems,
+            jewelryLoanerSpecification = model.loanerSpecification,
+            deliveryTime = model.deliveryTime,
+            receiptTime = model.receiptTime,
+            cost = model.cost,
+            prepayment = model.prepayment
+        )
+    }
 
     override fun mapFromLaundryEntity(model: LaundryEntity): GeneralReceipt {
         return GeneralReceipt(
-            model!!.id,
-            model.status,
-            model.name,
-            model.phone,
-            model.loanerName,
-            model.orderType,
-            model.description,
-            model.deliveryTime,
-            model.receiptTime,
-            model.cost,
-            model.prepayment
-        )      }
+            id = model!!.id,
+            status = model.status,
+            name = model.name,
+            phone = model.phone,
+            orderName = model.loanerName,
+            laundryDescription = model.description,
+            laundryOrderType = model.orderType,
+            deliveryTime = model.deliveryTime,
+            receiptTime = model.receiptTime,
+            cost = model.cost,
+            prepayment = model.prepayment
+        )
+    }
 
     override fun mapFromOtherJobsEntity(model: OtherJobsEntity): GeneralReceipt {
         return GeneralReceipt(
-            model!!.id,
-            model.status,
-            model.name,
-            model.phone,
-            model.orderName,
-            model.description,
-            model.orderNumber,
-            model.deliveryTime,
-            model.receiptTime,
-            model.cost,
-            model.prepayment
-        )    }
+            id = model!!.id,
+            status = model.status,
+            name = model.name,
+            phone = model.phone,
+            orderName = model.orderName,
+            otherJobsDescription = model.description,
+            otherJobsOrderNumber = model.orderNumber,
+            deliveryTime = model.deliveryTime,
+            receiptTime = model.receiptTime,
+            cost = model.cost,
+            prepayment = model.prepayment
+        )
+    }
 
     override fun mapFromPhotographyEntity(model: PhotographyEntity): GeneralReceipt {
         return GeneralReceipt(
-            model!!.id,
-            model.status,
-            model.name,
-            model.phone,
-            model.orderName,
-            model.orderSize,
-            model.orderNumber,
-            model.deliveryTime,
-            model.receiptTime,
-            model.cost,
-            model.prepayment
-        )    }
+            id = model!!.id,
+            status = model.status,
+            name = model.name,
+            phone = model.phone,
+            orderName = model.orderName,
+            photographyOrderNumber = model.orderNumber,
+            photographyOrderSize = model.orderSize,
+            deliveryTime = model.deliveryTime,
+            receiptTime = model.receiptTime,
+            cost = model.cost,
+            prepayment = model.prepayment
+        )
+    }
 
     override fun mapFromRepairsEntity(model: RepairsEntity): GeneralReceipt {
         return GeneralReceipt(
-            model!!.id,
-            model.status,
-            model.name,
-            model.phone,
-            model.loanerName,
-            model.loanerProblems,
-            model.risks,
-            model.deliveryTime,
-            model.receiptTime,
-            model.accessories,
-            model.cost,
-            model.prepayment
-        )     }
+            id = model!!.id,
+            status = model.status,
+            name = model.name,
+            phone = model.phone,
+            orderName = model.loanerName,
+            repairLoanerProblems = model.loanerProblems,
+            repairRisks = model.risks,
+            repairAccessories = model.accessories,
+            deliveryTime = model.deliveryTime,
+            receiptTime = model.receiptTime,
+            cost = model.cost,
+            prepayment = model.prepayment
+        )
+    }
 
     override fun mapFromTailoringEntity(model: TailoringEntity): GeneralReceipt {
         return GeneralReceipt(
-            model.id,
-            model.status,
-            model.name,
-            model.phone,
-            model.loanerName,
-            model.orderSpecification,
-            model.deliveryTime,
-            model.receiptTime,
-            model.sizes,
-            model.cost,
-            model.prepayment
-        )      }
+            id = model!!.id,
+            status = model.status,
+            name = model.name,
+            phone = model.phone,
+            orderName = model.loanerName,
+            tailoringOrderSpecification = model.orderSpecification,
+            tailoringSizes = model.sizes,
+            deliveryTime = model.deliveryTime,
+            receiptTime = model.receiptTime,
+            cost = model.cost,
+            prepayment = model.prepayment
+        )
+    }
 }

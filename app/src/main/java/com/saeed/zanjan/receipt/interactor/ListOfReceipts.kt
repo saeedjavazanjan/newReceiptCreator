@@ -128,6 +128,78 @@ class ListOfReceipts(
 
     }
 
+    fun getReceiptById(
+        receiptId:Int,
+        receiptCategory: Int
+    ):Flow<DataState<GeneralReceipt>> = flow {
+        emit(DataState.loading())
+        try {
+            when (receiptCategory) {
+                0 -> {
+                    //repair
+                    val result=receiptDao.getRepairsReceipt(receiptId)
+                    emit(DataState.success(generalMapper.mapFromRepairsEntity(result)))
+                }
+
+                1 -> {
+                    //repair
+                    val result=receiptDao.getRepairsReceipt(receiptId)
+                    emit(DataState.success(generalMapper.mapFromRepairsEntity(result)))
+                }
+
+                2 -> {
+                    //  repair
+                    val result=receiptDao.getRepairsReceipt(receiptId)
+                    emit(DataState.success(generalMapper.mapFromRepairsEntity(result)))
+                }
+
+                3 -> {
+                    //tailoring
+                    val result=receiptDao.getTailoringReceipt(receiptId)
+                    emit(DataState.success(generalMapper.mapFromTailoringEntity(result)))
+                }
+
+                4 -> {
+                    //jewelry
+                    val result=receiptDao.getJewelryReceipt(receiptId)
+                    emit(DataState.success(generalMapper.mapFromJewelryEntity(result)))
+                }
+
+                5 -> {
+                    //photo
+                    val result=receiptDao.getPhotographyReceipt(receiptId)
+                    emit(DataState.success(generalMapper.mapFromPhotographyEntity(result)))
+                }
+
+                6 -> {
+                    //laundry
+                    val result=receiptDao.getLaundryReceipt(receiptId)
+                    emit(DataState.success(generalMapper.mapFromLaundryEntity(result)))
+                }
+
+                7 -> {
+                    //confectionery
+                    val result=receiptDao.getConfectioneryReceipt(receiptId)
+                    emit(DataState.success(generalMapper.mapFromConfectioneryEntity(result)))
+                }
+
+                8 -> {
+                    //otherJobs
+                    val result=receiptDao.getOtherJobsReceipt(receiptId)
+                    emit(DataState.success(generalMapper.mapFromOtherJobsEntity(result)))
+                }
+                else->{
+                    emit(DataState.error("خطای دریافت دسته بندی"))
+                }
+
+            }
+        }catch (e:Exception){
+            emit(DataState.error(e.message.toString()?:"خطای ناشناخته"))
+
+        }
+
+
+    }
 
 
 
