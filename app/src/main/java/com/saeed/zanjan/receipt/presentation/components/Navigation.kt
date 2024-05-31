@@ -44,7 +44,7 @@ fun Navigation(
                     navController.navigate(it)
                 },
                 navigateToCreateReceiptScreen = {
-                    navController.navigate(Screen.CreateReceipt.route)
+                    navController.navigate(it)
 
                 }
             )
@@ -63,11 +63,16 @@ fun Navigation(
                 }
             )
         }
-        composable(Screen.CreateReceipt.route) {
+        composable(Screen.CreateReceipt.route+ "/{receiptId}",
+                arguments = listOf(
+                navArgument("receiptId") { type = NavType.IntType }
+                )) {
+                navBackStackEntry->
             CreateReceiptScreen(
                navController=navController,
-                viewModel=createReceiptViewModel
-            )
+                viewModel=createReceiptViewModel,
+                receiptId =navBackStackEntry.arguments?.getInt("receiptId")!!,
+                )
         }
     }
 }

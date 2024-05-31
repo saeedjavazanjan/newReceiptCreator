@@ -99,7 +99,8 @@ fun ReceiptScreen(
             bottomBar = {
             BottomBar(
                 itemClicked = {
-                    onNavigateToEdit(it)
+                    val route = it + "/${receiptId}"
+                    onNavigateToEdit(route)
                 }
             )
             }

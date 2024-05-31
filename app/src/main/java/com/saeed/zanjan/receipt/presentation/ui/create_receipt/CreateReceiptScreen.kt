@@ -1,11 +1,6 @@
 package com.saeed.zanjan.receipt.presentation.ui.create_receipt
 
-import android.Manifest
-import android.content.pm.PackageManager
 import androidx.activity.compose.BackHandler
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -41,6 +36,8 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -59,16 +56,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.core.content.ContextCompat
 import com.gmail.hamedvakhide.compose_jalali_datepicker.JalaliDatePickerDialog
 import com.saeed.zanjan.receipt.R
 import com.saeed.zanjan.receipt.domain.models.GeneralReceipt
-import com.saeed.zanjan.receipt.domain.models.RepairsReceipt
 import com.saeed.zanjan.receipt.presentation.components.BottomBar
 import com.saeed.zanjan.receipt.presentation.components.ExitDialog
 import com.saeed.zanjan.receipt.presentation.components.ReceiptCard
 import com.saeed.zanjan.receipt.presentation.components.SendSmsDialog
-import com.saeed.zanjan.receipt.presentation.components.SmsPermissionScreen
 import com.saeed.zanjan.receipt.presentation.components.StatusDialog
 import com.saeed.zanjan.receipt.presentation.navigation.Screen
 import com.saeed.zanjan.receipt.utils.NumberFormat
@@ -79,20 +73,36 @@ import kotlinx.coroutines.launch
 @Composable
 fun CreateReceiptScreen(
     navController: NavController,
-    viewModel: CreateReceiptViewModel
+    viewModel: CreateReceiptViewModel,
+    receiptId:Int?
 ) {
+
+
+
 
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
+    val currentReceipt by viewModel.currentReceipt.collectAsState()
+    if(receiptId != -1){
+        LaunchedEffect(key1 = Unit){
+            viewModel.getReceiptById(
+                receiptId!!,
+                snackbarHostState
+            )
+
+        }
+    }
+
+
 
     var generalReceipt by remember{mutableStateOf( GeneralReceipt())}
 
     val loading = viewModel.loading.value
     val dataSaveStatus = viewModel.dataSaveStatus.value
     val dataSaveStatusForSMS = viewModel.dataSaveStatusForSMS.value
-
     val savedReceiptId=viewModel.savedReceiptId.value
+
 
     val openReceiveDateDialog = remember { mutableStateOf(false) }
     val openDeliveryDateDialog = remember { mutableStateOf(false) }
@@ -110,93 +120,127 @@ fun CreateReceiptScreen(
     }
 
     var status by remember {
-        mutableStateOf(0)
-    }
-    var receiveDate by remember {
-        mutableStateOf("")
-    }
-    var deliveryDate by remember {
-        mutableStateOf("")
-    }
-    var customerName by remember {
-        mutableStateOf("")
-    }
-    var phoneNumber by remember {
-        mutableStateOf("")
-    }
-    var productName by remember {
-        mutableStateOf("")
+        mutableStateOf(currentReceipt.status)
     }
 
-    var totalAmount by remember { mutableStateOf(TextFieldValue("0")) }
-    var payedAmount by remember { mutableStateOf(TextFieldValue("0")) }
+    var receiveDate by remember {
+        mutableStateOf(currentReceipt.receiptTime) }
+
+    var deliveryDate by remember {
+        mutableStateOf(currentReceipt.deliveryTime)
+    }
+    var customerName by remember {
+        mutableStateOf(currentReceipt.name)
+    }
+    var phoneNumber by remember {
+        mutableStateOf(currentReceipt.phone)
+    }
+    var productName by remember {
+        mutableStateOf(currentReceipt.orderName)
+    }
+
+    var totalAmount by remember { mutableStateOf(currentReceipt.cost?.let { TextFieldValue(it) }) }
+    var payedAmount by remember { mutableStateOf(currentReceipt.prepayment?.let { TextFieldValue(it) }) }
 
 
     //repair
     var productProblem by remember {
-        mutableStateOf("")
+        mutableStateOf(currentReceipt.repairLoanerProblems)
     }
     var risks by remember {
-        mutableStateOf("")
+        mutableStateOf(currentReceipt.repairRisks)
     }
     var accessories by remember {
-        mutableStateOf("")
+        mutableStateOf(currentReceipt.repairAccessories)
     }
 
     //tailoring
     var details by remember {
-        mutableStateOf("")
+        mutableStateOf(currentReceipt.tailoringOrderSpecification)
     }
     var sizes by remember {
-        mutableStateOf("")
+        mutableStateOf(currentReceipt.tailoringSizes)
     }
 
     //jewelry
     var jewelryProductProblem by remember {
-        mutableStateOf("")
+        mutableStateOf(currentReceipt.jewelryLoanerProblems)
     }
     var explainOfOrder by remember {
-        mutableStateOf("")
+        mutableStateOf(currentReceipt.jewelryOrderSpecification)
     }
     var detailsOfJewelry by remember {
-        mutableStateOf("")
+        mutableStateOf(currentReceipt.jewelryLoanerSpecification)
     }
 
     //photography
     var photoNumber by remember {
-        mutableStateOf("")
+        mutableStateOf(currentReceipt.photographyOrderNumber)
     }
     var photoSize by remember {
-        mutableStateOf("")
+        mutableStateOf(currentReceipt.photographyOrderSize)
     }
 
     //laundry
     var typeOfLaundryOrder by remember {
-        mutableStateOf("")
+        mutableStateOf(currentReceipt.laundryOrderType)
     }
     var detailsOfLaundryOrder by remember {
-        mutableStateOf("")
+        mutableStateOf(currentReceipt.laundryDescription)
     }
 
     //confectionery
     var explainOfConfectioneryOrder by remember {
-        mutableStateOf("")
+        mutableStateOf(currentReceipt.confectioneryDescription)
     }
     var detailsOfConfectioneryOrder by remember {
-        mutableStateOf("")
+        mutableStateOf(currentReceipt.confectioneryOrderSpecification)
     }
     var weightOfOrder by remember {
-        mutableStateOf("")
+        mutableStateOf(currentReceipt.confectioneryOrderWeight)
     }
 
     //otherJobs
     var countOfOrder by remember {
-        mutableStateOf("")
+        mutableStateOf(currentReceipt.otherJobsOrderNumber)
     }
     var detailsOfOtherOrder by remember {
-        mutableStateOf("")
+        mutableStateOf(currentReceipt.otherJobsDescription)
     }
+    LaunchedEffect(currentReceipt) {
+        receiveDate = currentReceipt.receiptTime
+        status=currentReceipt.status
+        deliveryDate=currentReceipt.deliveryTime
+        customerName=currentReceipt.name
+        phoneNumber=currentReceipt.phone
+        productName=currentReceipt.orderName
+        totalAmount=currentReceipt.cost?.let { TextFieldValue(it) }
+        payedAmount=currentReceipt.prepayment?.let { TextFieldValue(it) }
 
+        productProblem=currentReceipt.repairLoanerProblems
+        risks=currentReceipt.repairRisks
+        accessories=currentReceipt.repairAccessories
+
+        details=currentReceipt.tailoringOrderSpecification
+        sizes=currentReceipt.tailoringSizes
+
+        jewelryProductProblem=currentReceipt.jewelryLoanerProblems
+        explainOfOrder=currentReceipt.jewelryOrderSpecification
+        detailsOfJewelry=currentReceipt.jewelryLoanerSpecification
+
+        photoNumber=currentReceipt.photographyOrderNumber
+        photoSize=currentReceipt.photographyOrderSize
+
+        typeOfLaundryOrder=currentReceipt.laundryOrderType
+        detailsOfLaundryOrder=currentReceipt.laundryDescription
+
+        explainOfConfectioneryOrder=currentReceipt.confectioneryOrderSpecification
+        detailsOfConfectioneryOrder=currentReceipt.confectioneryDescription
+        weightOfOrder=currentReceipt.confectioneryOrderWeight
+
+        countOfOrder=currentReceipt.otherJobsOrderNumber
+        detailsOfOtherOrder=currentReceipt.otherJobsDescription
+    }
 
     NewReceiptCreatorTheme(
         displayProgressBar = loading,
@@ -230,10 +274,10 @@ fun CreateReceiptScreen(
                 } else {
                     CrateReceiptBottomBar(
                         dataSaveStatus = dataSaveStatus,
-                        status = status,
+                        status = status!!,
                         saveData = {
                             saveClicked = true
-                            if (phoneNumber == "" || phoneNumber.length < 11) {
+                            if (phoneNumber == "" || phoneNumber!!.length < 11) {
                                 coroutineScope.launch {
                                     snackbarHostState.showSnackbar("لطفا شماره تلفن را به درستی وارد کنید")
 
@@ -246,8 +290,8 @@ fun CreateReceiptScreen(
                                     orderName = productName,
                                     deliveryTime = deliveryDate,
                                     receiptTime = receiveDate,
-                                    cost = totalAmount.text,
-                                    prepayment = payedAmount.text,
+                                    cost = totalAmount!!.text,
+                                    prepayment = payedAmount!!.text,
                                     confectioneryOrderSpecification =explainOfConfectioneryOrder,
                                     confectioneryOrderWeight =weightOfOrder,
                                     confectioneryDescription =detailsOfConfectioneryOrder,
@@ -331,8 +375,8 @@ fun CreateReceiptScreen(
                             orderName = productName,
                             deliveryTime = deliveryDate,
                             receiptTime = receiveDate,
-                            cost = totalAmount.text,
-                            prepayment = payedAmount.text,
+                            cost = totalAmount?.text,
+                            prepayment = payedAmount?.text,
                             confectioneryOrderSpecification =explainOfConfectioneryOrder,
                             confectioneryOrderWeight =weightOfOrder,
                             confectioneryDescription =detailsOfConfectioneryOrder,
@@ -444,7 +488,7 @@ fun CreateReceiptScreen(
                                     shape = RoundedCornerShape(30.dp),
                                     readOnly = true,
                                     enabled = false,
-                                    value = receiveDate,
+                                    value = receiveDate!!,
                                     onValueChange = { receive ->
                                         receiveDate = receive
                                     },
@@ -482,7 +526,7 @@ fun CreateReceiptScreen(
                                     shape = RoundedCornerShape(30.dp),
                                     readOnly = true,
                                     enabled = false,
-                                    value = deliveryDate,
+                                    value = deliveryDate!!,
                                     onValueChange = { delivery ->
                                         deliveryDate = delivery
                                     },
@@ -555,10 +599,10 @@ fun CreateReceiptScreen(
                                 modifier = Modifier
                                     .fillMaxWidth(),
                                 singleLine = true,
-                                isError = (phoneNumber.isEmpty() || phoneNumber.length < 11) && saveClicked,
+                                isError = (phoneNumber!!.isEmpty() || phoneNumber!!.length < 11) && saveClicked,
                                 shape = RoundedCornerShape(30.dp),
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
-                                value = phoneNumber,
+                                value = phoneNumber!!,
                                 onValueChange = { phone ->
                                     phoneNumber = phone
                                 },
@@ -589,7 +633,7 @@ fun CreateReceiptScreen(
                             OutlinedTextField(
                                 modifier = Modifier
                                     .fillMaxWidth(),
-                                value = productName,
+                                value = productName!!,
                                 singleLine = true,
                                 shape = RoundedCornerShape(30.dp),
                                 onValueChange = { pName ->
@@ -622,9 +666,9 @@ fun CreateReceiptScreen(
                         when (viewModel.receiptCategory) {
                             0 -> {
                                 RepairFields(
-                                    productProblem = productProblem,
-                                    risks = risks,
-                                    accessories = accessories,
+                                    productProblem = productProblem!!,
+                                    risks = risks!!,
+                                    accessories = accessories!!,
                                     pProblemSetValue = {
                                         productProblem = it
                                     },
@@ -640,9 +684,9 @@ fun CreateReceiptScreen(
 
                             1 -> {
                                 RepairFields(
-                                    productProblem = productProblem,
-                                    risks = risks,
-                                    accessories = accessories,
+                                    productProblem = productProblem!!,
+                                    risks = risks!!,
+                                    accessories = accessories!!,
                                     pProblemSetValue = {
                                         productProblem = it
                                     },
@@ -657,9 +701,9 @@ fun CreateReceiptScreen(
 
                             2 -> {
                                 RepairFields(
-                                    productProblem = productProblem,
-                                    risks = risks,
-                                    accessories = accessories,
+                                    productProblem = productProblem!!,
+                                    risks = risks!!,
+                                    accessories = accessories!!,
                                     pProblemSetValue = {
                                         productProblem = it
                                     },
@@ -675,8 +719,8 @@ fun CreateReceiptScreen(
 
                             3 -> {
                                 TailoringFields(
-                                    details = details,
-                                    sizes = sizes,
+                                    details = details!!,
+                                    sizes = sizes!!,
                                     detailsSetValue = {
                                         details = it
                                     },
@@ -688,9 +732,9 @@ fun CreateReceiptScreen(
 
                             4 -> {
                                 JewelryFields(
-                                    jewelryProblem = jewelryProductProblem,
-                                    explainOfOrder = explainOfOrder,
-                                    detailsOfProduct = detailsOfJewelry,
+                                    jewelryProblem = jewelryProductProblem!!,
+                                    explainOfOrder = explainOfOrder!!,
+                                    detailsOfProduct = detailsOfJewelry!!,
                                     jewelryProblemSetValue = {
                                         jewelryProductProblem = it
                                     },
@@ -705,8 +749,8 @@ fun CreateReceiptScreen(
 
                             5 -> {
                                 PhotographyFields(
-                                    photoNumber = photoNumber,
-                                    photoSize = photoSize,
+                                    photoNumber = photoNumber!!,
+                                    photoSize = photoSize!!,
                                     photoNumberSetValue = {
                                         phoneNumber = it
                                     },
@@ -718,8 +762,8 @@ fun CreateReceiptScreen(
 
                             6 -> {
                                 LaundryFields(
-                                    typeOfLaundryOrder = typeOfLaundryOrder,
-                                    detailsOfLaundryOrder = detailsOfLaundryOrder,
+                                    typeOfLaundryOrder = typeOfLaundryOrder!!,
+                                    detailsOfLaundryOrder = detailsOfLaundryOrder!!,
                                     typeOfLaundryOrderSetValue = {
                                         typeOfLaundryOrder = it
                                     },
@@ -731,9 +775,9 @@ fun CreateReceiptScreen(
 
                             7 -> {
                                 ConfectioneryFields(
-                                    explainOfConfectioneryOrder = explainOfConfectioneryOrder,
-                                    detailsOfConfectioneryOrder = detailsOfConfectioneryOrder,
-                                    weightOfOrder = weightOfOrder,
+                                    explainOfConfectioneryOrder = explainOfConfectioneryOrder!!,
+                                    detailsOfConfectioneryOrder = detailsOfConfectioneryOrder!!,
+                                    weightOfOrder = weightOfOrder!!,
                                     explainOfConfectioneryOrderSetValue = {
                                         explainOfConfectioneryOrder = it
                                     },
@@ -748,8 +792,8 @@ fun CreateReceiptScreen(
 
                             8 -> {
                                 OtherJobsFields(
-                                    countOfOrder = countOfOrder,
-                                    detailsOfOtherOrder = detailsOfOtherOrder,
+                                    countOfOrder = countOfOrder!!,
+                                    detailsOfOtherOrder = detailsOfOtherOrder!!,
                                     countOfOrderSetValue = {
                                         countOfOrder = it
                                     },
@@ -783,7 +827,7 @@ fun CreateReceiptScreen(
                                     },
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                                 singleLine = true,
-                                value = totalAmount,
+                                value = totalAmount!!,
                                 shape = RoundedCornerShape(30.dp),
                                 onValueChange = { tAmount ->
                                     totalAmount = NumberFormat.formatNumber(tAmount)
@@ -820,7 +864,7 @@ fun CreateReceiptScreen(
                                     },
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                                 singleLine = true,
-                                value = payedAmount,
+                                value = payedAmount!!,
                                 shape = RoundedCornerShape(30.dp),
                                 onValueChange = { pAmount ->
                                     payedAmount = NumberFormat.formatNumber(pAmount)
