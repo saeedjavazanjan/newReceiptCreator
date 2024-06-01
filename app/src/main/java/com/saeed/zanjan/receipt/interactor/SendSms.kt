@@ -17,7 +17,7 @@ class SendSms(
     val smsManager = SmsManager.getDefault()
     private lateinit var generalReceipt: GeneralReceipt
 
-    fun repairSendSMS(
+    fun receiptSendSMS(
         genReceipt: GeneralReceipt,
         receiptCategory:Int
 
@@ -86,6 +86,49 @@ class SendSms(
 
 
 
+
+    }
+
+    fun paymentSendSMS(
+        genReceipt: GeneralReceipt,
+        payedAmount:String,
+
+    ): Flow<DataState<String>> = flow {
+
+        generalReceipt =genReceipt
+        emit(DataState.loading())
+        var result=paySendSms(payedAmount)
+        if(result==1){
+            emit(DataState.success("پیامک ارسال شد"))
+
+        }else{
+            emit(DataState.error("خطا در ارسال پیامک"))
+        }
+
+
+
+
+    }
+    fun paySendSms(
+        payedAmount: String
+    ):Int{
+        try{
+        val massageText ="مجموعا مبلغ  " +payedAmount + " توسط " +generalReceipt.name+ " به " +companyName+" پرداخت شده است."+
+                    System.getProperty("line.separator") +
+                    "شماره رسید:" + generalReceipt.id+ System.getProperty("line.separator") +
+                    link
+            val parts = smsManager.divideMessage(massageText)
+            smsManager.sendMultipartTextMessage(
+                generalReceipt.phone,
+                null,
+                parts,
+                null,
+                null
+            )
+            return 1
+        }catch (e:Exception){
+            return -1
+        }
 
     }
 

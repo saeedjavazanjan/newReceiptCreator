@@ -10,6 +10,8 @@ import androidx.navigation.navArgument
 import com.saeed.zanjan.receipt.presentation.navigation.Screen
 import com.saeed.zanjan.receipt.presentation.ui.create_receipt.CreateReceiptScreen
 import com.saeed.zanjan.receipt.presentation.ui.create_receipt.CreateReceiptViewModel
+import com.saeed.zanjan.receipt.presentation.ui.editReceipt.EditReceiptScreen
+import com.saeed.zanjan.receipt.presentation.ui.editReceipt.EditReceiptViewModel
 import com.saeed.zanjan.receipt.presentation.ui.home.Home
 import com.saeed.zanjan.receipt.presentation.ui.home.HomeViewModel
 import com.saeed.zanjan.receipt.presentation.ui.receipt.ReceiptScreen
@@ -27,6 +29,7 @@ fun Navigation(
     val registrationViewModel:RegistrationViewModel = viewModel()
     val homeViewModel:HomeViewModel= viewModel()
     val createReceiptViewModel:CreateReceiptViewModel= viewModel()
+    val editReceiptViewModel:EditReceiptViewModel= viewModel()
     val receiptViewMode:ReceiptViewModel= viewModel()
     NavHost(navController = navController, startDestination = Screen.Home.route) {
         composable(Screen.Registration.route) {
@@ -44,7 +47,7 @@ fun Navigation(
                     navController.navigate(it)
                 },
                 navigateToCreateReceiptScreen = {
-                    navController.navigate(it)
+                    navController.navigate(Screen.CreateReceipt.route)
 
                 }
             )
@@ -63,16 +66,29 @@ fun Navigation(
                 }
             )
         }
-        composable(Screen.CreateReceipt.route+ "/{receiptId}",
-                arguments = listOf(
-                navArgument("receiptId") { type = NavType.IntType }
-                )) {
+        composable(Screen.CreateReceipt.route) {
                 navBackStackEntry->
             CreateReceiptScreen(
                navController=navController,
                 viewModel=createReceiptViewModel,
-                receiptId =navBackStackEntry.arguments?.getInt("receiptId")!!,
+                navigateToEditReceiptScreen={
+                    navController.navigate(it)
+
+                }
                 )
+        }
+
+        composable(Screen.EditReceipt.route+ "/{receiptId}",
+            arguments = listOf(
+                navArgument("receiptId") { type = NavType.IntType },
+            )) {
+                navBackStackEntry->
+            EditReceiptScreen(
+                navController=navController,
+                viewModel=editReceiptViewModel,
+                receiptId =navBackStackEntry.arguments?.getInt("receiptId")!!,
+
+            )
         }
     }
 }

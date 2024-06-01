@@ -7,5 +7,6 @@ sealed class Screen(
     object Home : Screen("home")
     object Receipt : Screen("receipt")
     object CreateReceipt : Screen("createReceipt")
+    object EditReceipt : Screen("editReceipt")
 
 }

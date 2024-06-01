@@ -1,4 +1,4 @@
-package com.saeed.zanjan.receipt.presentation.ui.create_receipt
+package com.saeed.zanjan.receipt.presentation.ui.editReceipt
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
@@ -37,25 +37,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import com.saeed.zanjan.receipt.presentation.components.TopBar
-import com.saeed.zanjan.receipt.ui.theme.CustomColors
-import com.saeed.zanjan.receipt.ui.theme.NewReceiptCreatorTheme
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.gmail.hamedvakhide.compose_jalali_datepicker.JalaliDatePickerDialog
 import com.saeed.zanjan.receipt.R
 import com.saeed.zanjan.receipt.domain.models.GeneralReceipt
@@ -71,41 +67,56 @@ import com.saeed.zanjan.receipt.presentation.components.RepairFields
 import com.saeed.zanjan.receipt.presentation.components.SendSmsDialog
 import com.saeed.zanjan.receipt.presentation.components.StatusDialog
 import com.saeed.zanjan.receipt.presentation.components.TailoringFields
+import com.saeed.zanjan.receipt.presentation.components.TopBar
 import com.saeed.zanjan.receipt.presentation.navigation.Screen
+import com.saeed.zanjan.receipt.presentation.ui.create_receipt.CreateReceiptViewModel
+import com.saeed.zanjan.receipt.ui.theme.CustomColors
+import com.saeed.zanjan.receipt.ui.theme.NewReceiptCreatorTheme
 import com.saeed.zanjan.receipt.utils.NumberFormat
 import ir.huri.jcal.JalaliCalendar
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateReceiptScreen(
+fun EditReceiptScreen(
     navController: NavController,
-    viewModel: CreateReceiptViewModel,
-    navigateToEditReceiptScreen:(String)->Unit
+    viewModel: EditReceiptViewModel,
+    receiptId:Int?,
 ) {
 
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
+    val currentReceipt by viewModel.currentReceipt.collectAsState()
+    if(receiptId != -1){
+        LaunchedEffect(key1 = currentReceipt){
+            viewModel.getReceiptById(
+                receiptId!!,
+                snackbarHostState
+            )
 
-    var generalReceipt by remember{mutableStateOf( GeneralReceipt())}
+        }
+    }
+
+
+
+    var generalReceipt by remember{ mutableStateOf( GeneralReceipt()) }
 
     val loading = viewModel.loading.value
     val dataSaveStatus = viewModel.dataSaveStatus.value
     val dataSaveStatusForSMS = viewModel.dataSaveStatusForSMS.value
-    val savedReceiptId=viewModel.savedReceiptId.value
-
-
 
     val openReceiveDateDialog = remember { mutableStateOf(false) }
     val openDeliveryDateDialog = remember { mutableStateOf(false) }
     val openStatusDialog = remember { mutableStateOf(false) }
     val openExitDialog = remember { mutableStateOf(false) }
-    val openSendSMSDialog = remember { mutableStateOf(false) }
+    val openStatusSendSMSDialog = remember { mutableStateOf(false) }
+    val openPaymentSendSMSDialog = remember { mutableStateOf(false) }
 
     DisposableEffect(Unit) {
         onDispose {
             viewModel.restartState()
+            viewModel.restartCurrentReceipt()
         }
     }
     var saveClicked by remember {
@@ -114,92 +125,126 @@ fun CreateReceiptScreen(
 
 
     var status by remember {
-        mutableStateOf(0)
+        mutableStateOf(currentReceipt.status)
     }
 
     var receiveDate by remember {
-        mutableStateOf("") }
+        mutableStateOf(currentReceipt.receiptTime) }
 
     var deliveryDate by remember {
-        mutableStateOf("")
+        mutableStateOf(currentReceipt.deliveryTime)
     }
     var customerName by remember {
-        mutableStateOf("")
+        mutableStateOf(currentReceipt.name)
     }
     var phoneNumber by remember {
-        mutableStateOf("")
+        mutableStateOf(currentReceipt.phone)
     }
     var productName by remember {
-        mutableStateOf("")
+        mutableStateOf(currentReceipt.orderName)
     }
 
-    var totalAmount by remember { mutableStateOf( TextFieldValue("0")) }
-    var payedAmount by remember { mutableStateOf( TextFieldValue("0")) }
+    var totalAmount by remember { mutableStateOf(currentReceipt.cost?.let { TextFieldValue(it) }) }
+    var payedAmount by remember { mutableStateOf(currentReceipt.prepayment?.let { TextFieldValue(it) }) }
 
 
     //repair
     var productProblem by remember {
-        mutableStateOf("")
+        mutableStateOf(currentReceipt.repairLoanerProblems)
     }
     var risks by remember {
-        mutableStateOf("")
+        mutableStateOf(currentReceipt.repairRisks)
     }
     var accessories by remember {
-        mutableStateOf("")
+        mutableStateOf(currentReceipt.repairAccessories)
     }
 
     //tailoring
     var details by remember {
-        mutableStateOf("")
+        mutableStateOf(currentReceipt.tailoringOrderSpecification)
     }
     var sizes by remember {
-        mutableStateOf("")
+        mutableStateOf(currentReceipt.tailoringSizes)
     }
 
     //jewelry
     var jewelryProductProblem by remember {
-        mutableStateOf("")
+        mutableStateOf(currentReceipt.jewelryLoanerProblems)
     }
     var explainOfOrder by remember {
-        mutableStateOf("")
+        mutableStateOf(currentReceipt.jewelryOrderSpecification)
     }
     var detailsOfJewelry by remember {
-        mutableStateOf("")
+        mutableStateOf(currentReceipt.jewelryLoanerSpecification)
     }
 
     //photography
     var photoNumber by remember {
-        mutableStateOf("")
+        mutableStateOf(currentReceipt.photographyOrderNumber)
     }
     var photoSize by remember {
-        mutableStateOf("")
+        mutableStateOf(currentReceipt.photographyOrderSize)
     }
 
     //laundry
     var typeOfLaundryOrder by remember {
-        mutableStateOf("")
+        mutableStateOf(currentReceipt.laundryOrderType)
     }
     var detailsOfLaundryOrder by remember {
-        mutableStateOf("")
+        mutableStateOf(currentReceipt.laundryDescription)
     }
 
     //confectionery
     var explainOfConfectioneryOrder by remember {
-        mutableStateOf("")
+        mutableStateOf(currentReceipt.confectioneryDescription)
     }
     var detailsOfConfectioneryOrder by remember {
-        mutableStateOf("")
+        mutableStateOf(currentReceipt.confectioneryOrderSpecification)
     }
     var weightOfOrder by remember {
-        mutableStateOf("")
+        mutableStateOf(currentReceipt.confectioneryOrderWeight)
     }
 
     //otherJobs
     var countOfOrder by remember {
-        mutableStateOf("")
+        mutableStateOf(currentReceipt.otherJobsOrderNumber)
     }
     var detailsOfOtherOrder by remember {
-        mutableStateOf("")
+        mutableStateOf(currentReceipt.otherJobsDescription)
+    }
+    LaunchedEffect(currentReceipt) {
+        receiveDate = currentReceipt.receiptTime
+        status=currentReceipt.status
+        deliveryDate=currentReceipt.deliveryTime
+        customerName=currentReceipt.name
+        phoneNumber=currentReceipt.phone
+        productName=currentReceipt.orderName
+        totalAmount=currentReceipt.cost?.let { TextFieldValue(it) }
+        payedAmount=currentReceipt.prepayment?.let { TextFieldValue(it) }
+
+        productProblem=currentReceipt.repairLoanerProblems
+        risks=currentReceipt.repairRisks
+        accessories=currentReceipt.repairAccessories
+
+        details=currentReceipt.tailoringOrderSpecification
+        sizes=currentReceipt.tailoringSizes
+
+        jewelryProductProblem=currentReceipt.jewelryLoanerProblems
+        explainOfOrder=currentReceipt.jewelryOrderSpecification
+        detailsOfJewelry=currentReceipt.jewelryLoanerSpecification
+
+        photoNumber=currentReceipt.photographyOrderNumber
+        photoSize=currentReceipt.photographyOrderSize
+
+        typeOfLaundryOrder=currentReceipt.laundryOrderType
+        detailsOfLaundryOrder=currentReceipt.laundryDescription
+
+        explainOfConfectioneryOrder=currentReceipt.confectioneryOrderSpecification
+        detailsOfConfectioneryOrder=currentReceipt.confectioneryDescription
+        weightOfOrder=currentReceipt.confectioneryOrderWeight
+
+        countOfOrder=currentReceipt.otherJobsOrderNumber
+        detailsOfOtherOrder=currentReceipt.otherJobsDescription
     }
 
     NewReceiptCreatorTheme(
@@ -214,7 +259,7 @@ fun CreateReceiptScreen(
                 TopBar(
                     onBackClicked = {
                         if (dataSaveStatus)
-                            navController.popBackStack()
+                            navController.navigate(Screen.Home.route)
                         else
                             openExitDialog.value = true
                     }
@@ -225,25 +270,21 @@ fun CreateReceiptScreen(
                     BottomBar(
                         itemClicked = {
                             if (it == Screen.EditReceipt.route) {
-                                val route = Screen.EditReceipt.route + "/${savedReceiptId}"
-
-                              navController.navigate(route = route){
-                                  popUpTo(Screen.Home.route){
-                                      inclusive = false
-                                      saveState = false
-                                  }
-
-
-                              }
                                 viewModel.restartState()
-
+                                viewModel.restartCurrentReceipt()
+                                 openReceiveDateDialog.value = false
+                                 openDeliveryDateDialog.value =false
+                                 openStatusDialog.value = false
+                                 openExitDialog.value = false
+                                 openStatusSendSMSDialog.value =false
+                                 openPaymentSendSMSDialog.value= false
                             } else {
 
                             }
                         }
                     )
                 } else {
-                    CrateReceiptBottomBar(
+                    EditReceiptBottomBar(
                         dataSaveStatus = dataSaveStatus,
                         status = status!!,
                         saveData = {
@@ -254,7 +295,8 @@ fun CreateReceiptScreen(
 
                                 }
                             } else {
-                                 generalReceipt = GeneralReceipt(
+                                generalReceipt = GeneralReceipt(
+                                    id=receiptId!!,
                                     status = status,
                                     name = customerName,
                                     phone = phoneNumber,
@@ -281,7 +323,7 @@ fun CreateReceiptScreen(
                                     tailoringOrderSpecification =details,
                                     tailoringSizes =sizes
                                 )
-                                viewModel.saveInDatabase(
+                                viewModel.updateReceipt(
                                     generalReceipt=generalReceipt,
                                     snackbarHostState = snackbarHostState,
                                 )
@@ -325,21 +367,25 @@ fun CreateReceiptScreen(
                 )
             }
 
-            LaunchedEffect(dataSaveStatusForSMS) {
+            LaunchedEffect(key1 =dataSaveStatusForSMS) {
                 if (dataSaveStatusForSMS) {
-                    openSendSMSDialog.value = true
+                    if(currentReceipt.prepayment!= payedAmount!!.text)
+                        openPaymentSendSMSDialog.value = true
+                    if(currentReceipt.status!= status)
+                        openStatusSendSMSDialog.value = true
+
                 }
             }
 
-            if (openSendSMSDialog.value) {
+            if (openPaymentSendSMSDialog.value) {
                 SendSmsDialog(
                     onDismiss = {
-                        openSendSMSDialog.value = false
+                        openPaymentSendSMSDialog.value = false
                     },
-                    description = "آیا قصد ارسال رسید پیامکی را دارید؟",
+                    description = "آیا قصد ارسال رسید پیامکی در خصوص دریافت وجه را دارید؟",
                     sendClicked = {
-                         generalReceipt = GeneralReceipt(
-                            id = savedReceiptId.toInt(),
+                        generalReceipt = GeneralReceipt(
+                            id = receiptId!!,
                             status = status,
                             name = customerName,
                             phone = phoneNumber,
@@ -367,9 +413,58 @@ fun CreateReceiptScreen(
                             tailoringSizes =sizes
                         )
 
-                        viewModel.sendMessage(generalReceipt)
+                        viewModel.paymentSendMessage(
+                            snackbarHostState = snackbarHostState,
+                           generalReceipt= generalReceipt,
+                            payedAmount =payedAmount!!.text
 
-                        openSendSMSDialog.value = false
+                        )
+
+                        openPaymentSendSMSDialog.value = false
+
+                    },
+                    context = context
+                )
+            }
+            if (openStatusSendSMSDialog.value && status!=1) {
+                SendSmsDialog(
+                    onDismiss = {
+                        openStatusSendSMSDialog.value = false
+                    },
+                    description = "آیا قصد ارسال  پیامک در خصوص تغییر وضعیت را دارید؟",
+                    sendClicked = {
+                        generalReceipt = GeneralReceipt(
+                            id = receiptId!!,
+                            status = status,
+                            name = customerName,
+                            phone = phoneNumber,
+                            orderName = productName,
+                            deliveryTime = deliveryDate,
+                            receiptTime = receiveDate,
+                            cost = totalAmount?.text,
+                            prepayment = payedAmount?.text,
+                            confectioneryOrderSpecification =explainOfConfectioneryOrder,
+                            confectioneryOrderWeight =weightOfOrder,
+                            confectioneryDescription =detailsOfConfectioneryOrder,
+                            jewelryOrderSpecification =explainOfOrder,
+                            jewelryLoanerProblems =jewelryProductProblem,
+                            jewelryLoanerSpecification =detailsOfJewelry,
+                            laundryOrderType =typeOfLaundryOrder,
+                            laundryDescription =detailsOfLaundryOrder,
+                            otherJobsDescription =detailsOfOtherOrder,
+                            otherJobsOrderNumber =countOfOrder,
+                            photographyOrderSize =photoSize,
+                            photographyOrderNumber =photoNumber,
+                            repairLoanerProblems =productProblem,
+                            repairRisks =risks,
+                            repairAccessories =accessories,
+                            tailoringOrderSpecification =details,
+                            tailoringSizes =sizes
+                        )
+
+                        viewModel.sendMessage(generalReceipt,snackbarHostState)
+
+                        openStatusSendSMSDialog.value = false
 
                     },
                     context = context
@@ -870,7 +965,7 @@ fun CreateReceiptScreen(
     }
     BackHandler {
         if (dataSaveStatus)
-            navController.popBackStack()
+            navController.navigate(Screen.Home.route)
         else
             openExitDialog.value = true
 
@@ -883,7 +978,7 @@ fun CreateReceiptScreen(
 
 
 @Composable
-fun CrateReceiptBottomBar(
+fun EditReceiptBottomBar(
     dataSaveStatus: Boolean,
     status: Int,
     saveData: () -> Unit,

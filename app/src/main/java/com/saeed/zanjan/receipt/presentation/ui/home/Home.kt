@@ -47,7 +47,7 @@ import com.saeed.zanjan.receipt.ui.theme.NewReceiptCreatorTheme
 fun Home(
     viewModel: HomeViewModel,
     navigateToReceiptScreen:(String)->Unit,
-    navigateToCreateReceiptScreen:(String)->Unit
+    navigateToCreateReceiptScreen:()->Unit
 ) {
 
     val snackbarHostState = remember { SnackbarHostState() }
@@ -86,8 +86,7 @@ fun Home(
                 modifier = Modifier
                     .background(Color.Transparent),
                 addButtonClicked = {
-                    val route = Screen.CreateReceipt.route + "/${-1}"
-                    navigateToCreateReceiptScreen(route)
+                    navigateToCreateReceiptScreen()
                 }
             )
         }

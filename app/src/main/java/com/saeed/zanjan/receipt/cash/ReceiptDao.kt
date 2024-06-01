@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 import com.saeed.zanjan.receipt.cash.model.ConfectioneryEntity
 import com.saeed.zanjan.receipt.cash.model.JewelryEntity
 import com.saeed.zanjan.receipt.cash.model.LaundryEntity
@@ -61,6 +62,7 @@ interface ReceiptDao {
 
     @Query("SELECT * FROM confectionery WHERE id = :Id")
     suspend fun getConfectioneryReceipt(Id: Int): ConfectioneryEntity
+
     @Query("SELECT * FROM jewelry WHERE id = :Id")
     suspend fun getJewelryReceipt(Id: Int): JewelryEntity
 
@@ -75,8 +77,31 @@ interface ReceiptDao {
 
     @Query("SELECT * FROM repairs WHERE id = :Id")
     suspend fun getRepairsReceipt(Id: Int): RepairsEntity
+
     @Query("SELECT * FROM tailoring WHERE id = :Id")
     suspend fun getTailoringReceipt(Id: Int): TailoringEntity
+
+    @Update
+    fun updateRepair(repair: RepairsEntity)
+
+    @Update
+    fun updateConfectionery(repair: ConfectioneryEntity)
+
+    @Update
+    fun updateJewelry(repair: JewelryEntity)
+
+    @Update
+    fun updatePhotography(repair: PhotographyEntity)
+
+    @Update
+    fun updateLaundry(repair: LaundryEntity)
+
+    @Update
+    fun updateTailoring(repair: TailoringEntity)
+
+    @Update
+    fun updateOtherJobs(repair: OtherJobsEntity)
+
 
     /* @Insert (onConflict = OnConflictStrategy.REPLACE)
      suspend fun insertUserData(userData: UserDataEntity)

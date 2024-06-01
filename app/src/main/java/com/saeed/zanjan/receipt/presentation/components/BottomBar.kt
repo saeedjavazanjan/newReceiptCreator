@@ -60,7 +60,7 @@ fun BottomBar(
                         containerColor = CustomColors.lightGray
                     ),
                     onClick = {
-                        itemClicked(Screen.CreateReceipt.route)
+                        itemClicked(Screen.EditReceipt.route)
                     },
                 ) {
                     Icon(
