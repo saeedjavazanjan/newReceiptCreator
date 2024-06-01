@@ -101,4 +101,81 @@ class SaveReceiptInDatabase(
     }
 
 
+    fun updateReceipt(
+        generalReceipt: GeneralReceipt,
+        receiptCategory: Int
+    ):Flow<DataState<String>> = flow {
+
+        emit(DataState.loading())
+        try {
+            when (receiptCategory) {
+                0 -> {
+                    //repair
+                  receiptDao.updateRepair(generalMapper.mapToRepairsEntity(generalReceipt))
+
+                }
+
+                1 -> {
+                    //repair
+                   receiptDao.updateRepair(generalMapper.mapToRepairsEntity(generalReceipt))
+
+                }
+
+                2 -> {
+                    //  repair
+                    receiptDao.updateRepair(generalMapper.mapToRepairsEntity(generalReceipt))
+
+                }
+
+                3 -> {
+                    //tailoring
+                    receiptDao.updateTailoring(generalMapper.mapToTailoringEntity(generalReceipt))
+
+                }
+
+                4 -> {
+                    //jewelry
+                    receiptDao.updateJewelry(generalMapper.mapToJewelryEntity(generalReceipt))
+
+                }
+
+                5 -> {
+                    //photo
+                    receiptDao.updatePhotography(generalMapper.mapToPhotographyEntity(generalReceipt))
+
+                }
+
+                6 -> {
+                    //laundry
+                 receiptDao.updateLaundry(generalMapper.mapLaundryEntity(generalReceipt))
+
+                }
+
+                7 -> {
+                    //confectionery
+                    receiptDao.updateConfectionery(generalMapper.mapToConfectioneryEntity(generalReceipt))
+
+                }
+
+                8 -> {
+                    //otherJobs
+                    receiptDao.updateOtherJobs(generalMapper.mapToOtherJobsEntity(generalReceipt))
+
+                }
+
+            }
+
+                emit(DataState.success("با موفقیت به روز رسانی شد"))
+
+
+
+        }catch (e:Exception){
+            emit(DataState.error("خطای ناشناخته"))
+        }
+
+
+
+
+
+    }
 }

@@ -75,6 +75,9 @@ dependencies {
 
     //navController
     implementation("androidx.navigation:navigation-compose:2.8.0-alpha07")
+    implementation ("androidx.navigation:navigation-fragment-ktx:2.7.4")
+    implementation ("androidx.navigation:navigation-ui-ktx:2.7.4")
+    implementation ("androidx.hilt:hilt-navigation-compose:1.1.0")
 
     //retrofit
     implementation ("com.squareup.retrofit2:retrofit:2.9.0")
