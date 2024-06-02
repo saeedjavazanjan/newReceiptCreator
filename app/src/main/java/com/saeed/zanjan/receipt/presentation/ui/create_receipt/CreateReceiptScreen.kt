@@ -230,7 +230,6 @@ fun CreateReceiptScreen(
                               navController.navigate(route = route){
                                   popUpTo(Screen.Home.route){
                                       inclusive = false
-                                      saveState = false
                                   }
 
 

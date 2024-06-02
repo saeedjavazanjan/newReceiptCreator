@@ -259,7 +259,7 @@ fun EditReceiptScreen(
                 TopBar(
                     onBackClicked = {
                         if (dataSaveStatus)
-                            navController.navigate(Screen.Home.route)
+                            navController.popBackStack(Screen.Home.route,inclusive = false)
                         else
                             openExitDialog.value = true
                     }
@@ -347,7 +347,7 @@ fun EditReceiptScreen(
                 },
                     onExitClicked = {
                         openExitDialog.value = false
-                        navController.popBackStack()
+                        navController.popBackStack(Screen.Home.route,inclusive = false)
                     }
                 )
 
@@ -965,7 +965,7 @@ fun EditReceiptScreen(
     }
     BackHandler {
         if (dataSaveStatus)
-            navController.navigate(Screen.Home.route)
+            navController.popBackStack(Screen.Home.route,inclusive = false)
         else
             openExitDialog.value = true
 

@@ -100,7 +100,12 @@ fun ReceiptScreen(
             BottomBar(
                 itemClicked = {
                     val route = it + "/${receiptId}"
-                    onNavigateToEdit(route)
+                  //  onNavigateToEdit(route)
+                    navController.navigate(route = route){
+                        popUpTo(Screen.Home.route){
+                            inclusive = false
+                        }
+                    }
                 }
             )
             }
