@@ -1,13 +1,14 @@
 package com.saeed.zanjan.receipt.presentation.ui.editReceipt
 
 import android.content.SharedPreferences
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.saeed.zanjan.receipt.domain.models.GeneralReceipt
 import com.saeed.zanjan.receipt.interactor.ListOfReceipts
-import com.saeed.zanjan.receipt.interactor.SaveReceiptInDatabase
+import com.saeed.zanjan.receipt.interactor.ReceiptQueryInDatabase
 import com.saeed.zanjan.receipt.interactor.SendSms
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,8 +22,7 @@ import javax.inject.Inject
 @HiltViewModel
 class EditReceiptViewModel
 @Inject constructor(
-    val saveReceiptInDatabase: SaveReceiptInDatabase,
-    val sendSms: SendSms,
+    val receiptQueryInDatabase: ReceiptQueryInDatabase,
     sharedPreferences: SharedPreferences,
     val listOfReceipts: ListOfReceipts
 ) : ViewModel() {
@@ -31,7 +31,6 @@ class EditReceiptViewModel
 
     val loading = mutableStateOf(false)
     val dataSaveStatus = mutableStateOf(false)
-    val dataSaveStatusForSMS = mutableStateOf(false)
 
     private val _currentReceipt = MutableStateFlow(GeneralReceipt())
     val currentReceipt: StateFlow<GeneralReceipt> = _currentReceipt.asStateFlow()
@@ -39,75 +38,25 @@ class EditReceiptViewModel
         generalReceipt: GeneralReceipt,
         snackbarHostState: SnackbarHostState,
     ) {
-        saveReceiptInDatabase.updateReceipt(generalReceipt,receiptCategory).onEach { dataState ->
+        receiptQueryInDatabase.updateReceipt(generalReceipt,receiptCategory).onEach { dataState ->
 
             dataState.loading.let {
                 loading.value = it
             }
             dataState.data?.let {
                 dataSaveStatus.value = true
-                snackbarHostState.showSnackbar(it)
-                dataSaveStatusForSMS.value = true
             }
             dataState.error?.let {
-                snackbarHostState.showSnackbar(it)
+                snackbarHostState.showSnackbar(it,duration = SnackbarDuration.Short)
             }
 
         }.launchIn(viewModelScope)
 
 
     }
-    fun sendMessage(
-        generalReceipt: GeneralReceipt,
-        snackbarHostState: SnackbarHostState
-    ) {
-        sendSms.receiptSendSMS(
-            generalReceipt,
-            receiptCategory
-        ).onEach { dataState ->
 
-            dataState.loading.let {
-                loading.value=it
-            }
-            dataState.data?.let {
-                snackbarHostState.showSnackbar(it)
 
-            }
 
-            dataState.error?.let {
-                snackbarHostState.showSnackbar(it)
-
-            }
-
-        }.launchIn(viewModelScope)
-
-    }
-
-    fun paymentSendMessage(
-        snackbarHostState: SnackbarHostState,
-        generalReceipt: GeneralReceipt,
-        payedAmount:String
-    ) {
-        sendSms.paymentSendSMS(
-            generalReceipt,
-            payedAmount
-        ).onEach { dataState ->
-
-            dataState.loading.let {
-                loading.value=it
-            }
-            dataState.data?.let {
-                snackbarHostState.showSnackbar(it)
-            }
-
-            dataState.error?.let {
-                snackbarHostState.showSnackbar(it)
-
-            }
-
-        }.launchIn(viewModelScope)
-
-    }
     fun getReceiptById(
         receiptId:Int,
         snackbarHostState: SnackbarHostState
@@ -141,7 +90,6 @@ class EditReceiptViewModel
 
     fun restartState(){
         dataSaveStatus.value=false
-        dataSaveStatusForSMS.value=false
     }
 
     fun restartCurrentReceipt(){

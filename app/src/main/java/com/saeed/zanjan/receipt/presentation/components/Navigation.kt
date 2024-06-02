@@ -26,15 +26,15 @@ fun Navigation(
      connectivityManager: ConnectivityManager,
      scaffoldState:ScaffoldState,*/
 ) {
-    val registrationViewModel:RegistrationViewModel = viewModel()
-    val homeViewModel:HomeViewModel= viewModel()
-    val createReceiptViewModel:CreateReceiptViewModel= viewModel()
-    val editReceiptViewModel:EditReceiptViewModel= viewModel()
-    val receiptViewMode:ReceiptViewModel= viewModel()
+    val registrationViewModel: RegistrationViewModel = viewModel()
+    val homeViewModel: HomeViewModel = viewModel()
+    val createReceiptViewModel: CreateReceiptViewModel = viewModel()
+    val editReceiptViewModel: EditReceiptViewModel = viewModel()
+    val receiptViewMode: ReceiptViewModel = viewModel()
     NavHost(navController = navController, startDestination = Screen.Home.route) {
         composable(Screen.Registration.route) {
             RegistrationScreen(
-               viewModel =registrationViewModel,
+                viewModel = registrationViewModel,
                 navigateToHome = {
                     navController.navigate(Screen.Home.route)
                 }
@@ -42,7 +42,7 @@ fun Navigation(
         }
         composable(Screen.Home.route) {
             Home(
-                viewModel=homeViewModel,
+                viewModel = homeViewModel,
                 navigateToReceiptScreen = {
                     navController.navigate(it)
                 },
@@ -53,42 +53,45 @@ fun Navigation(
             )
         }
 
-        composable(route = Screen.Receipt.route + "/{receiptId}",
+        composable(route = Screen.Receipt.route + "/{receiptId}/{newSaved}/{newUpdate}/{statusChanged}/{paymentChanged}",
             arguments = listOf(
-                navArgument("receiptId") { type = NavType.IntType }
-            )) {navBackStackEntry->
+                navArgument("receiptId") { type = NavType.IntType },
+                navArgument("newSaved") { type = NavType.BoolType },
+                navArgument("newUpdate") { type = NavType.BoolType },
+                navArgument("statusChanged") { type = NavType.BoolType },
+                navArgument("paymentChanged") { type = NavType.BoolType }
+            )) { navBackStackEntry ->
             ReceiptScreen(
-                viewModel=receiptViewMode,
-                receiptId =navBackStackEntry.arguments?.getInt("receiptId") ,
-                navController=navController,
-                onNavigateToEdit = {
-                    navController.navigate(it)
-                }
-            )
-        }
-        composable(Screen.CreateReceipt.route) {
-                navBackStackEntry->
-            CreateReceiptScreen(
-               navController=navController,
-                viewModel=createReceiptViewModel,
-                navigateToEditReceiptScreen={
-                    navController.navigate(it)
+                viewModel = receiptViewMode,
+                receiptId = navBackStackEntry.arguments?.getInt("receiptId"),
+                navController = navController,
+                newSaved = navBackStackEntry.arguments?.getBoolean("newSaved")!!,
+                newUpdate = navBackStackEntry.arguments?.getBoolean("newUpdate")!!,
+                statusChanged = navBackStackEntry.arguments?.getBoolean("statusChanged")!!,
+                paymentChanged = navBackStackEntry.arguments?.getBoolean("paymentChanged")!!,
 
-                }
+                )
+        }
+        composable(Screen.CreateReceipt.route) { navBackStackEntry ->
+            CreateReceiptScreen(
+                navController = navController,
+                viewModel = createReceiptViewModel,
+
                 )
         }
 
-        composable(Screen.EditReceipt.route+ "/{receiptId}",
+        composable(
+            Screen.EditReceipt.route + "/{receiptId}",
             arguments = listOf(
                 navArgument("receiptId") { type = NavType.IntType },
-            )) {
-                navBackStackEntry->
-            EditReceiptScreen(
-                navController=navController,
-                viewModel=editReceiptViewModel,
-                receiptId =navBackStackEntry.arguments?.getInt("receiptId")!!,
-
             )
+        ) { navBackStackEntry ->
+            EditReceiptScreen(
+                navController = navController,
+                viewModel = editReceiptViewModel,
+                receiptId = navBackStackEntry.arguments?.getInt("receiptId")!!,
+
+                )
         }
     }
 }

@@ -81,7 +81,6 @@ import kotlinx.coroutines.launch
 fun CreateReceiptScreen(
     navController: NavController,
     viewModel: CreateReceiptViewModel,
-    navigateToEditReceiptScreen:(String)->Unit
 ) {
 
     val snackbarHostState = remember { SnackbarHostState() }
@@ -92,7 +91,6 @@ fun CreateReceiptScreen(
 
     val loading = viewModel.loading.value
     val dataSaveStatus = viewModel.dataSaveStatus.value
-    val dataSaveStatusForSMS = viewModel.dataSaveStatusForSMS.value
     val savedReceiptId=viewModel.savedReceiptId.value
 
 
@@ -101,7 +99,6 @@ fun CreateReceiptScreen(
     val openDeliveryDateDialog = remember { mutableStateOf(false) }
     val openStatusDialog = remember { mutableStateOf(false) }
     val openExitDialog = remember { mutableStateOf(false) }
-    val openSendSMSDialog = remember { mutableStateOf(false) }
 
     DisposableEffect(Unit) {
         onDispose {
@@ -207,6 +204,20 @@ fun CreateReceiptScreen(
         themColor = CustomColors.lightBlue
     ) {
 
+        LaunchedEffect(key1 = dataSaveStatus){
+            if(dataSaveStatus){
+                val route = Screen.Receipt.route + "/${savedReceiptId}/${true}/${false}/${false}/${false}"
+                navController.navigate(route){
+                    popUpTo(Screen.Home.route){
+                        inclusive=false
+                    }
+
+                }
+            }
+
+        }
+
+
         Scaffold(
             snackbarHost = { SnackbarHost(snackbarHostState) },
             containerColor = CustomColors.lightBlue,
@@ -221,27 +232,6 @@ fun CreateReceiptScreen(
                 )
             },
             bottomBar = {
-                if (dataSaveStatus) {
-                    BottomBar(
-                        itemClicked = {
-                            if (it == Screen.EditReceipt.route) {
-                                val route = Screen.EditReceipt.route + "/${savedReceiptId}"
-
-                              navController.navigate(route = route){
-                                  popUpTo(Screen.Home.route){
-                                      inclusive = false
-                                  }
-
-
-                              }
-                                viewModel.restartState()
-
-                            } else {
-
-                            }
-                        }
-                    )
-                } else {
                     CrateReceiptBottomBar(
                         dataSaveStatus = dataSaveStatus,
                         status = status!!,
@@ -292,7 +282,6 @@ fun CreateReceiptScreen(
                             openStatusDialog.value = true
                         }
                     )
-                }
 
             }
         ) {
@@ -324,58 +313,6 @@ fun CreateReceiptScreen(
                 )
             }
 
-            LaunchedEffect(dataSaveStatusForSMS) {
-                if (dataSaveStatusForSMS) {
-                    openSendSMSDialog.value = true
-                }
-            }
-
-            if (openSendSMSDialog.value) {
-                SendSmsDialog(
-                    onDismiss = {
-                        openSendSMSDialog.value = false
-                    },
-                    description = "آیا قصد ارسال رسید پیامکی را دارید؟",
-                    sendClicked = {
-                         generalReceipt = GeneralReceipt(
-                            id = savedReceiptId.toInt(),
-                            status = status,
-                            name = customerName,
-                            phone = phoneNumber,
-                            orderName = productName,
-                            deliveryTime = deliveryDate,
-                            receiptTime = receiveDate,
-                            cost = totalAmount?.text,
-                            prepayment = payedAmount?.text,
-                            confectioneryOrderSpecification =explainOfConfectioneryOrder,
-                            confectioneryOrderWeight =weightOfOrder,
-                            confectioneryDescription =detailsOfConfectioneryOrder,
-                            jewelryOrderSpecification =explainOfOrder,
-                            jewelryLoanerProblems =jewelryProductProblem,
-                            jewelryLoanerSpecification =detailsOfJewelry,
-                            laundryOrderType =typeOfLaundryOrder,
-                            laundryDescription =detailsOfLaundryOrder,
-                            otherJobsDescription =detailsOfOtherOrder,
-                            otherJobsOrderNumber =countOfOrder,
-                            photographyOrderSize =photoSize,
-                            photographyOrderNumber =photoNumber,
-                            repairLoanerProblems =productProblem,
-                            repairRisks =risks,
-                            repairAccessories =accessories,
-                            tailoringOrderSpecification =details,
-                            tailoringSizes =sizes
-                        )
-
-                        viewModel.sendMessage(generalReceipt)
-
-                        openSendSMSDialog.value = false
-
-                    },
-                    context = context
-                )
-            }
-
-
 
 
             JalaliDatePickerDialog(
@@ -401,19 +338,6 @@ fun CreateReceiptScreen(
                 backgroundColor = CustomColors.lightGray,
                 textColor = CustomColors.darkPurple
             )
-            if (dataSaveStatus) {
-                ReceiptCard(
-                    modifier = Modifier
-                        .padding(
-                            start = 25.dp,
-                            end = 25.dp,
-                            top = it.calculateTopPadding(),
-                        )
-                        .fillMaxSize(),
-                    receiptCategory = viewModel.receiptCategory,
-                    generalReceipt=generalReceipt
-                )
-            } else {
                 Card(
                     modifier = Modifier
                         .padding(
@@ -860,7 +784,6 @@ fun CreateReceiptScreen(
 
                     }
                 }
-            }
 
 
         }

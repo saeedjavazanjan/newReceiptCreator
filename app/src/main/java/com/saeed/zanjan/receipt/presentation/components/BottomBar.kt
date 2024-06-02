@@ -79,6 +79,7 @@ fun BottomBar(
                         containerColor = CustomColors.lightGray
                     ),
                     onClick = {
+
                     },
                 ) {
                     Icon(
@@ -133,6 +134,8 @@ fun BottomBar(
                         containerColor = CustomColors.lightGray
                     ),
                     onClick = {
+
+                          itemClicked("delete")
                     },
                 ) {
                     Icon(
