@@ -1,9 +1,15 @@
 package com.saeed.zanjan.receipt.presentation.ui.receipt
 
+import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
+import android.graphics.Bitmap
+import android.os.Environment
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.mutableStateOf
+import androidx.core.content.ContextCompat.startActivity
+import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.saeed.zanjan.receipt.domain.models.GeneralReceipt
@@ -14,6 +20,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
 import javax.inject.Inject
 
 @HiltViewModel
@@ -144,6 +153,34 @@ class ReceiptViewModel
     fun restartState(){
 
         deleteState.value=false
+    }
+
+    fun saveBitmapToFile(bitmap: Bitmap, fileName: String): File? {
+        val directory = File(Environment.getExternalStorageDirectory().toString() + "/receiptCreator")
+        if (!directory.exists()) {
+            directory.mkdirs()
+        }
+        val file = File(directory, "$fileName.png")
+        try {
+            val outputStream = FileOutputStream(file)
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+            outputStream.flush()
+            outputStream.close()
+        } catch (e: IOException) {
+            e.printStackTrace()
+            return null
+        }
+        return file
+    }
+
+    fun shareImage(file: File,context:Context) {
+        val uri = FileProvider.getUriForFile(context, context.applicationContext.packageName + ".provider", file)
+        val intent = Intent(Intent.ACTION_SEND).apply {
+            type = "image/png"
+            putExtra(Intent.EXTRA_STREAM, uri)
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+        context.startActivity(Intent.createChooser(intent, "Share Image"))
     }
 
 }

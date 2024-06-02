@@ -2,7 +2,10 @@ package com.saeed.zanjan.receipt.presentation.ui.receipt
 
 import HorizontalDashedLine
 import android.annotation.SuppressLint
-import androidx.compose.foundation.Canvas
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.view.View
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -47,6 +50,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -90,6 +94,18 @@ fun ReceiptScreen(
     val openSendSmsDialog = remember { mutableStateOf(false) }
     val openStatusSendSMSDialog = remember { mutableStateOf(false) }
     val openPaymentSendSMSDialog = remember { mutableStateOf(false) }
+
+    val bitmap = getBitmapFromComposable(context) {
+        ReceiptCard(
+            modifier = Modifier
+                .padding(horizontal = 25.dp)
+                .fillMaxSize(),
+            receiptCategory = receiptCategory,
+            generalReceipt = currentReceipt.value
+        )
+    }
+
+
 
     LaunchedEffect(key1 = deleteState){
         if(deleteState)
@@ -221,6 +237,12 @@ fun ReceiptScreen(
                                 openDeleteDialog.value = true
 
                             }
+                            "share"->{
+                                val file = viewModel.saveBitmapToFile(bitmap, ""+System.currentTimeMillis())
+                                file?.let {
+                                    viewModel.shareImage(it, context = context)
+                                }
+                            }
 
                         }
 
@@ -254,15 +276,20 @@ fun ReceiptScreen(
                     .padding(start = 10.dp, end = 10.dp, top = it.calculateTopPadding())
             ) {
 
+                    ReceiptCard(
+                        modifier = Modifier
+                            .padding(horizontal = 25.dp)
+                            .fillMaxWidth()
+                            .weight(1f),
+                        receiptCategory = receiptCategory,
+                        generalReceipt = currentReceipt.value
+                    )
 
-                ReceiptCard(
-                    modifier = Modifier
-                        .padding(horizontal = 25.dp)
-                        .fillMaxWidth()
-                        .weight(1f),
-                    receiptCategory = receiptCategory,
-                    generalReceipt = currentReceipt.value
-                )
+
+
+
+
+
 
 
             }
@@ -275,7 +302,26 @@ fun ReceiptScreen(
 
 }
 
-
+fun getBitmapFromComposable(context: Context,content: @Composable () -> Unit): Bitmap {
+    val composeView = ComposeView(context).apply {
+        setContent {
+            content()
+        }
+    }
+    composeView.measure(
+        View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+        View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+    )
+    composeView.layout(0, 0, composeView.measuredWidth, composeView.measuredHeight)
+    val bitmap = Bitmap.createBitmap(
+        composeView.width,
+        composeView.height,
+        Bitmap.Config.ARGB_8888
+    )
+    val canvas = Canvas(bitmap)
+    composeView.draw(canvas)
+    return bitmap
+}
 
 
 

@@ -55,7 +55,6 @@ import androidx.navigation.NavController
 import com.gmail.hamedvakhide.compose_jalali_datepicker.JalaliDatePickerDialog
 import com.saeed.zanjan.receipt.R
 import com.saeed.zanjan.receipt.domain.models.GeneralReceipt
-import com.saeed.zanjan.receipt.presentation.components.BottomBar
 import com.saeed.zanjan.receipt.presentation.components.ConfectioneryFields
 import com.saeed.zanjan.receipt.presentation.components.ExitDialog
 import com.saeed.zanjan.receipt.presentation.components.JewelryFields

@@ -79,7 +79,7 @@ fun BottomBar(
                         containerColor = CustomColors.lightGray
                     ),
                     onClick = {
-
+                              itemClicked("share")
                     },
                 ) {
                     Icon(
