@@ -1,20 +1,13 @@
 package com.saeed.zanjan.receipt.interactor
 
 import com.saeed.zanjan.receipt.cash.ReceiptDao
-import com.saeed.zanjan.receipt.cash.model.ConfectioneryEntityMapper
 import com.saeed.zanjan.receipt.cash.model.EntitiesGeneralMapper
-import com.saeed.zanjan.receipt.cash.model.JewelryEntityMapper
-import com.saeed.zanjan.receipt.cash.model.LaundryEntityMapper
-import com.saeed.zanjan.receipt.cash.model.OtherJobsEntityMapper
-import com.saeed.zanjan.receipt.cash.model.PhotographyEntityMapper
-import com.saeed.zanjan.receipt.cash.model.RepairsEntityMapper
-import com.saeed.zanjan.receipt.cash.model.TailoringEntityMapper
 import com.saeed.zanjan.receipt.domain.dataState.DataState
 import com.saeed.zanjan.receipt.domain.models.GeneralReceipt
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
-class SaveReceiptInDatabase(
+class ReceiptQueryInDatabase(
     val receiptDao: ReceiptDao,
    val generalMapper: EntitiesGeneralMapper
 ) {
@@ -174,6 +167,87 @@ class SaveReceiptInDatabase(
         }
 
 
+
+
+
+    }
+
+
+    fun deleteReceipt(
+        receiptId:Int,
+        receiptCategory: Int
+    ): Flow <DataState<String>> = flow {
+        emit(DataState.loading())
+        try {
+            var result=-1
+            when (receiptCategory) {
+                0 -> {
+                    //repair
+                   result= receiptDao.deleteRepair(receiptId)
+
+                }
+
+                1 -> {
+                    //repair
+                    result= receiptDao.deleteRepair(receiptId)
+
+                }
+
+                2 -> {
+                    //  repair
+                    result= receiptDao.deleteRepair(receiptId)
+
+                }
+
+                3 -> {
+                    //tailoring
+                    result= receiptDao.deleteTailoring(receiptId)
+
+                }
+
+                4 -> {
+                    //jewelry
+                    result= receiptDao.deleteJewelry(receiptId)
+
+                }
+
+                5 -> {
+                    //photo
+                    result= receiptDao.deletePhotography(receiptId)
+
+                }
+
+                6 -> {
+                    //laundry
+                    result= receiptDao.deleteLaundry(receiptId)
+
+                }
+
+                7 -> {
+                    //confectionery
+                    result= receiptDao.deleteConfectionery(receiptId)
+
+                }
+
+                8 -> {
+                    //otherJobs
+                    result= receiptDao.deleteOtherJobs(receiptId)
+
+                }
+
+            }
+
+            if(result>0)
+            emit(DataState.success("با موفقیت حذف شد"))
+            else
+                emit(DataState.error("خطای نا شناخته"))
+
+
+
+
+        }catch (e:Exception){
+            emit(DataState.error(e.message.toString()))
+        }
 
 
 

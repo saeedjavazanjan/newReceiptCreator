@@ -55,7 +55,6 @@ import androidx.navigation.NavController
 import com.gmail.hamedvakhide.compose_jalali_datepicker.JalaliDatePickerDialog
 import com.saeed.zanjan.receipt.R
 import com.saeed.zanjan.receipt.domain.models.GeneralReceipt
-import com.saeed.zanjan.receipt.presentation.components.BottomBar
 import com.saeed.zanjan.receipt.presentation.components.ConfectioneryFields
 import com.saeed.zanjan.receipt.presentation.components.ExitDialog
 import com.saeed.zanjan.receipt.presentation.components.JewelryFields
@@ -104,14 +103,12 @@ fun EditReceiptScreen(
 
     val loading = viewModel.loading.value
     val dataSaveStatus = viewModel.dataSaveStatus.value
-    val dataSaveStatusForSMS = viewModel.dataSaveStatusForSMS.value
 
     val openReceiveDateDialog = remember { mutableStateOf(false) }
     val openDeliveryDateDialog = remember { mutableStateOf(false) }
     val openStatusDialog = remember { mutableStateOf(false) }
     val openExitDialog = remember { mutableStateOf(false) }
-    val openStatusSendSMSDialog = remember { mutableStateOf(false) }
-    val openPaymentSendSMSDialog = remember { mutableStateOf(false) }
+
 
     DisposableEffect(Unit) {
         onDispose {
@@ -212,6 +209,8 @@ fun EditReceiptScreen(
     var detailsOfOtherOrder by remember {
         mutableStateOf(currentReceipt.otherJobsDescription)
     }
+
+
     LaunchedEffect(currentReceipt) {
         receiveDate = currentReceipt.receiptTime
         status=currentReceipt.status
@@ -251,7 +250,21 @@ fun EditReceiptScreen(
         displayProgressBar = loading,
         themColor = CustomColors.lightBlue
     ) {
+        LaunchedEffect(key1 = dataSaveStatus){
+            if(dataSaveStatus){
+                val route = Screen.Receipt.route + "/${receiptId}/${false}" +
+                        "/${true}" +
+                        "/${currentReceipt.status!=status}" +
+                        "/${currentReceipt.prepayment!=payedAmount!!.text}"
+                navController.navigate(route){
+                    popUpTo(Screen.Home.route){
+                        inclusive=false
+                    }
 
+                }
+            }
+
+        }
         Scaffold(
             snackbarHost = { SnackbarHost(snackbarHostState) },
             containerColor = CustomColors.lightBlue,
@@ -259,31 +272,14 @@ fun EditReceiptScreen(
                 TopBar(
                     onBackClicked = {
                         if (dataSaveStatus)
-                            navController.navigate(Screen.Home.route)
+                            navController.popBackStack(Screen.Home.route,inclusive = false)
                         else
                             openExitDialog.value = true
                     }
                 )
             },
             bottomBar = {
-                if (dataSaveStatus) {
-                    BottomBar(
-                        itemClicked = {
-                            if (it == Screen.EditReceipt.route) {
-                                viewModel.restartState()
-                                viewModel.restartCurrentReceipt()
-                                 openReceiveDateDialog.value = false
-                                 openDeliveryDateDialog.value =false
-                                 openStatusDialog.value = false
-                                 openExitDialog.value = false
-                                 openStatusSendSMSDialog.value =false
-                                 openPaymentSendSMSDialog.value= false
-                            } else {
 
-                            }
-                        }
-                    )
-                } else {
                     EditReceiptBottomBar(
                         dataSaveStatus = dataSaveStatus,
                         status = status!!,
@@ -335,8 +331,6 @@ fun EditReceiptScreen(
                             openStatusDialog.value = true
                         }
                     )
-                }
-
             }
         ) {
 
@@ -347,7 +341,7 @@ fun EditReceiptScreen(
                 },
                     onExitClicked = {
                         openExitDialog.value = false
-                        navController.popBackStack()
+                        navController.popBackStack(Screen.Home.route,inclusive = false)
                     }
                 )
 
@@ -367,109 +361,6 @@ fun EditReceiptScreen(
                 )
             }
 
-            LaunchedEffect(key1 =dataSaveStatusForSMS) {
-                if (dataSaveStatusForSMS) {
-                    if(currentReceipt.prepayment!= payedAmount!!.text)
-                        openPaymentSendSMSDialog.value = true
-                    if(currentReceipt.status!= status)
-                        openStatusSendSMSDialog.value = true
-
-                }
-            }
-
-            if (openPaymentSendSMSDialog.value) {
-                SendSmsDialog(
-                    onDismiss = {
-                        openPaymentSendSMSDialog.value = false
-                    },
-                    description = "آیا قصد ارسال رسید پیامکی در خصوص دریافت وجه را دارید؟",
-                    sendClicked = {
-                        generalReceipt = GeneralReceipt(
-                            id = receiptId!!,
-                            status = status,
-                            name = customerName,
-                            phone = phoneNumber,
-                            orderName = productName,
-                            deliveryTime = deliveryDate,
-                            receiptTime = receiveDate,
-                            cost = totalAmount?.text,
-                            prepayment = payedAmount?.text,
-                            confectioneryOrderSpecification =explainOfConfectioneryOrder,
-                            confectioneryOrderWeight =weightOfOrder,
-                            confectioneryDescription =detailsOfConfectioneryOrder,
-                            jewelryOrderSpecification =explainOfOrder,
-                            jewelryLoanerProblems =jewelryProductProblem,
-                            jewelryLoanerSpecification =detailsOfJewelry,
-                            laundryOrderType =typeOfLaundryOrder,
-                            laundryDescription =detailsOfLaundryOrder,
-                            otherJobsDescription =detailsOfOtherOrder,
-                            otherJobsOrderNumber =countOfOrder,
-                            photographyOrderSize =photoSize,
-                            photographyOrderNumber =photoNumber,
-                            repairLoanerProblems =productProblem,
-                            repairRisks =risks,
-                            repairAccessories =accessories,
-                            tailoringOrderSpecification =details,
-                            tailoringSizes =sizes
-                        )
-
-                        viewModel.paymentSendMessage(
-                            snackbarHostState = snackbarHostState,
-                           generalReceipt= generalReceipt,
-                            payedAmount =payedAmount!!.text
-
-                        )
-
-                        openPaymentSendSMSDialog.value = false
-
-                    },
-                    context = context
-                )
-            }
-            if (openStatusSendSMSDialog.value && status!=1) {
-                SendSmsDialog(
-                    onDismiss = {
-                        openStatusSendSMSDialog.value = false
-                    },
-                    description = "آیا قصد ارسال  پیامک در خصوص تغییر وضعیت را دارید؟",
-                    sendClicked = {
-                        generalReceipt = GeneralReceipt(
-                            id = receiptId!!,
-                            status = status,
-                            name = customerName,
-                            phone = phoneNumber,
-                            orderName = productName,
-                            deliveryTime = deliveryDate,
-                            receiptTime = receiveDate,
-                            cost = totalAmount?.text,
-                            prepayment = payedAmount?.text,
-                            confectioneryOrderSpecification =explainOfConfectioneryOrder,
-                            confectioneryOrderWeight =weightOfOrder,
-                            confectioneryDescription =detailsOfConfectioneryOrder,
-                            jewelryOrderSpecification =explainOfOrder,
-                            jewelryLoanerProblems =jewelryProductProblem,
-                            jewelryLoanerSpecification =detailsOfJewelry,
-                            laundryOrderType =typeOfLaundryOrder,
-                            laundryDescription =detailsOfLaundryOrder,
-                            otherJobsDescription =detailsOfOtherOrder,
-                            otherJobsOrderNumber =countOfOrder,
-                            photographyOrderSize =photoSize,
-                            photographyOrderNumber =photoNumber,
-                            repairLoanerProblems =productProblem,
-                            repairRisks =risks,
-                            repairAccessories =accessories,
-                            tailoringOrderSpecification =details,
-                            tailoringSizes =sizes
-                        )
-
-                        viewModel.sendMessage(generalReceipt,snackbarHostState)
-
-                        openStatusSendSMSDialog.value = false
-
-                    },
-                    context = context
-                )
-            }
 
 
 
@@ -497,19 +388,7 @@ fun EditReceiptScreen(
                 backgroundColor = CustomColors.lightGray,
                 textColor = CustomColors.darkPurple
             )
-            if (dataSaveStatus) {
-                ReceiptCard(
-                    modifier = Modifier
-                        .padding(
-                            start = 25.dp,
-                            end = 25.dp,
-                            top = it.calculateTopPadding(),
-                        )
-                        .fillMaxSize(),
-                    receiptCategory = viewModel.receiptCategory,
-                    generalReceipt=generalReceipt
-                )
-            } else {
+
                 Card(
                     modifier = Modifier
                         .padding(
@@ -956,7 +835,7 @@ fun EditReceiptScreen(
 
                     }
                 }
-            }
+
 
 
         }
@@ -965,7 +844,7 @@ fun EditReceiptScreen(
     }
     BackHandler {
         if (dataSaveStatus)
-            navController.navigate(Screen.Home.route)
+            navController.popBackStack(Screen.Home.route,inclusive = false)
         else
             openExitDialog.value = true
 

@@ -132,7 +132,7 @@ fun Home(
                     receiptCategory = viewModel.receiptCategory,
                     receipts = receiptsList.value,
                     navigateToScreen={id->
-                        val route = Screen.Receipt.route + "/${id}"
+                        val route = Screen.Receipt.route + "/${id}/${false}/${false}/${false}/${false}"
                         navigateToReceiptScreen(route)
                     }
                 )

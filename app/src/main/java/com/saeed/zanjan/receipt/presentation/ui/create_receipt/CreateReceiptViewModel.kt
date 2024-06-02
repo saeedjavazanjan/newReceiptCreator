@@ -1,13 +1,14 @@
 package com.saeed.zanjan.receipt.presentation.ui.create_receipt
 
 import android.content.SharedPreferences
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.saeed.zanjan.receipt.domain.models.GeneralReceipt
 import com.saeed.zanjan.receipt.interactor.ListOfReceipts
-import com.saeed.zanjan.receipt.interactor.SaveReceiptInDatabase
+import com.saeed.zanjan.receipt.interactor.ReceiptQueryInDatabase
 import com.saeed.zanjan.receipt.interactor.SendSms
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
@@ -17,27 +18,22 @@ import javax.inject.Inject
 @HiltViewModel
 class CreateReceiptViewModel
 @Inject constructor(
-    val saveReceiptInDatabase: SaveReceiptInDatabase,
-    val sendSms: SendSms,
+    val receiptQueryInDatabase: ReceiptQueryInDatabase,
     sharedPreferences: SharedPreferences,
-    val listOfReceipts: ListOfReceipts
 ) : ViewModel() {
 
     val receiptCategory=1//sharedPreferences.getInt("JOB_SUBJECT",-1)
 
     val loading = mutableStateOf(false)
     val dataSaveStatus = mutableStateOf(false)
-    val dataSaveStatusForSMS = mutableStateOf(false)
-
     val savedReceiptId= mutableStateOf(-1L)
 
-    val smsSenState = mutableStateOf("")
 
     fun saveInDatabase(
         generalReceipt: GeneralReceipt,
         snackbarHostState: SnackbarHostState,
     ) {
-        saveReceiptInDatabase.saveRepairReceipt(generalReceipt,receiptCategory).onEach { dataState ->
+        receiptQueryInDatabase.saveRepairReceipt(generalReceipt,receiptCategory).onEach { dataState ->
 
             dataState.loading.let {
                 loading.value = it
@@ -45,11 +41,9 @@ class CreateReceiptViewModel
             dataState.data?.let {
                 savedReceiptId.value=it
                 dataSaveStatus.value = true
-                snackbarHostState.showSnackbar("با موفقیت ذخیره شد")
-                dataSaveStatusForSMS.value = true
             }
             dataState.error?.let {
-                snackbarHostState.showSnackbar(it)
+                snackbarHostState.showSnackbar(it,duration = SnackbarDuration.Short)
             }
 
         }.launchIn(viewModelScope)
@@ -57,35 +51,11 @@ class CreateReceiptViewModel
 
     }
 
-     fun sendMessage(
-        generalReceipt: GeneralReceipt,
-    ) {
-        sendSms.receiptSendSMS(
-            generalReceipt,
-            receiptCategory
-        ).onEach { dataState ->
 
-            dataState.loading.let {
-                loading.value=it
-            }
-            dataState.data?.let {
-                smsSenState.value=it
-
-            }
-
-            dataState.error?.let {
-                smsSenState.value=it
-
-            }
-
-        }.launchIn(viewModelScope)
-
-    }
 
 
 fun restartState(){
     dataSaveStatus.value=false
-    dataSaveStatusForSMS.value=false
 }
 
 

@@ -103,6 +103,25 @@ interface ReceiptDao {
     fun updateOtherJobs(repair: OtherJobsEntity)
 
 
+    @Query("DELETE FROM confectionery WHERE id = :primaryKey")
+    suspend fun deleteConfectionery(primaryKey: Int): Int
+     @Query("DELETE FROM jewelry WHERE id = :primaryKey")
+    suspend fun deleteJewelry(primaryKey: Int): Int
+     @Query("DELETE FROM laundry WHERE id = :primaryKey")
+    suspend fun deleteLaundry(primaryKey: Int): Int
+     @Query("DELETE FROM otherJobs WHERE id = :primaryKey")
+    suspend fun deleteOtherJobs(primaryKey: Int): Int
+     @Query("DELETE FROM photography WHERE id = :primaryKey")
+    suspend fun deletePhotography(primaryKey: Int): Int
+     @Query("DELETE FROM repairs WHERE id = :primaryKey")
+    suspend fun deleteRepair(primaryKey: Int): Int
+     @Query("DELETE FROM tailoring WHERE id = :primaryKey")
+    suspend fun deleteTailoring(primaryKey: Int): Int
+
+
+
+
+
     /* @Insert (onConflict = OnConflictStrategy.REPLACE)
      suspend fun insertUserData(userData: UserDataEntity)
      @Insert(onConflict = OnConflictStrategy.REPLACE)

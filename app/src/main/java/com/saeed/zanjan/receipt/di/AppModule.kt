@@ -8,16 +8,9 @@ import com.google.gson.GsonBuilder
 import com.saeed.zanjan.receipt.BaseApplication
 import com.saeed.zanjan.receipt.cash.ReceiptDao
 import com.saeed.zanjan.receipt.cash.database.AppDatabase
-import com.saeed.zanjan.receipt.cash.model.ConfectioneryEntityMapper
 import com.saeed.zanjan.receipt.cash.model.EntitiesGeneralMapper
-import com.saeed.zanjan.receipt.cash.model.JewelryEntityMapper
-import com.saeed.zanjan.receipt.cash.model.LaundryEntityMapper
-import com.saeed.zanjan.receipt.cash.model.OtherJobsEntityMapper
-import com.saeed.zanjan.receipt.cash.model.PhotographyEntityMapper
-import com.saeed.zanjan.receipt.cash.model.RepairsEntityMapper
-import com.saeed.zanjan.receipt.cash.model.TailoringEntityMapper
 import com.saeed.zanjan.receipt.interactor.ListOfReceipts
-import com.saeed.zanjan.receipt.interactor.SaveReceiptInDatabase
+import com.saeed.zanjan.receipt.interactor.ReceiptQueryInDatabase
 import com.saeed.zanjan.receipt.interactor.SendSms
 import com.saeed.zanjan.receipt.interactor.UserRegistration
 import com.saeed.zanjan.receipt.network.RetrofitService
@@ -188,8 +181,8 @@ object AppModule {
     fun provideReceiptSaver(
         receiptDao: ReceiptDao,
         generalMapper: EntitiesGeneralMapper
-    ):SaveReceiptInDatabase{
-        return SaveReceiptInDatabase(
+    ):ReceiptQueryInDatabase{
+        return ReceiptQueryInDatabase(
            receiptDao=receiptDao,
             generalMapper=generalMapper
 
