@@ -9,6 +9,7 @@ import com.saeed.zanjan.receipt.BaseApplication
 import com.saeed.zanjan.receipt.cash.ReceiptDao
 import com.saeed.zanjan.receipt.cash.database.AppDatabase
 import com.saeed.zanjan.receipt.cash.model.EntitiesGeneralMapper
+import com.saeed.zanjan.receipt.interactor.ConnectionClass
 import com.saeed.zanjan.receipt.interactor.ListOfReceipts
 import com.saeed.zanjan.receipt.interactor.ReceiptQueryInDatabase
 import com.saeed.zanjan.receipt.interactor.SendSms
@@ -175,6 +176,11 @@ object AppModule {
     @Provides
     fun provideGeneralMapper(): EntitiesGeneralMapper {
         return EntitiesGeneralMapper()
+    }
+    @Singleton
+    @Provides
+    fun provideConnectionClass(): ConnectionClass {
+        return ConnectionClass()
     }
 
     @Singleton
