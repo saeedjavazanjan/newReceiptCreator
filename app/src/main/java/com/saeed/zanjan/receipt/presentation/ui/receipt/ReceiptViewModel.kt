@@ -1,13 +1,27 @@
 package com.saeed.zanjan.receipt.presentation.ui.receipt
 
+import android.Manifest
+import android.app.Application
+import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Picture
+import android.media.MediaScannerConnection
+import android.net.Uri
 import android.os.Environment
+import android.view.View
+import android.widget.FrameLayout
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.startActivity
 import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModel
@@ -16,14 +30,22 @@ import com.saeed.zanjan.receipt.domain.models.GeneralReceipt
 import com.saeed.zanjan.receipt.interactor.ListOfReceipts
 import com.saeed.zanjan.receipt.interactor.ReceiptQueryInDatabase
 import com.saeed.zanjan.receipt.interactor.SendSms
+import com.saeed.zanjan.receipt.interactor.ShareReceipt
+import com.saeed.zanjan.receipt.ui.theme.CustomColors
+import dagger.hilt.android.internal.Contexts.getApplication
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import javax.inject.Inject
+import kotlin.coroutines.resume
 
 @HiltViewModel
 class ReceiptViewModel
@@ -31,6 +53,7 @@ class ReceiptViewModel
     val listOfReceipts: ListOfReceipts,
     val receiptQueryInDatabase: ReceiptQueryInDatabase,
     val sharedPreferences: SharedPreferences,
+    val shareReceipt: ShareReceipt,
     val sendSms: SendSms
 ) : ViewModel() {
 
@@ -39,6 +62,27 @@ class ReceiptViewModel
     val deleteState = mutableStateOf(false)
 
     val currentReceipt = mutableStateOf(GeneralReceipt())
+
+
+    fun shareReceiptImage(
+        picture: Picture,
+        context: Context,
+        snackbarHostState: SnackbarHostState
+    ){
+        shareReceipt.shareReceipt(
+            picture,context
+        ).onEach { dataState ->
+            dataState.loading.let {
+                loading.value=it
+            }
+            dataState.error?.let {
+                snackbarHostState.showSnackbar(it, duration = SnackbarDuration.Short)
+            }
+
+        }.launchIn(viewModelScope)
+    }
+
+
 
     fun getReceiptById(
         receiptId: Int,
@@ -155,32 +199,6 @@ class ReceiptViewModel
         deleteState.value=false
     }
 
-    fun saveBitmapToFile(bitmap: Bitmap, fileName: String): File? {
-        val directory = File(Environment.getExternalStorageDirectory().toString() + "/receiptCreator")
-        if (!directory.exists()) {
-            directory.mkdirs()
-        }
-        val file = File(directory, "$fileName.png")
-        try {
-            val outputStream = FileOutputStream(file)
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
-            outputStream.flush()
-            outputStream.close()
-        } catch (e: IOException) {
-            e.printStackTrace()
-            return null
-        }
-        return file
-    }
 
-    fun shareImage(file: File,context:Context) {
-        val uri = FileProvider.getUriForFile(context, context.applicationContext.packageName + ".provider", file)
-        val intent = Intent(Intent.ACTION_SEND).apply {
-            type = "image/png"
-            putExtra(Intent.EXTRA_STREAM, uri)
-            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        }
-        context.startActivity(Intent.createChooser(intent, "Share Image"))
-    }
 
 }

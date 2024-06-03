@@ -68,7 +68,6 @@ import com.saeed.zanjan.receipt.presentation.components.OtherJobsFields
 import com.saeed.zanjan.receipt.presentation.components.PhotographyFields
 import com.saeed.zanjan.receipt.presentation.components.ReceiptCard
 import com.saeed.zanjan.receipt.presentation.components.RepairFields
-import com.saeed.zanjan.receipt.presentation.components.SendSmsDialog
 import com.saeed.zanjan.receipt.presentation.components.StatusDialog
 import com.saeed.zanjan.receipt.presentation.components.TailoringFields
 import com.saeed.zanjan.receipt.presentation.navigation.Screen
