@@ -12,6 +12,7 @@ import com.saeed.zanjan.receipt.cash.model.EntitiesGeneralMapper
 import com.saeed.zanjan.receipt.interactor.ListOfReceipts
 import com.saeed.zanjan.receipt.interactor.ReceiptQueryInDatabase
 import com.saeed.zanjan.receipt.interactor.SendSms
+import com.saeed.zanjan.receipt.interactor.ShareReceipt
 import com.saeed.zanjan.receipt.interactor.UserRegistration
 import com.saeed.zanjan.receipt.network.RetrofitService
 import com.saeed.zanjan.receipt.network.model.OtpDataDtoMapper
@@ -174,6 +175,12 @@ object AppModule {
     @Provides
     fun provideGeneralMapper(): EntitiesGeneralMapper {
         return EntitiesGeneralMapper()
+    }
+
+    @Singleton
+    @Provides
+    fun provideShareReceipt(): ShareReceipt {
+        return ShareReceipt()
     }
 
     @Singleton

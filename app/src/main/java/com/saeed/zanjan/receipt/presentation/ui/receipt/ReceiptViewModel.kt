@@ -9,6 +9,9 @@ import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Picture
+import android.media.MediaScannerConnection
+import android.net.Uri
 import android.os.Environment
 import android.view.View
 import android.widget.FrameLayout
@@ -27,6 +30,8 @@ import com.saeed.zanjan.receipt.domain.models.GeneralReceipt
 import com.saeed.zanjan.receipt.interactor.ListOfReceipts
 import com.saeed.zanjan.receipt.interactor.ReceiptQueryInDatabase
 import com.saeed.zanjan.receipt.interactor.SendSms
+import com.saeed.zanjan.receipt.interactor.ShareReceipt
+import com.saeed.zanjan.receipt.ui.theme.CustomColors
 import dagger.hilt.android.internal.Contexts.getApplication
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -48,6 +53,7 @@ class ReceiptViewModel
     val listOfReceipts: ListOfReceipts,
     val receiptQueryInDatabase: ReceiptQueryInDatabase,
     val sharedPreferences: SharedPreferences,
+    val shareReceipt: ShareReceipt,
     val sendSms: SendSms
 ) : ViewModel() {
 
@@ -56,85 +62,28 @@ class ReceiptViewModel
     val deleteState = mutableStateOf(false)
 
     val currentReceipt = mutableStateOf(GeneralReceipt())
-/*    fun requestStoragePermissionsAndShare(context: Context, content: @Composable () -> Unit) {
-        val permissions = arrayOf(
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.READ_EXTERNAL_STORAGE
-        )
 
-        val permissionsToRequest = permissions.filter {
-            ContextCompat.checkSelfPermission(context, it) != PackageManager.PERMISSION_GRANTED
-        }
 
-        if (permissionsToRequest.isNotEmpty()) {
-            // Use a method to request permissions and then proceed with sharing the image
-            viewModelScope.launch {
-                // Assuming permissions are granted here, handle the actual permission request as needed
-                withContext(Dispatchers.Main) {
-                 //   shareReceiptCardImage(context, content)
-                }
+    fun shareReceiptImage(
+        picture: Picture,
+        context: Context,
+        snackbarHostState: SnackbarHostState
+    ){
+        shareReceipt.shareReceipt(
+            picture,context
+        ).onEach { dataState ->
+            dataState.loading.let {
+                loading.value=it
             }
-        } else {
-            viewModelScope.launch(Dispatchers.Main) {
-               // shareReceiptCardImage(context, content)
+            dataState.error?.let {
+                snackbarHostState.showSnackbar(it, duration = SnackbarDuration.Short)
             }
-        }
+
+        }.launchIn(viewModelScope)
     }
 
-     suspend fun shareReceiptCardImage(context: Context, content: @Composable () -> Unit) {
-        val bitmap = getBitmapFromComposable(context, content)
-        val file = saveBitmapToFile(bitmap, "my_receipt_card_image")
-        file?.let {
-            shareImage(context, it)
-        }
-    }
 
-    private suspend fun getBitmapFromComposable(context: Context, content: @Composable () -> Unit): Bitmap? {
-        return suspendCancellableCoroutine { continuation ->
-            ScreenshotContentHolder.content = content
-            val intent = ScreenshotActivity.createIntent(context)
-            context.startActivity(intent)
-            continuation.invokeOnCancellation {
-                ScreenshotContentHolder.bitmap = null
-            }
-            viewModelScope.launch(Dispatchers.Main) {
-                while (ScreenshotContentHolder.bitmap == null) {
-                    // Wait until the bitmap is set by ScreenshotActivity
-                }
-                continuation.resume(ScreenshotContentHolder.bitmap)
-            }
-        }
-    }
 
-    private fun saveBitmapToFile(bitmap: Bitmap?, fileName: String): File? {
-        if (bitmap == null) return null
-
-        val directory = File(Environment.getExternalStorageDirectory().toString() + "/ComposeScreenshots")
-        if (!directory.exists()) {
-            directory.mkdirs()
-        }
-        val file = File(directory, "$fileName.png")
-        try {
-            val outputStream = FileOutputStream(file)
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
-            outputStream.flush()
-            outputStream.close()
-        } catch (e: IOException) {
-            e.printStackTrace()
-            return null
-        }
-        return file
-    }
-
-    private fun shareImage(context: Context, file: File) {
-        val uri = FileProvider.getUriForFile(context, context.applicationContext.packageName + ".provider", file)
-        val intent = Intent(Intent.ACTION_SEND).apply {
-            type = "image/png"
-            putExtra(Intent.EXTRA_STREAM, uri)
-            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        }
-        context.startActivity(Intent.createChooser(intent, "Share Image"))
-    }*/
     fun getReceiptById(
         receiptId: Int,
         snackbarHostState: SnackbarHostState
