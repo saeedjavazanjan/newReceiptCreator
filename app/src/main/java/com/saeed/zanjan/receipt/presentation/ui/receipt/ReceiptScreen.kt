@@ -1,49 +1,35 @@
 package com.saeed.zanjan.receipt.presentation.ui.receipt
 
-import HorizontalDashedLine
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity.RESULT_OK
+import android.app.AlertDialog
+import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothDevice
+import android.bluetooth.BluetoothManager
+import android.bluetooth.BluetoothSocket
 import android.content.Context
 import android.content.Intent
-import android.content.Intent.createChooser
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
-import android.graphics.Canvas
 import android.graphics.Picture
-import android.media.MediaScannerConnection
-import android.net.Uri
-import android.os.Environment
-import android.view.View
+import android.os.Build
+import android.widget.SimpleAdapter
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
@@ -62,27 +48,19 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithCache
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.draw
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
-import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.startActivity
 import androidx.navigation.NavController
-import com.saeed.zanjan.receipt.R
-import com.saeed.zanjan.receipt.domain.models.GeneralReceipt
+import com.saeed.zanjan.receipt.interactor.ConnectionClass
+import com.saeed.zanjan.receipt.presentation.components.BluetoothDevicesDialog
 import com.saeed.zanjan.receipt.presentation.components.BottomBar
 import com.saeed.zanjan.receipt.presentation.components.CustomAcceptDialog
 import com.saeed.zanjan.receipt.presentation.components.ReceiptCard
@@ -91,13 +69,8 @@ import com.saeed.zanjan.receipt.presentation.components.TopBar
 import com.saeed.zanjan.receipt.presentation.navigation.Screen
 import com.saeed.zanjan.receipt.ui.theme.CustomColors
 import com.saeed.zanjan.receipt.ui.theme.NewReceiptCreatorTheme
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.suspendCancellableCoroutine
-import java.io.File
-import kotlin.coroutines.resume
+import java.io.InputStream
+import java.io.OutputStream
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -130,15 +103,20 @@ fun ReceiptScreen(
     val openStatusSendSMSDialog = remember { mutableStateOf(false) }
     val openPaymentSendSMSDialog = remember { mutableStateOf(false) }
 
-
-
+    var hasBluetoothPermission by remember { mutableStateOf(false) }
+    
     var hasStoragePermission by remember { mutableStateOf(false) }
     var shouldShowRationale by remember { mutableStateOf(false) }
+    var btScanStatus by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
 
             hasStoragePermission = ContextCompat.checkSelfPermission(
                 context,Manifest.permission.WRITE_EXTERNAL_STORAGE,
+
+                ) == PackageManager.PERMISSION_GRANTED
+            hasBluetoothPermission = ContextCompat.checkSelfPermission(
+                context,Manifest.permission.BLUETOOTH,
 
                 ) == PackageManager.PERMISSION_GRANTED
 
@@ -153,6 +131,34 @@ fun ReceiptScreen(
         } else {
             shouldShowRationale = true
         }
+    }
+
+    val requestBluetoothPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            val blueToothManager:BluetoothManager= context.getSystemService(BluetoothManager::class.java)
+            val bluetoothAdapter:BluetoothAdapter?=blueToothManager.adapter
+            hasBluetoothPermission = true
+            if(bluetoothAdapter?.isEnabled==false){
+
+            }else{
+
+                btScanStatus=true
+            }
+
+        } else {
+            shouldShowRationale = true
+        }
+    }
+
+    val btActivityResultLauncher=rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ){result->
+        if(result.resultCode==RESULT_OK){
+            btScanStatus=true
+        }
+
     }
 
     if (shouldShowRationale) {
@@ -264,6 +270,22 @@ fun ReceiptScreen(
         themColor = CustomColors.lightBlue
     ) {
 
+        
+        if(btScanStatus){
+            
+            btScan(
+                context = context,
+                print = {
+                    viewModel.connectionClass.setPrinterName(it)
+                    viewModel.print(context = context, snackbarHostState = snackbarHostState)
+                },
+                close = {
+                    btScanStatus=false
+                }
+
+
+            )
+        }
 
         if(openSendSmsDialog.value){
             SendSmsDialog(
@@ -360,11 +382,21 @@ fun ReceiptScreen(
 
                                 }
 
-
-
-
                             }
+                            "print"-> {
+                               if(hasBluetoothPermission){
+                                   val enableBtIntent=Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+                                   btActivityResultLauncher.launch(enableBtIntent)
+                               }else{
+                                   if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
+                                       requestBluetoothPermissionLauncher.launch(Manifest.permission.BLUETOOTH_CONNECT)
 
+                                   }else{
+                                       requestBluetoothPermissionLauncher.launch(Manifest.permission.BLUETOOTH_ADMIN)
+
+                                   }
+                               }
+                            }
                         }
 
                     }
@@ -420,7 +452,8 @@ fun ReceiptScreen(
                 ) {
                     ReceiptCardForShare(
                         modifier = Modifier
-                            .fillMaxSize().padding(10.dp),
+                            .fillMaxSize()
+                            .padding(10.dp),
                         receiptCategory = receiptCategory,
                         generalReceipt = currentReceipt.value
                     )
@@ -459,4 +492,50 @@ fun ReceiptScreen(
     }
 
 }
+@Composable
+@SuppressLint("MissingPermission")
+ fun btScan(context: Context,print:(String)->Unit, close:()->Unit){
+    var openBtDevicesList by remember {
+        mutableStateOf(true)
+    }
+
+    val blueToothManager:BluetoothManager= context.getSystemService(BluetoothManager::class.java)
+     val bluetoothAdapter:BluetoothAdapter?=blueToothManager.adapter
+     val pairedDevices:Set<BluetoothDevice> = bluetoothAdapter?.bondedDevices as Set<BluetoothDevice>
+    var data:MutableList<MutableMap<String?,Any?>?>?=null
+    data=ArrayList()
+
+    if(pairedDevices.isNotEmpty()){
+        val dataNum1:MutableMap<String?,Any?> = HashMap()
+        dataNum1["A"]=""
+        dataNum1["B"]=""
+        data.add(dataNum1)
+        for (device in pairedDevices){
+            val dataNum:MutableMap<String?,Any?> = HashMap()
+            dataNum["A"]=device.name
+            dataNum["B"]=device.address
+            data.add(dataNum)
+        }
+        if(openBtDevicesList){
+            BluetoothDevicesDialog(
+                onDismiss = {
+                    openBtDevicesList=false
+                    close()
+                },
+                devices = data,
+                itemClicked = {
+                    openBtDevicesList=false
+                    print(it)
+                    close()
+                }
+
+
+            )
+        }
+
+
+    }else{
+        Toast.makeText(context,"notdevice found",Toast.LENGTH_SHORT).show()
+    }
+ }
 

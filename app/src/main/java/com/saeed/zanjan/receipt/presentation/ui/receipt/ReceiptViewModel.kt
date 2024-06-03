@@ -27,6 +27,7 @@ import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.saeed.zanjan.receipt.domain.models.GeneralReceipt
+import com.saeed.zanjan.receipt.interactor.ConnectionClass
 import com.saeed.zanjan.receipt.interactor.ListOfReceipts
 import com.saeed.zanjan.receipt.interactor.ReceiptQueryInDatabase
 import com.saeed.zanjan.receipt.interactor.SendSms
@@ -54,7 +55,8 @@ class ReceiptViewModel
     val receiptQueryInDatabase: ReceiptQueryInDatabase,
     val sharedPreferences: SharedPreferences,
     val shareReceipt: ShareReceipt,
-    val sendSms: SendSms
+    val sendSms: SendSms,
+    val connectionClass: ConnectionClass
 ) : ViewModel() {
 
     val receiptCategory = 1//sharedPreferences.getInt("JOB_SUBJECT",-1)
@@ -194,10 +196,29 @@ class ReceiptViewModel
         }.launchIn(viewModelScope)
     }
 
+
+    fun print(context: Context,snackbarHostState: SnackbarHostState){
+        connectionClass.intentPrint("gfsgrgrgrgrg", context = context).onEach { dataState ->
+
+            dataState.loading.let {
+                loading.value=it
+            }
+            dataState.data?.let {
+                snackbarHostState.showSnackbar(it)
+
+            }
+            dataState.error?.let {
+                snackbarHostState.showSnackbar(it)
+            }
+
+        }.launchIn(viewModelScope)
+    }
+
     fun restartState(){
 
         deleteState.value=false
     }
+
 
 
 

@@ -116,10 +116,12 @@ fun BottomBar(
                         containerColor = CustomColors.lightGray
                     ),
                     onClick = {
+                        itemClicked("print")
+
                     },
                 ) {
                     Icon(
-                        painter = painterResource(id = R.drawable.signeture),
+                        painter = painterResource(id = R.drawable.printer),
                         tint = CustomColors.darkPurple,
                         contentDescription = null
                     )
