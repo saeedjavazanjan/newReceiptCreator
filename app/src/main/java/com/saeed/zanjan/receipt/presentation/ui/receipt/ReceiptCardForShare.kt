@@ -3,6 +3,7 @@ package com.saeed.zanjan.receipt.presentation.ui.receipt
 import HorizontalDashedLine
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,6 +27,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
@@ -38,48 +40,75 @@ import com.saeed.zanjan.receipt.ui.theme.CustomColors
 @Composable
 fun ReceiptCardForShare(
     modifier: Modifier,
-    receiptCategory:Int?,
+    receiptCategory: Int?,
     generalReceipt: GeneralReceipt
-){
+) {
     Card(
-        modifier
-        ,
-        border= BorderStroke(3.dp,CustomColors.lightBlue),
-        shape = RoundedCornerShape( 16.dp),
+        modifier,
+        border = BorderStroke(3.dp, CustomColors.lightBlue),
+        shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
             containerColor = Color.White,
             contentColor = CustomColors.lightBlue,
         )
 
     ) {
-        Column{
+        Column {
             Column(
                 modifier = Modifier
-                    .weight(1f).padding(vertical = 20.dp)
+                    .weight(1f)
+                    .padding(vertical = 20.dp)
                     .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(20.dp)
             ) {
                 Row(
-                    modifier = Modifier.padding(start=30.dp,end=30.dp)
+                    modifier = Modifier.padding(start = 30.dp, end = 30.dp)
+
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.profile),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(40.dp)
+                            .clip(CircleShape)
+                    )
+                    Spacer(modifier = Modifier.size(15.dp))
+
+                    Text(
+                        modifier = Modifier
+                            .padding(1.dp)
+                            .align(Alignment.CenterVertically),
+                        text = "وب واژگان",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = CustomColors.bitterDarkPurple
+                    )
+                }
+
+
+
+
+
+                Row(
+                    modifier = Modifier.padding(start = 30.dp, end = 30.dp)
                 ) {
                     Column {
 
                         Text(
                             modifier = Modifier
-                                .padding(3.dp)
+                                .padding(1.dp)
                                 .align(Alignment.CenterHorizontally),
                             text = "تاریخ دریافت",
-                            style = MaterialTheme.typography.bodyMedium,
+                            style = MaterialTheme.typography.bodySmall,
                             color = CustomColors.bitterDarkPurple
                         )
 
                         generalReceipt.receiptTime?.let {
                             Text(
                                 modifier = Modifier
-                                    .padding(3.dp)
+                                    .padding(1.dp)
                                     .align(Alignment.CenterHorizontally),
                                 text = it,
-                                style = MaterialTheme.typography.bodyMedium,
+                                style = MaterialTheme.typography.bodySmall,
                                 color = CustomColors.darkPurple
                             )
                         }
@@ -89,19 +118,19 @@ fun ReceiptCardForShare(
                     Column {
                         Text(
                             modifier = Modifier
-                                .padding(3.dp)
+                                .padding(1.dp)
                                 .align(Alignment.CenterHorizontally),
                             text = "موعد تحویل",
-                            style = MaterialTheme.typography.bodyMedium,
+                            style = MaterialTheme.typography.bodySmall,
                             color = CustomColors.bitterDarkPurple
                         )
                         generalReceipt.deliveryTime?.let {
                             Text(
                                 modifier = Modifier
-                                    .padding(3.dp)
+                                    .padding(1.dp)
                                     .align(Alignment.CenterHorizontally),
                                 text = it,
-                                style = MaterialTheme.typography.bodyMedium,
+                                style = MaterialTheme.typography.bodySmall,
                                 color = CustomColors.darkPurple
                             )
                         }
@@ -130,11 +159,13 @@ fun ReceiptCardForShare(
                         }
                     }
 
-                    Box(modifier =
-                    Modifier
-                        .weight(1f)
-                        .height(2.dp)
-                        .padding(start = 5.dp, end = 5.dp)){
+                    Box(
+                        modifier =
+                        Modifier
+                            .weight(1f)
+                            .height(2.dp)
+                            .padding(start = 5.dp, end = 5.dp)
+                    ) {
                         HorizontalDashedLine()
 
                     }
@@ -158,172 +189,203 @@ fun ReceiptCardForShare(
                         }
                     }
                 }
+                Row {
+                    Column(
+                        modifier = Modifier
+                            .padding(horizontal = 10.dp)
+                    ) {
 
-                Column(
-                    modifier = Modifier
-                        .padding(horizontal = 10.dp)
-                ) {
-                    Text(
-                        modifier = Modifier
-                            .padding(3.dp)
-                            .align(Alignment.Start),
-                        text = "نام مشتری",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = CustomColors.bitterDarkPurple
-                    )
-                    Text(
-                        modifier = Modifier
-                            .padding(3.dp)
-                            .align(Alignment.Start),
-                        text = generalReceipt.name,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = CustomColors.darkPurple
-                    )
-                }
-                Column(
-                    modifier = Modifier
-                        .padding(horizontal = 10.dp)
-                ) {
-                    Text(
-                        modifier = Modifier
-                            .padding(3.dp)
-                            .align(Alignment.Start),
-                        text = "شماره تماس",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = CustomColors.bitterDarkPurple
-                    )
-                    generalReceipt.phone?.let {
                         Text(
                             modifier = Modifier
-                                .padding(3.dp)
+                                .padding(1.dp)
                                 .align(Alignment.Start),
-                            text = it,
-                            style = MaterialTheme.typography.bodyMedium,
+                            text = "نام مشتری",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = CustomColors.bitterDarkPurple
+                        )
+                        Text(
+                            modifier = Modifier
+                                .padding(1.dp)
+                                .align(Alignment.Start),
+                            text = generalReceipt.name,
+                            style = MaterialTheme.typography.bodySmall,
                             color = CustomColors.darkPurple
                         )
                     }
-                }
-                Column(
-                    modifier = Modifier
-                        .padding(horizontal = 10.dp)
-                ) {
-                    Text(
+                    Spacer(modifier = Modifier.weight(1f))
+                    Column(
                         modifier = Modifier
-                            .padding(3.dp)
-                            .align(Alignment.Start),
-                        text = "نام کالا",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = CustomColors.bitterDarkPurple
-                    )
-                    generalReceipt.orderName?.let {
+                            .padding(horizontal = 30.dp)
+                    ) {
                         Text(
                             modifier = Modifier
-                                .padding(3.dp)
+                                .padding(1.dp)
                                 .align(Alignment.Start),
-                            text = it,
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = CustomColors.darkPurple
+                            text = "نام کالا",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = CustomColors.bitterDarkPurple
                         )
+                        generalReceipt.orderName?.let {
+                            Text(
+                                modifier = Modifier
+                                    .padding(1.dp)
+                                    .align(Alignment.Start),
+                                text = it,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = CustomColors.darkPurple
+                            )
+                        }
                     }
                 }
-                Divider(
-                    color = CustomColors.lightGray,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(2.dp)
-                        .padding(horizontal = 5.dp)
-                )
-                when(receiptCategory){
-                    0->{
+
+
+
+                when (receiptCategory) {
+                    0 -> {
                         RepairItems(generalReceipt)
                     }
-                    1->{
+
+                    1 -> {
                         RepairItems(generalReceipt)
 
                     }
-                    2->{
+
+                    2 -> {
                         RepairItems(generalReceipt)
 
                     }
-                    3->{
+
+                    3 -> {
                         TailoringItems(generalReceipt)
 
                     }
-                    4->{
+
+                    4 -> {
                         JewelryItems(generalReceipt)
                     }
-                    5->{
+
+                    5 -> {
                         PhotographyItems(generalReceipt)
                     }
-                    6->{
+
+                    6 -> {
                         LaundryItems(generalReceipt)
                     }
-                    7->{
+
+                    7 -> {
                         ConfectioneryItems(generalReceipt)
 
                     }
-                    8->{
+
+                    8 -> {
                         OtherJobsItems(generalReceipt)
 
                     }
 
                 }
+                Row {
+                    Column(
+                        modifier = Modifier
+                            .padding(horizontal = 10.dp)
+                    ) {
+                        Text(
+                            modifier = Modifier
+                                .padding(1.dp)
+                                .align(Alignment.Start),
+                            text = "مبلغ کل",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = CustomColors.bitterDarkPurple
+                        )
+                        generalReceipt.cost?.let {
+                            Text(
+                                modifier = Modifier
+                                    .padding(1.dp)
+                                    .align(Alignment.Start),
+                                text = it,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = CustomColors.darkPurple
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.weight(1f))
+                    Column(
+                        modifier = Modifier
+                            .padding(horizontal = 30.dp)
+                    ) {
+                        Text(
+                            modifier = Modifier
+                                .padding(1.dp)
+                                .align(Alignment.Start),
+                            text = "مبلغ پرداختی",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = CustomColors.bitterDarkPurple
+                        )
+                        generalReceipt.prepayment?.let {
+                            Text(
+                                modifier = Modifier
+                                    .padding(1.dp)
+                                    .align(Alignment.Start),
+                                text = it,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = CustomColors.darkPurple
+                            )
+                        }
+
+
+                    }
+                }
+
+                Column(
+                    modifier = Modifier
+                        .padding(horizontal = 10.dp)
+                ) {
+                    Text(
+                        modifier = Modifier
+                            .padding(1.dp)
+                            .align(Alignment.Start),
+                        text = "قوانین",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = CustomColors.bitterDarkPurple
+                    )
+                    Text(
+                        modifier = Modifier
+                            .padding(1.dp)
+                            .fillMaxWidth()
+                            .align(Alignment.Start),
+                        text = "خرابی به عهده مشتری\nخرابی به عهده مشتری\nخرابی به عهده مشتری\nخرابی به عهده مشتری",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = CustomColors.darkPurple
+                    )
+
+                }
+                Spacer(modifier = Modifier.weight(1f))
+
                 Divider(
                     color = CustomColors.lightGray,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(2.dp)
+                        .height(1.dp)
                         .padding(horizontal = 5.dp)
                 )
+
                 Column(
                     modifier = Modifier
                         .padding(horizontal = 10.dp)
+                        .fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
                         modifier = Modifier
-                            .padding(3.dp)
-                            .align(Alignment.Start),
-                        text = "مبلغ کل",
-                        style = MaterialTheme.typography.bodyMedium,
+                            .padding(1.dp)
+                            .align(Alignment.CenterHorizontally),
+                        text = "0215455555",
+                        style = MaterialTheme.typography.bodySmall,
                         color = CustomColors.bitterDarkPurple
                     )
-                    generalReceipt.cost?.let {
-                        Text(
-                            modifier = Modifier
-                                .padding(3.dp)
-                                .align(Alignment.Start),
-                            text = it,
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = CustomColors.darkPurple
-                        )
-                    }
-                }
-                Column(
-                    modifier = Modifier
-                        .padding(horizontal = 10.dp)
-                ) {
-                    Text(
-                        modifier = Modifier
-                            .padding(3.dp)
-                            .align(Alignment.Start),
-                        text = "مبلغ پرداختی",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = CustomColors.bitterDarkPurple
-                    )
-                    generalReceipt.prepayment?.let {
-                        Text(
-                            modifier = Modifier
-                                .padding(3.dp)
-                                .align(Alignment.Start),
-                            text = it,
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = CustomColors.darkPurple
-                        )
-                    }
-                    Spacer(modifier = Modifier.size(90.dp))
+
+
                 }
             }
-
 
 
         }
@@ -335,29 +397,29 @@ fun ReceiptCardForShare(
 @Composable
 fun RepairItems(
     generalReceipt: GeneralReceipt
-){
+) {
     Column(
         modifier = Modifier
             .padding(horizontal = 10.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp)
-    ){
+    ) {
         Column {
             Text(
                 modifier = Modifier
-                    .padding(3.dp)
+                    .padding(1.dp)
                     .align(Alignment.Start),
                 text = "مشکل محصول ",
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodySmall,
                 color = CustomColors.bitterDarkPurple
             )
             generalReceipt.repairLoanerProblems?.let {
                 Text(
                     modifier = Modifier
-                        .padding(3.dp)
+                        .padding(1.dp)
                         .fillMaxWidth()
                         .align(Alignment.Start),
                     text = it,
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = MaterialTheme.typography.bodySmall,
                     color = CustomColors.darkPurple
                 )
             }
@@ -365,19 +427,19 @@ fun RepairItems(
         Column {
             Text(
                 modifier = Modifier
-                    .padding(3.dp)
+                    .padding(1.dp)
                     .align(Alignment.Start),
                 text = "خطرات احتمالی و توضیحات",
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodySmall,
                 color = CustomColors.bitterDarkPurple
             )
             generalReceipt.repairRisks?.let {
                 Text(
                     modifier = Modifier
-                        .padding(3.dp)
+                        .padding(1.dp)
                         .align(Alignment.Start),
                     text = it,
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = MaterialTheme.typography.bodySmall,
                     color = CustomColors.darkPurple
                 )
             }
@@ -385,19 +447,19 @@ fun RepairItems(
         Column {
             Text(
                 modifier = Modifier
-                    .padding(3.dp)
+                    .padding(1.dp)
                     .align(Alignment.Start),
                 text = "لوازم همراه ",
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodySmall,
                 color = CustomColors.bitterDarkPurple
             )
             generalReceipt.repairAccessories?.let {
                 Text(
                     modifier = Modifier
-                        .padding(3.dp)
+                        .padding(1.dp)
                         .align(Alignment.Start),
                     text = it,
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = MaterialTheme.typography.bodySmall,
                     color = CustomColors.darkPurple
                 )
             }
@@ -406,31 +468,33 @@ fun RepairItems(
 
 
 }
+
 @Composable
 fun TailoringItems(
     generalReceipt: GeneralReceipt
-){
-    Column( modifier = Modifier
-        .padding(horizontal = 10.dp),
+) {
+    Column(
+        modifier = Modifier
+            .padding(horizontal = 10.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp)
-    ){
+    ) {
         Column {
             Text(
                 modifier = Modifier
-                    .padding(3.dp)
+                    .padding(1.dp)
                     .align(Alignment.Start),
                 text = "مشخصات ",
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodySmall,
                 color = CustomColors.bitterDarkPurple
             )
             generalReceipt.tailoringOrderSpecification?.let {
                 Text(
                     modifier = Modifier
-                        .padding(3.dp)
+                        .padding(1.dp)
                         .fillMaxWidth()
                         .align(Alignment.Start),
                     text = it,
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = MaterialTheme.typography.bodySmall,
                     color = CustomColors.darkPurple
                 )
             }
@@ -438,19 +502,19 @@ fun TailoringItems(
         Column {
             Text(
                 modifier = Modifier
-                    .padding(3.dp)
+                    .padding(1.dp)
                     .align(Alignment.Start),
                 text = "اندازه ها",
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodySmall,
                 color = CustomColors.bitterDarkPurple
             )
             generalReceipt.tailoringSizes?.let {
                 Text(
                     modifier = Modifier
-                        .padding(3.dp)
+                        .padding(1.dp)
                         .align(Alignment.Start),
                     text = it,
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = MaterialTheme.typography.bodySmall,
                     color = CustomColors.darkPurple
                 )
             }
@@ -458,33 +522,34 @@ fun TailoringItems(
     }
 
 }
+
 @Composable
 fun JewelryItems(
     generalReceipt: GeneralReceipt
 
-){
+) {
     Column(
         modifier = Modifier
             .padding(horizontal = 10.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp)
-    ){
+    ) {
         Column {
             Text(
                 modifier = Modifier
-                    .padding(3.dp)
+                    .padding(1.dp)
                     .align(Alignment.Start),
                 text = "مشکل محصول ",
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodySmall,
                 color = CustomColors.bitterDarkPurple
             )
             generalReceipt.jewelryLoanerProblems?.let {
                 Text(
                     modifier = Modifier
-                        .padding(3.dp)
+                        .padding(1.dp)
                         .fillMaxWidth()
                         .align(Alignment.Start),
                     text = it,
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = MaterialTheme.typography.bodySmall,
                     color = CustomColors.darkPurple
                 )
             }
@@ -492,19 +557,19 @@ fun JewelryItems(
         Column {
             Text(
                 modifier = Modifier
-                    .padding(3.dp)
+                    .padding(1.dp)
                     .align(Alignment.Start),
                 text = "توضیحات سفارش ساخت",
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodySmall,
                 color = CustomColors.bitterDarkPurple
             )
             generalReceipt.jewelryOrderSpecification?.let {
                 Text(
                     modifier = Modifier
-                        .padding(3.dp)
+                        .padding(1.dp)
                         .align(Alignment.Start),
                     text = it,
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = MaterialTheme.typography.bodySmall,
                     color = CustomColors.darkPurple
                 )
             }
@@ -512,52 +577,53 @@ fun JewelryItems(
         Column {
             Text(
                 modifier = Modifier
-                    .padding(3.dp)
+                    .padding(1.dp)
                     .align(Alignment.Start),
                 text = "مشخصات محصول تعمیری",
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodySmall,
                 color = CustomColors.bitterDarkPurple
             )
             generalReceipt.jewelryLoanerSpecification?.let {
                 Text(
                     modifier = Modifier
-                        .padding(3.dp)
+                        .padding(1.dp)
                         .align(Alignment.Start),
                     text = it,
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = MaterialTheme.typography.bodySmall,
                     color = CustomColors.darkPurple
                 )
             }
         }
     }
 }
+
 @Composable
 fun PhotographyItems(
     generalReceipt: GeneralReceipt
 
-){
+) {
     Column(
         modifier = Modifier
             .padding(horizontal = 10.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp)
-    ){
+    ) {
         Column {
             Text(
                 modifier = Modifier
-                    .padding(3.dp)
+                    .padding(1.dp)
                     .align(Alignment.Start),
                 text = "تعداد سفارش",
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodySmall,
                 color = CustomColors.bitterDarkPurple
             )
             generalReceipt.photographyOrderNumber?.let {
                 Text(
                     modifier = Modifier
-                        .padding(3.dp)
+                        .padding(1.dp)
                         .fillMaxWidth()
                         .align(Alignment.Start),
                     text = it,
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = MaterialTheme.typography.bodySmall,
                     color = CustomColors.darkPurple
                 )
             }
@@ -565,52 +631,53 @@ fun PhotographyItems(
         Column {
             Text(
                 modifier = Modifier
-                    .padding(3.dp)
+                    .padding(1.dp)
                     .align(Alignment.Start),
                 text = "توضیحات و اندازه ها ",
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodySmall,
                 color = CustomColors.bitterDarkPurple
             )
             generalReceipt.photographyOrderSize?.let {
                 Text(
                     modifier = Modifier
-                        .padding(3.dp)
+                        .padding(1.dp)
                         .align(Alignment.Start),
                     text = it,
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = MaterialTheme.typography.bodySmall,
                     color = CustomColors.darkPurple
                 )
             }
         }
     }
 }
+
 @Composable
 fun LaundryItems(
     generalReceipt: GeneralReceipt
 
-){
+) {
     Column(
         modifier = Modifier
             .padding(horizontal = 10.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp)
-    ){
+    ) {
         Column {
             Text(
                 modifier = Modifier
-                    .padding(3.dp)
+                    .padding(1.dp)
                     .align(Alignment.Start),
                 text = "نوع سفارش",
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodySmall,
                 color = CustomColors.bitterDarkPurple
             )
             generalReceipt.laundryOrderType?.let {
                 Text(
                     modifier = Modifier
-                        .padding(3.dp)
+                        .padding(1.dp)
                         .fillMaxWidth()
                         .align(Alignment.Start),
                     text = it,
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = MaterialTheme.typography.bodySmall,
                     color = CustomColors.darkPurple
                 )
             }
@@ -618,52 +685,53 @@ fun LaundryItems(
         Column {
             Text(
                 modifier = Modifier
-                    .padding(3.dp)
+                    .padding(1.dp)
                     .align(Alignment.Start),
                 text = "توضیحات سفارش",
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodySmall,
                 color = CustomColors.bitterDarkPurple
             )
             generalReceipt.laundryDescription?.let {
                 Text(
                     modifier = Modifier
-                        .padding(3.dp)
+                        .padding(1.dp)
                         .align(Alignment.Start),
                     text = it,
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = MaterialTheme.typography.bodySmall,
                     color = CustomColors.darkPurple
                 )
             }
         }
     }
 }
+
 @Composable
 fun ConfectioneryItems(
     generalReceipt: GeneralReceipt
 
-){
+) {
     Column(
         modifier = Modifier
             .padding(horizontal = 10.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp)
-    ){
+    ) {
         Column {
             Text(
                 modifier = Modifier
-                    .padding(3.dp)
+                    .padding(1.dp)
                     .align(Alignment.Start),
                 text = "توضیحات سفارش",
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodySmall,
                 color = CustomColors.bitterDarkPurple
             )
             generalReceipt.confectioneryDescription?.let {
                 Text(
                     modifier = Modifier
-                        .padding(3.dp)
+                        .padding(1.dp)
                         .fillMaxWidth()
                         .align(Alignment.Start),
                     text = it,
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = MaterialTheme.typography.bodySmall,
                     color = CustomColors.darkPurple
                 )
             }
@@ -671,19 +739,19 @@ fun ConfectioneryItems(
         Column {
             Text(
                 modifier = Modifier
-                    .padding(3.dp)
+                    .padding(1.dp)
                     .align(Alignment.Start),
                 text = "مشخصات",
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodySmall,
                 color = CustomColors.bitterDarkPurple
             )
             generalReceipt.confectioneryOrderSpecification?.let {
                 Text(
                     modifier = Modifier
-                        .padding(3.dp)
+                        .padding(1.dp)
                         .align(Alignment.Start),
                     text = it,
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = MaterialTheme.typography.bodySmall,
                     color = CustomColors.darkPurple
                 )
             }
@@ -691,52 +759,53 @@ fun ConfectioneryItems(
         Column {
             Text(
                 modifier = Modifier
-                    .padding(3.dp)
+                    .padding(1.dp)
                     .align(Alignment.Start),
                 text = "وزن",
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodySmall,
                 color = CustomColors.bitterDarkPurple
             )
             generalReceipt.confectioneryOrderWeight?.let {
                 Text(
                     modifier = Modifier
-                        .padding(3.dp)
+                        .padding(1.dp)
                         .align(Alignment.Start),
                     text = it,
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = MaterialTheme.typography.bodySmall,
                     color = CustomColors.darkPurple
                 )
             }
         }
     }
 }
+
 @Composable
 fun OtherJobsItems(
     generalReceipt: GeneralReceipt
 
-){
+) {
     Column(
         modifier = Modifier
             .padding(horizontal = 10.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp)
-    ){
+    ) {
         Column {
             Text(
                 modifier = Modifier
-                    .padding(3.dp)
+                    .padding(1.dp)
                     .align(Alignment.Start),
                 text = "تعداد سفارش",
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodySmall,
                 color = CustomColors.bitterDarkPurple
             )
             generalReceipt.otherJobsOrderNumber?.let {
                 Text(
                     modifier = Modifier
-                        .padding(3.dp)
+                        .padding(1.dp)
                         .fillMaxWidth()
                         .align(Alignment.Start),
                     text = it,
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = MaterialTheme.typography.bodySmall,
                     color = CustomColors.darkPurple
                 )
             }
@@ -744,19 +813,19 @@ fun OtherJobsItems(
         Column {
             Text(
                 modifier = Modifier
-                    .padding(3.dp)
+                    .padding(1.dp)
                     .align(Alignment.Start),
                 text = "توضیحات سفارش",
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodySmall,
                 color = CustomColors.bitterDarkPurple
             )
             generalReceipt.otherJobsDescription?.let {
                 Text(
                     modifier = Modifier
-                        .padding(3.dp)
+                        .padding(1.dp)
                         .align(Alignment.Start),
                     text = it,
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = MaterialTheme.typography.bodySmall,
                     color = CustomColors.darkPurple
                 )
             }
@@ -764,19 +833,19 @@ fun OtherJobsItems(
         Column {
             Text(
                 modifier = Modifier
-                    .padding(3.dp)
+                    .padding(1.dp)
                     .align(Alignment.Start),
                 text = "وزن",
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodySmall,
                 color = CustomColors.bitterDarkPurple
             )
             generalReceipt.confectioneryOrderWeight?.let {
                 Text(
                     modifier = Modifier
-                        .padding(3.dp)
+                        .padding(1.dp)
                         .align(Alignment.Start),
                     text = it,
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = MaterialTheme.typography.bodySmall,
                     color = CustomColors.darkPurple
                 )
             }
