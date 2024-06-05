@@ -42,7 +42,7 @@ fun ReceiptListCard(
 
     Card(
         modifier = Modifier
-            .padding(16.dp)
+            .padding(5.dp)
             .fillMaxWidth().clickable {
                 onReceiptClickListener(receipt.id)
             },
@@ -74,8 +74,14 @@ fun ReceiptListCard(
                         color = CustomColors.darkPurple
                     )
                 }
-                Spacer(modifier =Modifier.weight(1f) )
 
+                Spacer(modifier =Modifier.weight(1f) )
+                Text(
+                    modifier = Modifier.padding(horizontal = 20.dp),
+                    text = receipt.id.toString(),
+                    style=MaterialTheme.typography.bodyMedium,
+                    color = CustomColors.darkPurple
+                )
                 Card(
                     modifier = Modifier
                         .width(40.dp)

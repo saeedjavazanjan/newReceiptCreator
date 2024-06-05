@@ -81,6 +81,25 @@ interface ReceiptDao {
     @Query("SELECT * FROM tailoring WHERE id = :Id")
     suspend fun getTailoringReceipt(Id: Int): TailoringEntity
 
+
+    @Query("SELECT * FROM confectionery WHERE status = :status")
+    suspend fun filterConfectionery(status: Int): List<ConfectioneryEntity>
+       @Query("SELECT * FROM jewelry WHERE status = :status")
+    suspend fun filterJewelry(status: Int): List<JewelryEntity>
+       @Query("SELECT * FROM laundry WHERE status = :status")
+    suspend fun filterLaundry(status: Int): List<LaundryEntity>
+       @Query("SELECT * FROM otherJobs WHERE status = :status")
+    suspend fun filterOtherJobs(status: Int): List<OtherJobsEntity>
+       @Query("SELECT * FROM photography WHERE status = :status")
+    suspend fun filterPhotography(status: Int): List<PhotographyEntity>
+       @Query("SELECT * FROM repairs WHERE status = :status")
+    suspend fun filterRepairs(status: Int): List<RepairsEntity>
+       @Query("SELECT * FROM tailoring WHERE status = :status")
+    suspend fun filterTailoring(status: Int): List<TailoringEntity>
+
+
+
+
     @Update
     fun updateRepair(repair: RepairsEntity)
 
@@ -117,6 +136,84 @@ interface ReceiptDao {
     suspend fun deleteRepair(primaryKey: Int): Int
      @Query("DELETE FROM tailoring WHERE id = :primaryKey")
     suspend fun deleteTailoring(primaryKey: Int): Int
+
+    @Query("""
+        SELECT * FROM confectionery 
+        WHERE id LIKE '%' || :query || '%'
+        OR name LIKE '%' || :query || '%' 
+        OR OrderName LIKE '%' || :query || '%' 
+        OR phone LIKE '%' || :query || '%' 
+        ORDER BY receiptTime 
+        """)
+    suspend fun searchConfectioneries(
+        query: String,
+    ): List<ConfectioneryEntity>
+ @Query("""
+        SELECT * FROM jewelry 
+        WHERE id LIKE '%' || :query || '%'
+        OR name LIKE '%' || :query || '%' 
+        OR loanerName LIKE '%' || :query || '%' 
+        OR phone LIKE '%' || :query || '%' 
+        ORDER BY receiptTime 
+        """)
+    suspend fun searchJewelry(
+        query: String,
+    ): List<JewelryEntity>
+ @Query("""
+        SELECT * FROM laundry 
+        WHERE id LIKE '%' || :query || '%'
+        OR name LIKE '%' || :query || '%' 
+        OR loanerName LIKE '%' || :query || '%' 
+        OR phone LIKE '%' || :query || '%' 
+        ORDER BY receiptTime 
+        """)
+    suspend fun searchLaundry(
+        query: String,
+    ): List<LaundryEntity>
+ @Query("""
+        SELECT * FROM otherJobs 
+        WHERE id LIKE '%' || :query || '%'
+        OR name LIKE '%' || :query || '%' 
+        OR OrderName LIKE '%' || :query || '%' 
+        OR phone LIKE '%' || :query || '%' 
+        ORDER BY receiptTime 
+        """)
+    suspend fun searchOtherJobs(
+        query: String,
+    ): List<OtherJobsEntity>
+ @Query("""
+        SELECT * FROM photography 
+        WHERE id LIKE '%' || :query || '%'
+        OR name LIKE '%' || :query || '%' 
+        OR OrderName LIKE '%' || :query || '%' 
+        OR phone LIKE '%' || :query || '%' 
+        ORDER BY receiptTime 
+        """)
+    suspend fun searchPhotography(
+        query: String,
+    ): List<PhotographyEntity>
+ @Query("""
+        SELECT * FROM repairs 
+        WHERE id LIKE '%' || :query || '%'
+        OR name LIKE '%' || :query || '%' 
+        OR loanerName LIKE '%' || :query || '%' 
+        OR phone LIKE '%' || :query || '%' 
+        ORDER BY receiptTime 
+        """)
+    suspend fun searchRepairs(
+        query: String,
+    ): List<RepairsEntity>
+ @Query("""
+        SELECT * FROM tailoring 
+        WHERE id LIKE '%' || :query || '%'
+        OR name LIKE '%' || :query || '%' 
+        OR loanerName LIKE '%' || :query || '%' 
+        OR phone LIKE '%' || :query || '%' 
+        ORDER BY receiptTime 
+        """)
+    suspend fun searchTailoring(
+        query: String,
+    ): List<TailoringEntity>
 
 
 

@@ -28,6 +28,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,17 +40,24 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.saeed.zanjan.receipt.R
 import com.saeed.zanjan.receipt.ui.theme.CustomColors
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeTopBar(
     focusRequester: FocusRequester,
-    isSearchExpanded:Boolean,
-    expandSearchBar:(Boolean)->Unit,
-    modifier: Modifier
-){
+    isSearchExpanded: Boolean,
+    expandSearchBar: (Boolean) -> Unit,
+    modifier: Modifier,
+    search: (String) -> Unit,
+    filter:()->Unit
+) {
 
-    Row(modifier =modifier) {
+    var searchValue by remember {
+        mutableStateOf("")
+    }
+    Row(modifier = modifier) {
         Button(
             contentPadding = PaddingValues(0.dp),
             modifier = Modifier
@@ -78,7 +87,7 @@ fun HomeTopBar(
                 containerColor = CustomColors.lightGray
             ),
             onClick = {
-                //    Handle navigation
+                      filter()
             },
         ) {
             Icon(
@@ -113,7 +122,7 @@ fun HomeTopBar(
                             expandSearchBar(true)
                         },
                     ) {
-                        if(! isSearchExpanded){
+                        if (!isSearchExpanded) {
 
                             Icon(
                                 painter = painterResource(id = R.drawable.search___),
@@ -125,17 +134,25 @@ fun HomeTopBar(
                 }
                 AnimatedVisibility(
                     visible = isSearchExpanded,
-                    enter = slideInHorizontally(initialOffsetX = { fullWidth -> fullWidth }, animationSpec = spring()),
-                    exit = slideOutHorizontally(targetOffsetX = { fullWidth -> fullWidth }, animationSpec = spring())
+                    enter = slideInHorizontally(
+                        initialOffsetX = { fullWidth -> fullWidth },
+                        animationSpec = spring()
+                    ),
+                    exit = slideOutHorizontally(
+                        targetOffsetX = { fullWidth -> fullWidth },
+                        animationSpec = spring()
+                    )
                 ) {
                     TextField(
                         enabled = true,
-                        value = "",
+                        value = searchValue,
                         onValueChange = {
+                            searchValue = it
 
+                            search(it)
                         },
                         trailingIcon = {
-                            if(isSearchExpanded){
+                            if (isSearchExpanded) {
                                 Icon(
                                     modifier = Modifier.clickable {
                                         expandSearchBar(false)
@@ -173,8 +190,8 @@ fun HomeTopBar(
         ) {
             Card(
 
-                shape= CircleShape,
-                colors= CardDefaults.cardColors(
+                shape = CircleShape,
+                colors = CardDefaults.cardColors(
                     containerColor = CustomColors.lightBlue,
                     contentColor = CustomColors.lightBlue
                 ),
@@ -186,7 +203,8 @@ fun HomeTopBar(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.padding(vertical = 5.dp, horizontal = 10.dp)
                 ) {
-                    Text("سعید غفاری",
+                    Text(
+                        "سعید غفاری",
                         style = MaterialTheme.typography.bodyMedium,
                         color = Color.White
                     )
