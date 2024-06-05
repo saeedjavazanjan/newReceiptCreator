@@ -26,8 +26,8 @@ class ListOfReceipts(
                     //repair
                    val result=receiptDao.getAllRepairsEntity()
                     val list= mutableListOf<GeneralReceipt>()
-                    result.forEach {repair->
-                        list.add(generalMapper.mapFromRepairsEntity(repair))
+                    result.forEach {rec->
+                        list.add(generalMapper.mapFromRepairsEntity(rec))
                     }
                     emit(DataState.success(list))
                 }
@@ -36,8 +36,8 @@ class ListOfReceipts(
                     //repair
                     val result=receiptDao.getAllRepairsEntity()
                     val list= mutableListOf<GeneralReceipt>()
-                    result.forEach {repair->
-                        list.add(generalMapper.mapFromRepairsEntity(repair))
+                    result.forEach {rec->
+                        list.add(generalMapper.mapFromRepairsEntity(rec))
                     }
                     emit(DataState.success(list))
                 }
@@ -46,8 +46,8 @@ class ListOfReceipts(
                     //  repair
                     val result=receiptDao.getAllRepairsEntity()
                     val list= mutableListOf<GeneralReceipt>()
-                    result.forEach {repair->
-                        list.add(generalMapper.mapFromRepairsEntity(repair))
+                    result.forEach {rec->
+                        list.add(generalMapper.mapFromRepairsEntity(rec))
                     }
                     emit(DataState.success(list))
                 }
@@ -127,6 +127,118 @@ class ListOfReceipts(
 
 
     }
+
+
+    fun searchReceipt(
+        query:String,
+        receiptCategory: Int
+    ):Flow<DataState<List<GeneralReceipt>>> = flow{
+        emit(DataState.loading())
+        try {
+            when (receiptCategory) {
+                0 -> {
+                    //repair
+                    val result=receiptDao.searchRepairs(query)
+                    val list= mutableListOf<GeneralReceipt>()
+                    result.forEach {rec->
+                        list.add(generalMapper.mapFromRepairsEntity(rec))
+                    }
+                    emit(DataState.success(list))
+                }
+
+                1 -> {
+                    //repair
+                    val result=receiptDao.searchRepairs(query)
+                    val list= mutableListOf<GeneralReceipt>()
+                    result.forEach {rec->
+                        list.add(generalMapper.mapFromRepairsEntity(rec))
+                    }
+                    emit(DataState.success(list))
+                }
+
+                2 -> {
+                    //  repair
+                    val result=receiptDao.searchRepairs(query)
+                    val list= mutableListOf<GeneralReceipt>()
+                    result.forEach {rec->
+                        list.add(generalMapper.mapFromRepairsEntity(rec))
+                    }
+                    emit(DataState.success(list))
+                }
+
+                3 -> {
+                    //tailoring
+                    val result=receiptDao.searchTailoring(query)
+                    val list= mutableListOf<GeneralReceipt>()
+                    result.forEach {rec->
+                        list.add(generalMapper.mapFromTailoringEntity(rec))
+                    }
+                    emit(DataState.success(list))
+                }
+
+                4 -> {
+                    //jewelry
+                    val result=receiptDao.searchJewelry(query)
+                    val list= mutableListOf<GeneralReceipt>()
+                    result.forEach {rec->
+                        list.add(generalMapper.mapFromJewelryEntity(rec))
+                    }
+                    emit(DataState.success(list))
+                }
+
+                5 -> {
+                    //photo
+                    val result=receiptDao.searchPhotography(query)
+                    val list= mutableListOf<GeneralReceipt>()
+                    result.forEach {rec->
+                        list.add(generalMapper.mapFromPhotographyEntity(rec))
+                    }
+                    emit(DataState.success(list))
+                }
+
+                6 -> {
+                    //laundry
+                    val result=receiptDao.searchLaundry(query)
+                    val list= mutableListOf<GeneralReceipt>()
+                    result.forEach {rec->
+                        list.add(generalMapper.mapFromLaundryEntity(rec))
+                    }
+                    emit(DataState.success(list))
+                }
+
+                7 -> {
+                    //confectionery
+                    val result=receiptDao.searchConfectioneries(query)
+                    val list= mutableListOf<GeneralReceipt>()
+                    result.forEach {rec->
+                        list.add(generalMapper.mapFromConfectioneryEntity(rec))
+                    }
+                    emit(DataState.success(list))
+                }
+
+                8 -> {
+                    //otherJobs
+                    val result=receiptDao.searchOtherJobs(query)
+                    val list= mutableListOf<GeneralReceipt>()
+                    result.forEach {rec->
+                        list.add(generalMapper.mapFromOtherJobsEntity(rec))
+                    }
+                    emit(DataState.success(list))
+                }
+                else->{
+                    emit(DataState.error("خطای دریافت دسته بندی"))
+                }
+
+            }
+        }catch (e:Exception){
+            emit(DataState.error(e.message.toString()?:"خطای ناشناخته"))
+
+        }
+
+
+
+    }
+
 
     fun getReceiptById(
         receiptId:Int,

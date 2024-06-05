@@ -78,6 +78,14 @@ fun Home(
                  isSearchExpanded=isSearchExpanded,
                  expandSearchBar = {
                      isSearchExpanded=it
+                 },
+                 search = {
+
+                     viewModel.searchReceipt(
+                         it,
+                         snackbarHostState
+                     )
+
                  }
              )
          },

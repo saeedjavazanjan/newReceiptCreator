@@ -56,4 +56,23 @@ class HomeViewModel
 
     }
 
+
+    fun searchReceipt(query:String,snackbarHostState: SnackbarHostState){
+        lisOfReceipts.searchReceipt(query,receiptCategory).onEach { dataState ->
+
+            dataState.loading.let {
+                loading.value=it
+            }
+            dataState.data?.let {
+                receiptList.value=it
+            }
+            dataState.error?.let {
+                snackbarHostState.showSnackbar(it)
+
+            }
+
+
+        }.launchIn(viewModelScope)
+    }
+
    }
