@@ -7,9 +7,11 @@ import android.bluetooth.BluetoothManager
 import android.bluetooth.BluetoothSocket
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.util.Log
 import android.widget.Toast
 import com.saeed.zanjan.receipt.domain.dataState.DataState
+import com.saeed.zanjan.receipt.domain.models.GeneralReceipt
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -19,7 +21,12 @@ import java.io.OutputStream
 import java.nio.charset.Charset
 import java.util.UUID
 
-class ConnectionClass {
+class ConnectionClass(
+    sharedPreferences: SharedPreferences
+) {
+    val companyName=sharedPreferences.getString("COMPANY","")
+    val companyPhone=sharedPreferences.getString("PHONE","")
+    val receiptCategory=sharedPreferences.getInt("JOB_SUBJECT",-1)
 
     private var printerName=""
     var bluetoothDevice:BluetoothDevice?=null
@@ -97,7 +104,7 @@ class ConnectionClass {
                             outputStream=socket!!.outputStream
                             inputStream=socket!!.inputStream
                             listenForData()
-                            result="پرینت موفق"
+                            result="دستگاه متصل شد"
                             break
 
                         }
@@ -120,9 +127,10 @@ class ConnectionClass {
     }
 
 @SuppressLint("SuspiciousIndentation")
-fun intentPrint(data:String, context: Context) :Flow<DataState<String>> = flow<DataState<String>> {
+fun intentPrint(generalReceipt: GeneralReceipt, context: Context) :Flow<DataState<String>> = flow<DataState<String>> {
     emit(DataState.loading())
 
+   val data=stringOfReceipt(generalReceipt)
     if(printerName.trim().isNotEmpty()){
       val result= initPrinter(context)
         try {
@@ -142,4 +150,166 @@ fun intentPrint(data:String, context: Context) :Flow<DataState<String>> = flow<D
 }.flowOn(Dispatchers.IO)
 
 
+fun stringOfReceipt(generalReceipt: GeneralReceipt):String{
+
+    when (receiptCategory) {
+        0 -> {
+            //repair
+            return   companyName+ System.getProperty("line.separator") +
+                    "نام کالا:" + generalReceipt.orderName + System.getProperty("line.separator") +
+                    "ایرادات:" + generalReceipt.repairLoanerProblems + System.getProperty("line.separator") +
+                    "خطرات:" + generalReceipt.repairRisks + System.getProperty("line.separator") +
+                    "موعد تحویل:" + generalReceipt.deliveryTime + System.getProperty("line.separator")+
+                    "لوازم همراه:" + generalReceipt.repairAccessories + System.getProperty("line.separator") +
+                    System.getProperty("line.separator") +
+                    "جمع هزینه:" + generalReceipt.cost +" تومان" + System.getProperty("line.separator") +
+                    "پرداخت شده:" + generalReceipt.prepayment+" تومان" + System.getProperty("line.separator") +
+                    "شماره رسید:" + generalReceipt.id+ System.getProperty("line.separator") +
+                    "------------------------------------"+
+                    System.getProperty("line.separator")+
+                    " شماره تماس: " + companyPhone
+        }
+
+        1 -> {
+            //repair
+            return   companyName+ System.getProperty("line.separator") +
+                    "نام کالا:" + generalReceipt.orderName + System.getProperty("line.separator") +
+                    "ایرادات:" + generalReceipt.repairLoanerProblems + System.getProperty("line.separator") +
+                    "خطرات:" + generalReceipt.repairRisks + System.getProperty("line.separator") +
+                    "موعد تحویل:" + generalReceipt.deliveryTime + System.getProperty("line.separator")+
+                    "لوازم همراه:" + generalReceipt.repairAccessories + System.getProperty("line.separator") +
+                    System.getProperty("line.separator") +
+                    "جمع هزینه:" + generalReceipt.cost +" تومان" + System.getProperty("line.separator") +
+                    "پرداخت شده:" + generalReceipt.prepayment+" تومان" + System.getProperty("line.separator") +
+                    "شماره رسید:" + generalReceipt.id+ System.getProperty("line.separator") +
+                    "------------------------------------"+
+                    System.getProperty("line.separator")+
+                    " شماره تماس: " + companyPhone
+        }
+
+        2 -> {
+            //  repair
+            return   companyName+ System.getProperty("line.separator") +
+                    "نام کالا:" + generalReceipt.orderName + System.getProperty("line.separator") +
+                    "ایرادات:" + generalReceipt.repairLoanerProblems + System.getProperty("line.separator") +
+                    "خطرات:" + generalReceipt.repairRisks + System.getProperty("line.separator") +
+                    "موعد تحویل:" + generalReceipt.deliveryTime + System.getProperty("line.separator")+
+                    "لوازم همراه:" + generalReceipt.repairAccessories + System.getProperty("line.separator") +
+                    System.getProperty("line.separator") +
+                    "جمع هزینه:" + generalReceipt.cost +" تومان" + System.getProperty("line.separator") +
+                    "پرداخت شده:" + generalReceipt.prepayment+" تومان" + System.getProperty("line.separator") +
+                    "شماره رسید:" + generalReceipt.id+ System.getProperty("line.separator") +
+                    "------------------------------------"+
+                    System.getProperty("line.separator")+
+                    " شماره تماس: " + companyPhone
+        }
+
+        3 -> {
+            //tailoring
+          return  companyName+ System.getProperty("line.separator") +
+                    "نام سفارش:" + generalReceipt.orderName + System.getProperty("line.separator") +
+                    "مشخصات:" + generalReceipt.tailoringOrderSpecification + System.getProperty("line.separator") +
+                    "موعد تحویل:" + generalReceipt.deliveryTime + System.getProperty("line.separator") +
+                    System.getProperty("line.separator") +
+                    "جمع هزینه:" + generalReceipt.cost+" تومان" + System.getProperty("line.separator") +
+                    "پرداخت شده:" + generalReceipt.prepayment+ " تومان" +System.getProperty("line.separator") +
+                    "شماره رسید:" + generalReceipt.id+ System.getProperty("line.separator") +
+                  "------------------------------------"+
+                  System.getProperty("line.separator")+
+                  " شماره تماس: " + companyPhone
+
+        }
+
+        4 -> {
+            //jewelry
+           return   companyName+ System.getProperty("line.separator") +
+                   "نام سفارش:" + generalReceipt.orderName + System.getProperty("line.separator") +
+                   "مشخصات کالا:" + generalReceipt.jewelryLoanerSpecification + System.getProperty("line.separator") +
+                   "مشخصات سفارش:" + generalReceipt.jewelryOrderSpecification + System.getProperty("line.separator") +
+                   "مشکلات:" + generalReceipt.jewelryLoanerProblems + System.getProperty("line.separator") +
+                   "موعد تحویل:" +generalReceipt.deliveryTime  + System.getProperty("line.separator") +
+                   System.getProperty("line.separator") +
+                   "جمع هزینه:" + generalReceipt.cost +" تومان" + System.getProperty("line.separator") +
+                   "پرداخت شده:" + generalReceipt.prepayment+" تومان" + System.getProperty("line.separator") +
+                   "شماره رسید:" + generalReceipt.id+ System.getProperty("line.separator") +
+                   "------------------------------------"+
+                   System.getProperty("line.separator")+
+                   " شماره تماس: " + companyPhone
+        }
+
+        5 -> {
+            //photo
+            return companyName+ System.getProperty("line.separator") +
+                    "عنوان سفارش:" + generalReceipt.orderName + System.getProperty("line.separator") +
+                    "تعداد:" + generalReceipt.photographyOrderNumber + System.getProperty("line.separator") +
+                    "اندازه :" + generalReceipt.photographyOrderSize + System.getProperty("line.separator") +
+                    "موعد تحویل:" + generalReceipt.deliveryTime + System.getProperty("line.separator") +
+                    System.getProperty("line.separator") +
+                    "جمع هزینه:" + generalReceipt.cost +" تومان" + System.getProperty("line.separator") +
+                    "پرداخت شده:"+ generalReceipt.prepayment+" تومان" + System.getProperty("line.separator") +
+                    "شماره رسید:" + generalReceipt.id+ System.getProperty("line.separator") +
+                    "------------------------------------"+
+                    System.getProperty("line.separator")+
+                    " شماره تماس: " + companyPhone
+        }
+
+        6 -> {
+            //laundry
+          return companyName+ System.getProperty("line.separator") +
+                  "نام کالا:" + generalReceipt.orderName + System.getProperty("line.separator") +
+                  "نوع سفارش:" + generalReceipt.laundryOrderType + System.getProperty("line.separator") +
+                  "توضیحات:" + generalReceipt.laundryDescription + System.getProperty("line.separator") +
+                  "موعد تحویل:" + generalReceipt.deliveryTime + System.getProperty("line.separator") +
+                  System.getProperty("line.separator") +
+                  "جمع هزینه:" + generalReceipt.cost +" تومان" + System.getProperty("line.separator") +
+                  "پرداخت شده:" + generalReceipt.prepayment+" تومان" + System.getProperty("line.separator") +
+                  "شماره رسید:" + generalReceipt.id+ System.getProperty("line.separator") +
+                  "------------------------------------"+
+                  System.getProperty("line.separator")+
+                  " شماره تماس: " + companyPhone
+
+        }
+
+        7 -> {
+            //confectionery
+            return  companyName+ System.getProperty("line.separator") +
+                    "نام سفارش:" + generalReceipt.orderName + System.getProperty("line.separator") +
+                    "مشخصات:" + generalReceipt.confectioneryOrderSpecification + System.getProperty("line.separator") +
+                    "توضیحات:" + generalReceipt.confectioneryDescription + System.getProperty("line.separator") +
+                    "وزن:" + generalReceipt.confectioneryOrderWeight + System.getProperty("line.separator") +
+                    "موعد تحویل:" + generalReceipt.deliveryTime + System.getProperty("line.separator") +
+                    System.getProperty("line.separator") +
+                    "جمع هزینه:" + generalReceipt.cost +" تومان" + System.getProperty("line.separator") +
+                    "پرداخت شده:" + generalReceipt.prepayment+" تومان" + System.getProperty("line.separator") +
+                    "شماره رسید:" + generalReceipt.id+ System.getProperty("line.separator") +
+                    "------------------------------------"+
+                    System.getProperty("line.separator")+
+                    " شماره تماس: " + companyPhone
+        }
+
+        8 -> {
+            //otherJobs
+          return companyName+ System.getProperty("line.separator") +
+                  "عنوان سفارش:" + generalReceipt.orderName + System.getProperty("line.separator") +
+                  "تعداد:" + generalReceipt.otherJobsOrderNumber + System.getProperty("line.separator") +
+                  "توضیحات:" + generalReceipt.otherJobsDescription + System.getProperty("line.separator") +
+                  "موعد تحویل:" + generalReceipt.deliveryTime + System.getProperty("line.separator") +
+                  System.getProperty("line.separator") +
+                  "جمع هزینه:" + generalReceipt.cost +" تومان" + System.getProperty("line.separator") +
+                  "پرداخت شده:" + generalReceipt.prepayment+" تومان" + System.getProperty("line.separator") +
+                  "شماره رسید:" + generalReceipt.id+ System.getProperty("line.separator") +
+                  "------------------------------------"+
+                  System.getProperty("line.separator")+
+                  " شماره تماس: " + companyPhone
+
+        }
+        else->{
+            return "رسید یافت نشد"
+        }
+
+    }
+
+
+
+}
 }

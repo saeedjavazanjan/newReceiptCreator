@@ -179,8 +179,10 @@ object AppModule {
     }
     @Singleton
     @Provides
-    fun provideConnectionClass(): ConnectionClass {
-        return ConnectionClass()
+    fun provideConnectionClass(
+        sharedPreferences: SharedPreferences
+    ): ConnectionClass {
+        return ConnectionClass(sharedPreferences)
     }
 
     @Singleton
