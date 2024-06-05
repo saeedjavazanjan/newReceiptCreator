@@ -133,6 +133,31 @@ class SendSms(
     }
 
 
+    fun sendOtpSms(
+        genReceipt: GeneralReceipt,
+        code:Int,
+    ):Flow<DataState<Int>> = flow{
+        generalReceipt =genReceipt
+    emit(DataState.loading())
+        try{
+            val massageText = "کد تحویل کالا: $code"
+            val parts = smsManager.divideMessage(massageText)
+            smsManager.sendMultipartTextMessage(
+                generalReceipt.phone,
+                null,
+                parts,
+                null,
+                null
+            )
+            emit(DataState.success(code))
+        }catch (e:Exception){
+            emit(DataState.error(e.message.toString()))
+        }
+
+    }
+
+
+
     private fun repairSmsPattern():Int{
         val massageText: String
          try {

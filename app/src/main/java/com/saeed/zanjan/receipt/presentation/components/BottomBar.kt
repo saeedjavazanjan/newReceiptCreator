@@ -98,6 +98,7 @@ fun BottomBar(
                         containerColor = CustomColors.lightGray
                     ),
                     onClick = {
+                              itemClicked("sendCode")
                     },
                 ) {
                     Icon(
