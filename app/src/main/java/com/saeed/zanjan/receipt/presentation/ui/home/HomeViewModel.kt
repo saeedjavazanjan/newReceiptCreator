@@ -75,4 +75,23 @@ class HomeViewModel
         }.launchIn(viewModelScope)
     }
 
+    fun filterReceipt(status:Int,snackbarHostState: SnackbarHostState){
+        lisOfReceipts.filterReceipts(status,receiptCategory).onEach { dataState ->
+
+            dataState.loading.let {
+                loading.value=it
+            }
+            dataState.data?.let {
+                receiptList.value=it
+            }
+            dataState.error?.let {
+                snackbarHostState.showSnackbar(it)
+
+            }
+
+
+        }.launchIn(viewModelScope)
+
+    }
+
    }

@@ -50,7 +50,8 @@ fun HomeTopBar(
     isSearchExpanded: Boolean,
     expandSearchBar: (Boolean) -> Unit,
     modifier: Modifier,
-    search: (String) -> Unit
+    search: (String) -> Unit,
+    filter:()->Unit
 ) {
 
     var searchValue by remember {
@@ -86,7 +87,7 @@ fun HomeTopBar(
                 containerColor = CustomColors.lightGray
             ),
             onClick = {
-                //    Handle navigation
+                      filter()
             },
         ) {
             Icon(

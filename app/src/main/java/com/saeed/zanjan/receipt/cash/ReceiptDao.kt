@@ -81,6 +81,25 @@ interface ReceiptDao {
     @Query("SELECT * FROM tailoring WHERE id = :Id")
     suspend fun getTailoringReceipt(Id: Int): TailoringEntity
 
+
+    @Query("SELECT * FROM confectionery WHERE status = :status")
+    suspend fun filterConfectionery(status: Int): List<ConfectioneryEntity>
+       @Query("SELECT * FROM jewelry WHERE status = :status")
+    suspend fun filterJewelry(status: Int): List<JewelryEntity>
+       @Query("SELECT * FROM laundry WHERE status = :status")
+    suspend fun filterLaundry(status: Int): List<LaundryEntity>
+       @Query("SELECT * FROM otherJobs WHERE status = :status")
+    suspend fun filterOtherJobs(status: Int): List<OtherJobsEntity>
+       @Query("SELECT * FROM photography WHERE status = :status")
+    suspend fun filterPhotography(status: Int): List<PhotographyEntity>
+       @Query("SELECT * FROM repairs WHERE status = :status")
+    suspend fun filterRepairs(status: Int): List<RepairsEntity>
+       @Query("SELECT * FROM tailoring WHERE status = :status")
+    suspend fun filterTailoring(status: Int): List<TailoringEntity>
+
+
+
+
     @Update
     fun updateRepair(repair: RepairsEntity)
 
