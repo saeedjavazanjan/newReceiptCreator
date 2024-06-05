@@ -6,10 +6,7 @@ import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothManager
 import android.bluetooth.BluetoothSocket
 import android.content.Context
-import android.content.Intent
 import android.content.SharedPreferences
-import android.util.Log
-import android.widget.Toast
 import com.saeed.zanjan.receipt.domain.dataState.DataState
 import com.saeed.zanjan.receipt.domain.models.GeneralReceipt
 import kotlinx.coroutines.Dispatchers
@@ -21,7 +18,7 @@ import java.io.OutputStream
 import java.nio.charset.Charset
 import java.util.UUID
 
-class ConnectionClass(
+class BlueToothConnectionClass(
     sharedPreferences: SharedPreferences
 ) {
     val companyName=sharedPreferences.getString("COMPANY","")

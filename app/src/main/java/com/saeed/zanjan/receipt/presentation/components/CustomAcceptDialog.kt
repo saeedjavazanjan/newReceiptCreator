@@ -27,7 +27,8 @@ fun CustomAcceptDialog(
     onDismiss: () -> Unit,
     onAccept: () -> Unit,
     title:String,
-    description: String
+    description: String,
+    acceptText:String
 
 ){
 
@@ -63,7 +64,7 @@ fun CustomAcceptDialog(
                         }
 
                     ) {
-                        Text(text = "تایید",
+                        Text(text = acceptText,
                             style = MaterialTheme.typography.bodyLarge,
                             color = CustomColors.darkPurple
                         )

@@ -1,59 +1,24 @@
 package com.saeed.zanjan.receipt.presentation.ui.receipt
 
-import android.Manifest
-import android.annotation.SuppressLint
-import android.app.Application
-import android.app.Dialog
-import android.bluetooth.BluetoothAdapter
-import android.bluetooth.BluetoothDevice
-import android.bluetooth.BluetoothManager
 import android.content.Context
-import android.content.Intent
 import android.content.SharedPreferences
-import android.content.pm.PackageManager
-import android.graphics.Bitmap
-import android.graphics.Canvas
 import android.graphics.Picture
-import android.media.MediaScannerConnection
-import android.net.Uri
-import android.os.Environment
-import android.view.View
-import android.widget.FrameLayout
-import android.widget.Toast
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.platform.ViewCompositionStrategy
-import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.startActivity
-import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.saeed.zanjan.receipt.domain.models.GeneralReceipt
-import com.saeed.zanjan.receipt.interactor.ConnectionClass
+import com.saeed.zanjan.receipt.interactor.BlueToothConnectionClass
 import com.saeed.zanjan.receipt.interactor.ListOfReceipts
 import com.saeed.zanjan.receipt.interactor.ReceiptQueryInDatabase
 import com.saeed.zanjan.receipt.interactor.SendSms
 import com.saeed.zanjan.receipt.interactor.ShareReceipt
-import com.saeed.zanjan.receipt.presentation.components.BluetoothDevicesDialog
-import com.saeed.zanjan.receipt.ui.theme.CustomColors
-import dagger.hilt.android.internal.Contexts.getApplication
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlinx.coroutines.withContext
-import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
 import javax.inject.Inject
-import kotlin.coroutines.resume
 
 @HiltViewModel
 class ReceiptViewModel
@@ -63,17 +28,16 @@ class ReceiptViewModel
     val sharedPreferences: SharedPreferences,
     val shareReceipt: ShareReceipt,
     val sendSms: SendSms,
-    val connectionClass: ConnectionClass
+    val blueToothConnectionClass: BlueToothConnectionClass
 ) : ViewModel() {
 
     val receiptCategory = 1//sharedPreferences.getInt("JOB_SUBJECT",-1)
     val loading = mutableStateOf(false)
     val deleteState = mutableStateOf(false)
-    val btListShow = mutableStateOf(false)
+    val otpCode = mutableStateOf(0)
 
     val currentReceipt = mutableStateOf(GeneralReceipt())
     var data:MutableList<MutableMap<String?,Any?>?>?=null
-
 
     fun shareReceiptImage(
         picture: Picture,
@@ -207,7 +171,7 @@ class ReceiptViewModel
 
 
     fun print(context: Context,snackbarHostState: SnackbarHostState){
-        connectionClass.intentPrint(currentReceipt.value, context = context).onEach { dataState ->
+        blueToothConnectionClass.intentPrint(currentReceipt.value, context = context).onEach { dataState ->
 
             dataState.loading.let {
                 loading.value=it
@@ -223,7 +187,41 @@ class ReceiptViewModel
         }.launchIn(viewModelScope)
     }
 
+    fun generateAndSendOtpPassword(snackbarHostState: SnackbarHostState){
 
+        otpCode.value=createFourDigitNumber()
+
+        sendSms.sendOtpSms(currentReceipt.value,otpCode.value).onEach { dataState ->
+
+        dataState.loading.let {
+            loading.value=it
+        }
+            dataState.data?.let {
+
+
+            }
+        dataState.error?.let {
+            snackbarHostState.showSnackbar(it)
+        }
+
+
+        }.launchIn(viewModelScope)
+
+
+
+    }
+    fun createFourDigitNumber(): Int {
+        var fourDigitNumber  = ""
+        val rangeList = {(0..9).random()}
+
+        while(fourDigitNumber.length < 4)
+        {
+            val num = rangeList().toString()
+            if (!fourDigitNumber.contains(num)) fourDigitNumber +=num
+        }
+
+        return fourDigitNumber.toInt()
+    }
 
     fun restartState(){
 

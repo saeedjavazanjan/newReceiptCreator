@@ -3,17 +3,14 @@ package com.saeed.zanjan.receipt.presentation.ui.receipt
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK
-import android.app.AlertDialog
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothManager
-import android.bluetooth.BluetoothSocket
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Picture
 import android.os.Build
-import android.widget.SimpleAdapter
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -28,7 +25,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -59,18 +55,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
-import com.saeed.zanjan.receipt.interactor.ConnectionClass
 import com.saeed.zanjan.receipt.presentation.components.BluetoothDevicesDialog
 import com.saeed.zanjan.receipt.presentation.components.BottomBar
 import com.saeed.zanjan.receipt.presentation.components.CustomAcceptDialog
+import com.saeed.zanjan.receipt.presentation.components.OtpCodeShowDialog
 import com.saeed.zanjan.receipt.presentation.components.ReceiptCard
 import com.saeed.zanjan.receipt.presentation.components.SendSmsDialog
 import com.saeed.zanjan.receipt.presentation.components.TopBar
 import com.saeed.zanjan.receipt.presentation.navigation.Screen
 import com.saeed.zanjan.receipt.ui.theme.CustomColors
 import com.saeed.zanjan.receipt.ui.theme.NewReceiptCreatorTheme
-import java.io.InputStream
-import java.io.OutputStream
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -79,10 +73,10 @@ fun ReceiptScreen(
     viewModel: ReceiptViewModel,
     receiptId: Int?,
     navController: NavController,
-    newSaved:Boolean=false,
-    newUpdate:Boolean=false,
-    statusChanged:Boolean=false,
-    paymentChanged:Boolean=false,
+    newSaved: Boolean = false,
+    newUpdate: Boolean = false,
+    statusChanged: Boolean = false,
+    paymentChanged: Boolean = false,
 ) {
     val receiptCategory = viewModel.receiptCategory
 
@@ -102,28 +96,43 @@ fun ReceiptScreen(
     val openSendSmsDialog = remember { mutableStateOf(false) }
     val openStatusSendSMSDialog = remember { mutableStateOf(false) }
     val openPaymentSendSMSDialog = remember { mutableStateOf(false) }
+    val openSendOtpCodeDialog = remember { mutableStateOf(false) }
+    val openOtpCodeShowDialog = remember { mutableStateOf(false) }
 
     var hasBluetoothPermission by remember { mutableStateOf(false) }
-    
+    var hasSmsPermission by remember { mutableStateOf(false) }
     var hasStoragePermission by remember { mutableStateOf(false) }
     var shouldShowRationale by remember { mutableStateOf(false) }
     var btScanStatus by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
 
-            hasStoragePermission = ContextCompat.checkSelfPermission(
-                context,Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            hasSmsPermission = ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.SEND_SMS
+            ) == PackageManager.PERMISSION_GRANTED
 
-                ) == PackageManager.PERMISSION_GRANTED
-            hasBluetoothPermission = ContextCompat.checkSelfPermission(
-                context,Manifest.permission.BLUETOOTH,
+        hasStoragePermission = ContextCompat.checkSelfPermission(
+            context, Manifest.permission.WRITE_EXTERNAL_STORAGE,
 
-                ) == PackageManager.PERMISSION_GRANTED
+            ) == PackageManager.PERMISSION_GRANTED
+        hasBluetoothPermission = ContextCompat.checkSelfPermission(
+            context, Manifest.permission.BLUETOOTH,
+
+            ) == PackageManager.PERMISSION_GRANTED
 
 
     }
-
-    val requestPermissionLauncher = rememberLauncherForActivityResult(
+    val requestSmsPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            hasSmsPermission = true
+        } else {
+            shouldShowRationale = true
+        }
+    }
+    val requestStoragePermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean ->
         if (isGranted) {
@@ -137,14 +146,15 @@ fun ReceiptScreen(
         contract = ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean ->
         if (isGranted) {
-            val blueToothManager:BluetoothManager= context.getSystemService(BluetoothManager::class.java)
-            val bluetoothAdapter:BluetoothAdapter?=blueToothManager.adapter
+            val blueToothManager: BluetoothManager =
+                context.getSystemService(BluetoothManager::class.java)
+            val bluetoothAdapter: BluetoothAdapter? = blueToothManager.adapter
             hasBluetoothPermission = true
-            if(bluetoothAdapter?.isEnabled==false){
+            if (bluetoothAdapter?.isEnabled == false) {
 
-            }else{
+            } else {
 
-                btScanStatus=true
+                btScanStatus = true
             }
 
         } else {
@@ -152,17 +162,17 @@ fun ReceiptScreen(
         }
     }
 
-    val btActivityResultLauncher=rememberLauncherForActivityResult(
+    val btActivityResultLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
-    ){result->
-        if(result.resultCode==RESULT_OK){
-            btScanStatus=true
+    ) { result ->
+        if (result.resultCode == RESULT_OK) {
+            btScanStatus = true
         }
 
     }
 
     if (shouldShowRationale) {
-        Dialog(onDismissRequest =  {shouldShowRationale=false }) {
+        Dialog(onDismissRequest = { shouldShowRationale = false }) {
             Surface(
                 modifier = Modifier.widthIn(max = 400.dp),
                 shape = RoundedCornerShape(8.dp)
@@ -191,7 +201,7 @@ fun ReceiptScreen(
                         TextButton(
                             onClick = {
                                 shouldShowRationale = false
-                                requestPermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                                requestStoragePermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
 
                             }
 
@@ -226,27 +236,30 @@ fun ReceiptScreen(
 
 
 
-    LaunchedEffect(key1 = deleteState){
-        if(deleteState)
+    LaunchedEffect(key1 = deleteState) {
+        if (deleteState)
             navController.popBackStack()
     }
 
 
-    LaunchedEffect(newSaved){
-        if(newSaved){
-            snackbarHostState.showSnackbar("با موفقیت ذخیره شد",duration = SnackbarDuration.Short)
-            openSendSmsDialog.value=true
+    LaunchedEffect(newSaved) {
+        if (newSaved) {
+            snackbarHostState.showSnackbar("با موفقیت ذخیره شد", duration = SnackbarDuration.Short)
+            openSendSmsDialog.value = true
         }
-          if(newUpdate){
-            snackbarHostState.showSnackbar("با موفقیت به روز رسانی  شد",duration = SnackbarDuration.Short)
+        if (newUpdate) {
+            snackbarHostState.showSnackbar(
+                "با موفقیت به روز رسانی  شد",
+                duration = SnackbarDuration.Short
+            )
         }
 
         if (paymentChanged) {
-            openPaymentSendSMSDialog.value=true
+            openPaymentSendSMSDialog.value = true
 
         }
-        if (statusChanged &&  currentReceipt.value.status!=1 &&currentReceipt.value.status!=0) {
-            openStatusSendSMSDialog.value=true
+        if (statusChanged && currentReceipt.value.status != 1 && currentReceipt.value.status != 0) {
+            openStatusSendSMSDialog.value = true
 
         }
 
@@ -270,79 +283,23 @@ fun ReceiptScreen(
         themColor = CustomColors.lightBlue
     ) {
 
-        
-        if(btScanStatus){
-            
+
+        if (btScanStatus) {
+
             btScan(
                 context = context,
                 print = {
-                    viewModel.connectionClass.setPrinterName(it)
+                    viewModel.blueToothConnectionClass.setPrinterName(it)
                     viewModel.print(context = context, snackbarHostState = snackbarHostState)
                 },
                 close = {
-                    btScanStatus=false
+                    btScanStatus = false
                 }
 
 
             )
         }
 
-        if(openSendSmsDialog.value){
-            SendSmsDialog(
-                onDismiss = {
-                    openSendSmsDialog.value = false
-                },
-                description = "آیا قصد ارسال رسید پیامکی را دارید؟",
-                sendClicked = {
-
-
-                    viewModel.sendMessage(currentReceipt.value, snackbarHostState)
-
-                    openSendSmsDialog.value = false
-
-                },
-                context = context
-            )
-        }
-
-        if(openPaymentSendSMSDialog.value){
-            SendSmsDialog(
-                onDismiss = {
-                    openPaymentSendSMSDialog.value = false
-                },
-                description = "آیا قصد ارسال رسید پیامکی در خصوص دریافت وجه را دارید؟",
-                sendClicked = {
-
-                    viewModel.paymentSendMessage(
-                        snackbarHostState = snackbarHostState,
-                        generalReceipt= currentReceipt.value,
-                        payedAmount =currentReceipt.value.prepayment!!
-
-                    )
-
-                    openPaymentSendSMSDialog.value = false
-
-                },
-                context = context
-            )
-
-        }
-        if(openStatusSendSMSDialog.value){
-            SendSmsDialog(
-                onDismiss = {
-                    openStatusSendSMSDialog.value = false
-                },
-                description = "آیا قصد ارسال  پیامک در خصوص تغییر وضعیت را دارید؟",
-                sendClicked = {
-
-                    viewModel.sendMessage(currentReceipt.value,snackbarHostState)
-
-                    openStatusSendSMSDialog.value = false
-
-                },
-                context = context
-            )
-        }
 
 
         Scaffold(
@@ -372,30 +329,40 @@ fun ReceiptScreen(
                                 openDeleteDialog.value = true
 
                             }
-                            "share"->{
+
+                            "share" -> {
                                 if (!hasStoragePermission) {
-                                    requestPermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                                }else{
-                                       viewModel.shareReceiptImage(
-                                           picture = picture,context=context,snackbarHostState=snackbarHostState
-                                       )
+                                    requestStoragePermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                                } else {
+                                    viewModel.shareReceiptImage(
+                                        picture = picture,
+                                        context = context,
+                                        snackbarHostState = snackbarHostState
+                                    )
 
                                 }
 
                             }
-                            "print"-> {
-                               if(hasBluetoothPermission){
-                                   val enableBtIntent=Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
-                                   btActivityResultLauncher.launch(enableBtIntent)
-                               }else{
-                                   if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
-                                       requestBluetoothPermissionLauncher.launch(Manifest.permission.BLUETOOTH_CONNECT)
 
-                                   }else{
-                                       requestBluetoothPermissionLauncher.launch(Manifest.permission.BLUETOOTH_ADMIN)
+                            "print" -> {
+                                if (hasBluetoothPermission) {
+                                    val enableBtIntent =
+                                        Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+                                    btActivityResultLauncher.launch(enableBtIntent)
+                                } else {
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                                        requestBluetoothPermissionLauncher.launch(Manifest.permission.BLUETOOTH_CONNECT)
 
-                                   }
-                               }
+                                    } else {
+                                        requestBluetoothPermissionLauncher.launch(Manifest.permission.BLUETOOTH_ADMIN)
+
+                                    }
+                                }
+                            }
+
+                            "sendCode" -> {
+                                openSendOtpCodeDialog.value = true
+
                             }
                         }
 
@@ -403,6 +370,64 @@ fun ReceiptScreen(
                 )
             }
         ) {
+
+            if (openSendSmsDialog.value) {
+                SendSmsDialog(
+                    onDismiss = {
+                        openSendSmsDialog.value = false
+                    },
+                    description = "آیا قصد ارسال رسید پیامکی را دارید؟",
+                    sendClicked = {
+
+
+                        viewModel.sendMessage(currentReceipt.value, snackbarHostState)
+
+                        openSendSmsDialog.value = false
+
+                    },
+                    context = context
+                )
+            }
+
+            if (openPaymentSendSMSDialog.value) {
+                SendSmsDialog(
+                    onDismiss = {
+                        openPaymentSendSMSDialog.value = false
+                    },
+                    description = "آیا قصد ارسال رسید پیامکی در خصوص دریافت وجه را دارید؟",
+                    sendClicked = {
+
+                        viewModel.paymentSendMessage(
+                            snackbarHostState = snackbarHostState,
+                            generalReceipt = currentReceipt.value,
+                            payedAmount = currentReceipt.value.prepayment!!
+
+                        )
+
+                        openPaymentSendSMSDialog.value = false
+
+                    },
+                    context = context
+                )
+
+            }
+            if (openStatusSendSMSDialog.value) {
+                SendSmsDialog(
+                    onDismiss = {
+                        openStatusSendSMSDialog.value = false
+                    },
+                    description = "آیا قصد ارسال  پیامک در خصوص تغییر وضعیت را دارید؟",
+                    sendClicked = {
+
+                        viewModel.sendMessage(currentReceipt.value, snackbarHostState)
+
+                        openStatusSendSMSDialog.value = false
+
+                    },
+                    context = context
+                )
+            }
+
             if (openDeleteDialog.value) {
 
                 CustomAcceptDialog(
@@ -418,72 +443,100 @@ fun ReceiptScreen(
 
                     },
                     title = "حذف رسید",
-                    description = "آیا از حذف این رسید مطمِئنید؟"
+                    description = "آیا از حذف این رسید مطمِئنید؟",
+                    acceptText = "تایید"
                 )
 
             }
 
-                Column(
-                    modifier = Modifier
-                        .background(CustomColors.lightBlue)
-                        .fillMaxSize()
-                        .padding(start = 10.dp, end = 10.dp)
-                        .drawWithCache {
-                            // Example that shows how to redirect rendering to an Android Picture and then
-                            // draw the picture into the original destination
-                            val width = this.size.width.toInt()
-                            val height = this.size.height.toInt()
-                            onDrawWithContent {
-                                val pictureCanvas =
-                                    androidx.compose.ui.graphics.Canvas(
-                                        picture.beginRecording(
-                                            width,
-                                            height
-                                        )
-                                    )
-                                draw(this, this.layoutDirection, pictureCanvas, this.size) {
-                                    this@onDrawWithContent.drawContent()
-                                }
-                                picture.endRecording()
+            if (openSendOtpCodeDialog.value) {
+                CustomAcceptDialog(
+                    onDismiss = {
+                        openSendOtpCodeDialog.value = false
 
-                                drawIntoCanvas { canvas -> canvas.nativeCanvas.drawPicture(picture) }
-                            }
+                    },
+                    onAccept = {
+                        if (!hasSmsPermission) {
+                            requestSmsPermissionLauncher.launch(Manifest.permission.SEND_SMS)
+                        }else{
+                            viewModel.generateAndSendOtpPassword(snackbarHostState = snackbarHostState)
+                            openOtpCodeShowDialog.value = true
+                            openSendOtpCodeDialog.value = false
                         }
-                ) {
-                    ReceiptCardForShare(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(10.dp),
-                        receiptCategory = receiptCategory,
-                        generalReceipt = currentReceipt.value
-                    )
 
 
-                }
-                Column(
+                    },
+                    title = "رمز تحویل کالا",
+                    description = "جهت اطمینان از هویت تحویل گیرنده کالا می توانید یک رمز یکبار مصرف به شماره مشتری ارسال کنید و در صورت مطابقت رمز، کالا را تحویل دهید.",
+                    acceptText = "ارسال"
+                )
+
+            }
+
+            if (openOtpCodeShowDialog.value) {
+
+                OtpCodeShowDialog(
+                    onDismiss = {
+                        openOtpCodeShowDialog.value = false
+                    },
+
+                    code = viewModel.otpCode.value
+                )
+            }
+
+
+            Column(
+                modifier = Modifier
+                    .background(CustomColors.lightBlue)
+                    .fillMaxSize()
+                    .padding(start = 10.dp, end = 10.dp)
+                    .drawWithCache {
+                        // Example that shows how to redirect rendering to an Android Picture and then
+                        // draw the picture into the original destination
+                        val width = this.size.width.toInt()
+                        val height = this.size.height.toInt()
+                        onDrawWithContent {
+                            val pictureCanvas =
+                                androidx.compose.ui.graphics.Canvas(
+                                    picture.beginRecording(
+                                        width,
+                                        height
+                                    )
+                                )
+                            draw(this, this.layoutDirection, pictureCanvas, this.size) {
+                                this@onDrawWithContent.drawContent()
+                            }
+                            picture.endRecording()
+
+                            drawIntoCanvas { canvas -> canvas.nativeCanvas.drawPicture(picture) }
+                        }
+                    }
+            ) {
+                ReceiptCardForShare(
                     modifier = Modifier
-                        .background(CustomColors.lightBlue)
                         .fillMaxSize()
-                        .padding(start = 10.dp, end = 10.dp, top = it.calculateTopPadding())
-                ) {
-                    ReceiptCard(
-                        modifier = Modifier
-                            .padding(horizontal = 25.dp)
-                            .fillMaxWidth()
-                            .weight(1f),
-                        receiptCategory = receiptCategory,
-                        generalReceipt = currentReceipt.value
-                    )
-                }
+                        .padding(10.dp),
+                    receiptCategory = receiptCategory,
+                    generalReceipt = currentReceipt.value
+                )
 
 
-
-
-
-
-
-
-
+            }
+            Column(
+                modifier = Modifier
+                    .background(CustomColors.lightBlue)
+                    .fillMaxSize()
+                    .padding(start = 10.dp, end = 10.dp, top = it.calculateTopPadding())
+            ) {
+                ReceiptCard(
+                    modifier = Modifier
+                        .padding(horizontal = 25.dp)
+                        .fillMaxWidth()
+                        .weight(1f),
+                    receiptCategory = receiptCategory,
+                    generalReceipt = currentReceipt.value
+                )
+            }
 
 
         }
@@ -492,39 +545,41 @@ fun ReceiptScreen(
     }
 
 }
+
 @Composable
 @SuppressLint("MissingPermission")
- fun btScan(context: Context,print:(String)->Unit, close:()->Unit){
+fun btScan(context: Context, print: (String) -> Unit, close: () -> Unit) {
     var openBtDevicesList by remember {
         mutableStateOf(true)
     }
 
-    val blueToothManager:BluetoothManager= context.getSystemService(BluetoothManager::class.java)
-     val bluetoothAdapter:BluetoothAdapter?=blueToothManager.adapter
-     val pairedDevices:Set<BluetoothDevice> = bluetoothAdapter?.bondedDevices as Set<BluetoothDevice>
-    var data:MutableList<MutableMap<String?,Any?>?>?=null
-    data=ArrayList()
+    val blueToothManager: BluetoothManager = context.getSystemService(BluetoothManager::class.java)
+    val bluetoothAdapter: BluetoothAdapter? = blueToothManager.adapter
+    val pairedDevices: Set<BluetoothDevice> =
+        bluetoothAdapter?.bondedDevices as Set<BluetoothDevice>
+    var data: MutableList<MutableMap<String?, Any?>?>? = null
+    data = ArrayList()
 
-    if(pairedDevices.isNotEmpty()){
-        val dataNum1:MutableMap<String?,Any?> = HashMap()
-        dataNum1["A"]=""
-        dataNum1["B"]=""
+    if (pairedDevices.isNotEmpty()) {
+        val dataNum1: MutableMap<String?, Any?> = HashMap()
+        dataNum1["A"] = ""
+        dataNum1["B"] = ""
         data.add(dataNum1)
-        for (device in pairedDevices){
-            val dataNum:MutableMap<String?,Any?> = HashMap()
-            dataNum["A"]=device.name
-            dataNum["B"]=device.address
+        for (device in pairedDevices) {
+            val dataNum: MutableMap<String?, Any?> = HashMap()
+            dataNum["A"] = device.name
+            dataNum["B"] = device.address
             data.add(dataNum)
         }
-        if(openBtDevicesList){
+        if (openBtDevicesList) {
             BluetoothDevicesDialog(
                 onDismiss = {
-                    openBtDevicesList=false
+                    openBtDevicesList = false
                     close()
                 },
                 devices = data,
                 itemClicked = {
-                    openBtDevicesList=false
+                    openBtDevicesList = false
                     print(it)
                     close()
                 }
@@ -534,8 +589,8 @@ fun ReceiptScreen(
         }
 
 
-    }else{
-        Toast.makeText(context,"notdevice found",Toast.LENGTH_SHORT).show()
+    } else {
+        Toast.makeText(context, "notdevice found", Toast.LENGTH_SHORT).show()
     }
- }
+}
 
