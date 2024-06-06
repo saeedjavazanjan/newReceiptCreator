@@ -1,6 +1,7 @@
 package com.saeed.zanjan.receipt.presentation.components
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -31,41 +32,54 @@ fun BluetoothDevicesDialog(
 
     Dialog(onDismissRequest = { onDismiss() }) {
         Surface(
-            modifier = Modifier.width(400.dp),
+            modifier = Modifier
+                .width(400.dp)
+                .height(600.dp),
             shape = RoundedCornerShape(8.dp)
         ) {
-            LazyColumn(
-                state = rememberLazyListState(),
-            ) {
-                itemsIndexed(
-                    items = devices
-                ) { index, device ->
 
-                    Text(
+            Column {
+                LazyColumn(
+                    state = rememberLazyListState(),
+                ) {
+                    itemsIndexed(
+                        items = devices
+                    ) { index, device ->
 
-                        modifier = Modifier.padding(10.dp).fillMaxWidth().clickable {
-                            itemClicked(device?.get("A")?.toString() ?: "Unknown")
-                        },
-                        text =device?.get("A")?.toString() ?: "Unknown"
-                    )
-                }
+                        Text(
 
-                item{
-                    Divider(
-                        color = CustomColors.lightGray,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(1.dp)
-                            .padding(horizontal = 5.dp)
-                    )
-                    Text(
-                        modifier = Modifier.padding( 20.dp),
-                        text = "لازم است گوشی شما از قبل با پرینتر همگام سازی شده باشد.",
-                        style= MaterialTheme.typography.bodyMedium,
-                        color = CustomColors.darkPurple
-                    )
+                            modifier = Modifier
+                                .padding(10.dp)
+                                .fillMaxWidth()
+                                .clickable {
+                                    itemClicked(
+                                        device
+                                            ?.get("A")
+                                            ?.toString() ?: "Unknown"
+                                    )
+                                },
+                            text =device?.get("A")?.toString() ?: "Unknown"
+                        )
+                    }
+
+                    item{
+                        Divider(
+                            color = CustomColors.lightGray,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(1.dp)
+                                .padding(horizontal = 5.dp)
+                        )
+                        Text(
+                            modifier = Modifier.padding( 20.dp),
+                            text = "لازم است گوشی شما از قبل با پرینتر همگام سازی شده باشد.",
+                            style= MaterialTheme.typography.bodyMedium,
+                            color = CustomColors.darkPurple
+                        )
+                    }
                 }
             }
+
 
 
         }

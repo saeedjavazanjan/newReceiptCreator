@@ -51,6 +51,7 @@ fun HomeTopBar(
     expandSearchBar: (Boolean) -> Unit,
     modifier: Modifier,
     search: (String) -> Unit,
+    menu:()->Unit,
     filter:()->Unit
 ) {
 
@@ -67,7 +68,7 @@ fun HomeTopBar(
                 containerColor = CustomColors.lightGray
             ),
             onClick = {
-                //    Handle navigation
+                      menu()
             },
         ) {
             Icon(
