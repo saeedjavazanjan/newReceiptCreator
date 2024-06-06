@@ -49,7 +49,10 @@ fun Navigation(
                 navigateToCreateReceiptScreen = {
                     navController.navigate(Screen.CreateReceipt.route)
 
-                }
+                },
+                navigateToProfileSetting = {} ,
+                navigateToAboutUs = {},
+                navigateToCustomersList = {}
             )
         }
 

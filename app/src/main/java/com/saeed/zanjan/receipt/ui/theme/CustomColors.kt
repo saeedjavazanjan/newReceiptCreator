@@ -14,6 +14,8 @@ object CustomColors {
     val problem= Color(0xFFFFC107)
     val delivered= Color(0xFF6C757D)
     val darkBlue= Color(0xff0056ab)
+    val gold= Color(0xffF5BD02)
+    val transparentBlue= Color(0x37328CE2)
    /* val readyForDelivery= Color(0xFFD3E5CF)
     val delivered= Color(0xFFCECECD)
     val inProses= Color(0xFFFFC2A6)
