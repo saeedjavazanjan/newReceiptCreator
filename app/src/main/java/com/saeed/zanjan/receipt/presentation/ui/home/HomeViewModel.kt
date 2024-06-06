@@ -1,6 +1,9 @@
 package com.saeed.zanjan.receipt.presentation.ui.home
 
+import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
+import android.net.Uri
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -92,6 +95,14 @@ class HomeViewModel
 
         }.launchIn(viewModelScope)
 
+    }
+
+    fun commentOnApp(context: Context){
+        val intent = Intent(Intent.ACTION_EDIT)
+        intent.data =
+            Uri.parse("bazaar://details?id=" + "com.saeed.zanjan.receipt")
+        intent.setPackage("com.farsitel.bazaar")
+        context.startActivity(intent)
     }
 
    }
