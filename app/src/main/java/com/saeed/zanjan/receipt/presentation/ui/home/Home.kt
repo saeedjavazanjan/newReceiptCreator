@@ -109,7 +109,7 @@ fun Home(
             premiumIcon = painterResource(id = R.drawable.star)
         ),
         NavigationItem(
-            title = "پنل اختصاصی(به زودی)",
+            title = "پنل اختصاصی (به زودی)",
             icon = painterResource(id = R.drawable.personal_panel)
         ),
     )
@@ -124,6 +124,10 @@ fun Home(
     }
     LaunchedEffect(Unit) {
         viewModel.getListOfReceipts(snackbarHostState)
+       // viewModel.downloadDb(snackbarHostState)
+    }
+    LaunchedEffect(key1 = viewModel.databaseSaved.value){
+       // viewModel.getListOfReceipts(snackbarHostState)
     }
     NewReceiptCreatorTheme(
         displayProgressBar = loading,
@@ -164,8 +168,15 @@ fun Home(
                                                     navigateToCustomersList()
                                                 }
                                                 4->{}
-                                                5->{}
-                                                6->{}
+                                                5->{
+                                                    viewModel.uploadBackUpOfDatabase(snackbarHostState)
+                                                }
+                                                6->{
+                                                    coroutineScope.launch {
+                                                        snackbarHostState.showSnackbar("این امکان هنوز پیاده سازی نشده است.")
+
+                                                    }
+                                                }
                                             }
 
                                         },

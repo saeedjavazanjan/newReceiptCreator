@@ -105,6 +105,7 @@ dependencies {
     kapt("androidx.room:room-compiler:$room_version")
     // optional - Kotlin Extensions and Coroutines support for Room
     implementation("androidx.room:room-ktx:$room_version")
+    implementation ("com.opencsv:opencsv:5.5.2")
 
 
 

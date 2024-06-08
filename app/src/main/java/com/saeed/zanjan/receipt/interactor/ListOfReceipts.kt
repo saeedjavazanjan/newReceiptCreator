@@ -16,7 +16,6 @@ class ListOfReceipts(
 
 
     fun getListOfReceipts(
-
         receiptCategory: Int
     ): Flow<DataState<List<GeneralReceipt>>> = flow {
         emit(DataState.loading())
