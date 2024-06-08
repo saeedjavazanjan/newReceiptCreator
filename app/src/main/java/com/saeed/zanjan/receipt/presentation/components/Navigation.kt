@@ -18,6 +18,8 @@ import com.saeed.zanjan.receipt.presentation.ui.receipt.ReceiptScreen
 import com.saeed.zanjan.receipt.presentation.ui.receipt.ReceiptViewModel
 import com.saeed.zanjan.receipt.presentation.ui.registration.RegistrationScreen
 import com.saeed.zanjan.receipt.presentation.ui.registration.RegistrationViewModel
+import com.saeed.zanjan.receipt.presentation.ui.splash.SplashScreen
+import com.saeed.zanjan.receipt.presentation.ui.splash.SplashViewModel
 
 @Composable
 fun Navigation(
@@ -31,7 +33,19 @@ fun Navigation(
     val createReceiptViewModel: CreateReceiptViewModel = viewModel()
     val editReceiptViewModel: EditReceiptViewModel = viewModel()
     val receiptViewMode: ReceiptViewModel = viewModel()
-    NavHost(navController = navController, startDestination = Screen.Home.route) {
+    val splashViewModel: SplashViewModel = viewModel()
+    NavHost(navController = navController, startDestination = Screen.Splash.route) {
+
+        composable(Screen.Splash.route) {
+            SplashScreen(
+                viewModel = splashViewModel,
+                navigateToHome = {
+                    navController.navigate(Screen.Home.route)
+                }
+            )
+        }
+
+
         composable(Screen.Registration.route) {
             RegistrationScreen(
                 viewModel = registrationViewModel,

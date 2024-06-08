@@ -1,5 +1,6 @@
 package com.saeed.zanjan.receipt.cash
 
+import android.database.Cursor
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -58,6 +59,28 @@ interface ReceiptDao {
 
     @Query("SELECT * FROM tailoring")
     fun getAllTailoringReceipts(): List<TailoringEntity>
+
+    @Query("SELECT * FROM confectionery")
+    fun getAllConfectioneryCursor(): Cursor
+ @Query("SELECT * FROM jewelry")
+    fun getAllJewelryCursor(): Cursor
+ @Query("SELECT * FROM laundry")
+    fun getAllLaundryCursor(): Cursor
+ @Query("SELECT * FROM otherJobs")
+    fun getAllOtherJobsCursor(): Cursor
+ @Query("SELECT * FROM photography")
+    fun getAllPhotographyCursor(): Cursor
+ @Query("SELECT * FROM repairs")
+    fun getAllRepairsCursor(): Cursor
+ @Query("SELECT * FROM tailoring")
+    fun getAllTailoringCursor(): Cursor
+
+
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(receipts: List<RepairsEntity>)
+
+
 
 
     @Query("SELECT * FROM confectionery WHERE id = :Id")

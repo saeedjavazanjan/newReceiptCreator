@@ -1,0 +1,151 @@
+package com.saeed.zanjan.receipt.interactor
+
+import android.content.Context
+import android.content.SharedPreferences
+import android.os.Environment
+import com.saeed.zanjan.receipt.domain.dataState.DataState
+import com.saeed.zanjan.receipt.network.RetrofitService
+import com.saeed.zanjan.receipt.utils.CsvExportUtil
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.Response
+import okhttp3.ResponseBody
+import org.json.JSONObject
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
+import java.io.InputStream
+
+class Backup(
+    val context: Context,
+    val retrofitService: RetrofitService,
+    private val csvExportUtil: CsvExportUtil,
+    private val sharedPreferences: SharedPreferences
+) {
+
+    val receiptCategory=1//sharedPreferences.getInt("JOB_SUBJECT",-1)
+
+
+
+    fun backupDb():Flow<DataState<String>> = flow{
+        emit(DataState.loading())
+
+        try {
+            val dataBasePart=getDatabaseAsPart()
+           val result= retrofitService.uploadDatabase(
+               "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0IiwibmFtZSI6ImZ2YmZiIiwiZW1haWwiOiIwOTE5MzQ4MDI2MyIsImV4cCI6MzI5NTY3Mzk1NiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDozOTc4IiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDozOTc4In0.KR0AN0NF4WEJi6aR8-ZyvGCqlZrTXKpf9DITCIIG2vY",
+               dataBasePart)
+            if (result.isSuccessful) {
+                emit(DataState.success(result.body()!!))
+            } else if (result.code() == 401) {
+                emit(DataState.error("شما دسترسی لازم را ندارید"))
+            } else {
+                try {
+                    val errMsg = result.errorBody()?.string()?.let {
+                        JSONObject(it).getString("error") // or whatever your message is
+                    } ?: run {
+                        emit(DataState.error(result.code().toString()))
+                    }
+                    emit(DataState.error(errMsg.toString()))
+                } catch (e: Exception) {
+                    emit(DataState.error(e.message.toString()))
+                }
+            }
+
+        }catch (e:Exception){
+
+            emit(DataState.error(e.message.toString()))
+
+        }
+
+
+    }
+
+
+    private fun getDatabaseAsPart(
+    ): MultipartBody.Part {
+        val dbFile: File = exportDatabaseToCsv()
+        val requestFile = RequestBody.create("application/octet-stream".toMediaTypeOrNull(), dbFile)
+        return MultipartBody.Part.createFormData("DatabaseFile", dbFile.name, requestFile)
+
+    }
+
+    fun downloadDatabase():Flow<DataState<String>> = flow {
+        emit(DataState.loading())
+        try {
+            val response =retrofitService.downloadDatabase(
+                "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0IiwibmFtZSI6ImZ2YmZiIiwiZW1haWwiOiIwOTE5MzQ4MDI2MyIsImV4cCI6MzI5NTY3Mzk1NiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDozOTc4IiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDozOTc4In0.KR0AN0NF4WEJi6aR8-ZyvGCqlZrTXKpf9DITCIIG2vY"
+
+                )
+            if (response.isSuccessful) {
+                response.body()?.let { body ->
+                    val success = saveFile(body)
+                    if(success){
+                        val filePath = getCsvFilePath()
+                        csvExportUtil.repairsImportCsvToDatabase(filePath) // مسیر فایل ذخیره شده را بدست می‌آوریم
+                        emit(DataState.success("دریافت موفق اطلاعات"))
+                    }else{
+                        emit(DataState.error("خطا در ذخیره دیتا بیس"))
+
+                    }
+                }
+            }else if (response.code() == 401) {
+                emit(DataState.error("شما دسترسی لازم را ندارید"))
+            } else {
+                try {
+                    val errMsg = response.errorBody()?.string()?.let {
+                        JSONObject(it).getString("error") // or whatever your message is
+                    } ?: run {
+                        emit(DataState.error(response.code().toString()))
+                    }
+                    emit(DataState.error(errMsg.toString()))
+                } catch (e: Exception) {
+                    emit(DataState.error(e.message.toString()))
+                }
+            }
+
+
+        }catch (e:Exception){
+            emit(DataState.error(e.message.toString()))
+
+        }
+
+    }
+
+    fun saveFile(body: ResponseBody): Boolean {
+        return try {
+            val file = File(context.filesDir, "downloaded_receipt.csv")
+            var inputStream: InputStream? = null
+            var outputStream: FileOutputStream? = null
+            try {
+                inputStream = body.byteStream()
+                outputStream = FileOutputStream(file)
+                val buffer = ByteArray(4096)
+                var bytesRead: Int
+                while (inputStream.read(buffer).also { bytesRead = it } != -1) {
+                    outputStream.write(buffer, 0, bytesRead)
+                }
+                outputStream.flush()
+                true
+            } finally {
+                inputStream?.close()
+                outputStream?.close()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
+        }
+    }
+
+    private fun exportDatabaseToCsv():File {
+        return csvExportUtil.exportDatabaseToCsv(receiptCategory)
+    }
+
+    fun getCsvFilePath(): String {
+        return File(context.filesDir, "downloaded_receipt.csv").absolutePath
+    }
+}

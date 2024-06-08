@@ -10,24 +10,35 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.saeed.zanjan.receipt.domain.models.GeneralReceipt
+import com.saeed.zanjan.receipt.interactor.Backup
 import com.saeed.zanjan.receipt.interactor.ListOfReceipts
+import com.saeed.zanjan.receipt.utils.CsvExportUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
 import javax.inject.Inject
+
 
 @HiltViewModel
 class HomeViewModel
    @Inject constructor(
        private val  sharedPreferences: SharedPreferences,
-       private val lisOfReceipts: ListOfReceipts
+       private val lisOfReceipts: ListOfReceipts,
+       private val backup: Backup
    ) :ViewModel() {
 
 
         val receiptCategory=1//sharedPreferences.getInt("JOB_SUBJECT",-1)
     val loading = mutableStateOf(false)
     val receiptList: MutableState<List<GeneralReceipt>> = mutableStateOf(ArrayList())
+    val databaseSaved= mutableStateOf(false)
 
 
     fun getListOfReceipts(
@@ -104,5 +115,44 @@ class HomeViewModel
         intent.setPackage("com.farsitel.bazaar")
         context.startActivity(intent)
     }
+
+    fun uploadBackUpOfDatabase(snackbarHostState: SnackbarHostState){
+        backup.backupDb().onEach { dataState ->
+            dataState.loading.let {
+                loading.value=it
+            }
+            dataState.data?.let {
+                snackbarHostState.showSnackbar("done")
+            }
+            dataState.error?.let {
+                snackbarHostState.showSnackbar(it)
+
+            }
+        }.launchIn(viewModelScope)
+
+    }
+    fun downloadDb(snackbarHostState: SnackbarHostState){
+        backup.downloadDatabase().onEach { dataState ->
+
+            dataState.loading.let {
+                loading.value=it
+
+
+            }
+            dataState.data?.let{
+                databaseSaved.value=true
+                snackbarHostState.showSnackbar(it)
+            }
+            dataState.error?.let {
+                snackbarHostState.showSnackbar(it)
+
+            }
+
+        }.launchIn(viewModelScope)
+
+    }
+
+
+
 
    }
