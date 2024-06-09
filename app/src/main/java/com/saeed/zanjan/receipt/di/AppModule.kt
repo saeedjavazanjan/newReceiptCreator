@@ -8,10 +8,17 @@ import com.google.gson.GsonBuilder
 import com.saeed.zanjan.receipt.BaseApplication
 import com.saeed.zanjan.receipt.cash.ReceiptDao
 import com.saeed.zanjan.receipt.cash.database.AppDatabase
+import com.saeed.zanjan.receipt.cash.model.ConfectioneryEntityMapper
 import com.saeed.zanjan.receipt.cash.model.EntitiesGeneralMapper
+import com.saeed.zanjan.receipt.cash.model.JewelryEntityMapper
+import com.saeed.zanjan.receipt.cash.model.LaundryEntityMapper
+import com.saeed.zanjan.receipt.cash.model.OtherJobsEntityMapper
+import com.saeed.zanjan.receipt.cash.model.PhotographyEntityMapper
 import com.saeed.zanjan.receipt.cash.model.RepairsEntityMapper
+import com.saeed.zanjan.receipt.cash.model.TailoringEntityMapper
 import com.saeed.zanjan.receipt.interactor.Backup
 import com.saeed.zanjan.receipt.interactor.BlueToothConnectionClass
+import com.saeed.zanjan.receipt.interactor.ExportExcelFile
 import com.saeed.zanjan.receipt.interactor.ListOfReceipts
 import com.saeed.zanjan.receipt.interactor.ReceiptQueryInDatabase
 import com.saeed.zanjan.receipt.interactor.SendSms
@@ -141,21 +148,66 @@ object AppModule {
         return db.receiptDao()
     }
 
-    @Singleton
-    @Provides
-    fun provideRepairsMapper(): RepairsEntityMapper {
-        return RepairsEntityMapper()
-    }
+
+
+     @Singleton
+     @Provides
+     fun provideConfectioneryMapper(): ConfectioneryEntityMapper {
+         return ConfectioneryEntityMapper()
+     }
+  @Singleton
+     @Provides
+     fun provideJewelryMapper(): JewelryEntityMapper {
+         return JewelryEntityMapper()
+     }
+  @Singleton
+     @Provides
+     fun provideLaundryMapper(): LaundryEntityMapper {
+         return LaundryEntityMapper()
+     }
+  @Singleton
+     @Provides
+     fun provideOtherJobsMapper(): OtherJobsEntityMapper {
+         return OtherJobsEntityMapper()
+     }
+  @Singleton
+     @Provides
+     fun providePhotoMapper(): PhotographyEntityMapper {
+         return PhotographyEntityMapper()
+     }
+  @Singleton
+     @Provides
+     fun provideRepairsMapper(): RepairsEntityMapper {
+         return RepairsEntityMapper()
+     }
+  @Singleton
+     @Provides
+     fun provideTailoringMapper(): TailoringEntityMapper {
+         return TailoringEntityMapper()
+     }
     @Singleton
     @Provides
     fun provideCsvExporter( @ApplicationContext context: Context,
                             receiptDao: ReceiptDao,
-                            mapper:RepairsEntityMapper
+                            confectioneryEntityMapper: ConfectioneryEntityMapper,
+                            jewelryEntityMapper: JewelryEntityMapper,
+                            laundryEntityMapper: LaundryEntityMapper,
+                            otherJobsEntityMapper: OtherJobsEntityMapper,
+                            photographyEntityMapper: PhotographyEntityMapper,
+                            repairsEntityMapper:RepairsEntityMapper,
+                            tailoringEntityMapper: TailoringEntityMapper
+
     ): CsvExportUtil{
         return CsvExportUtil(
             context=context,
             receiptDao,
-            mapper=mapper
+            confectioneryEntityMapper,
+            jewelryEntityMapper,
+            laundryEntityMapper,
+            otherJobsEntityMapper,
+            photographyEntityMapper,
+            repairsEntityMapper,
+            tailoringEntityMapper
         )
     }
 
@@ -176,45 +228,34 @@ object AppModule {
             sharedPreferences = sharedPreferences
         )
     }
-/*
 
     @Singleton
     @Provides
-    fun provideConfectioneryMapper(): ConfectioneryEntityMapper {
-        return ConfectioneryEntityMapper()
-    }
- @Singleton
-    @Provides
-    fun provideJewelryMapper(): JewelryEntityMapper {
-        return JewelryEntityMapper()
-    }
- @Singleton
-    @Provides
-    fun provideLaundryMapper(): LaundryEntityMapper {
-        return LaundryEntityMapper()
-    }
- @Singleton
-    @Provides
-    fun provideOtherJobsMapper(): OtherJobsEntityMapper {
-        return OtherJobsEntityMapper()
-    }
- @Singleton
-    @Provides
-    fun providePhotoMapper(): PhotographyEntityMapper {
-        return PhotographyEntityMapper()
-    }
- @Singleton
-    @Provides
-    fun provideRepairsMapper(): RepairsEntityMapper {
-        return RepairsEntityMapper()
-    }
- @Singleton
-    @Provides
-    fun provideTailoringMapper(): TailoringEntityMapper {
-        return TailoringEntityMapper()
-    }
-*/
+    fun provideExportExcel(
+        @ApplicationContext context: Context,
+        receiptDao: ReceiptDao,
+        confectioneryEntityMapper: ConfectioneryEntityMapper,
+        jewelryEntityMapper: JewelryEntityMapper,
+        laundryEntityMapper: LaundryEntityMapper,
+        otherJobsEntityMapper: OtherJobsEntityMapper,
+        photographyEntityMapper: PhotographyEntityMapper,
+        repairsEntityMapper:RepairsEntityMapper,
+        tailoringEntityMapper: TailoringEntityMapper
 
+        ): ExportExcelFile {
+        return ExportExcelFile(
+            context,
+            receiptDao,
+            confectioneryEntityMapper,
+            jewelryEntityMapper,
+            laundryEntityMapper,
+            otherJobsEntityMapper,
+            photographyEntityMapper,
+            repairsEntityMapper,
+            tailoringEntityMapper
+
+        )
+    }
 
     @Singleton
     @Provides

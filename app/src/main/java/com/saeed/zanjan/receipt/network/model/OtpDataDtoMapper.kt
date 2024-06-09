@@ -1,6 +1,5 @@
 package com.saeed.zanjan.receipt.network.model
 
-import com.saeed.zanjan.receipt.domain.models.GeneralReceipt
 import com.saeed.zanjan.receipt.domain.models.OtpData
 import com.saeed.zanjan.receipt.domain.util.DomainMapper
 
@@ -19,6 +18,10 @@ class OtpDataDtoMapper:DomainMapper<OtpDataDto,OtpData> {
             phoneNumber = domainModel.phoneNumber,
             password = domainModel.password
         )
+    }
+
+    override fun mapToDomainList(entityList: List<OtpDataDto>): List<OtpData> {
+        return emptyList()
     }
 
 

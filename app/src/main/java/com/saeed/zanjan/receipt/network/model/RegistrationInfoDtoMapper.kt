@@ -1,6 +1,5 @@
 package com.saeed.zanjan.receipt.network.model
 
-import com.saeed.zanjan.receipt.domain.models.GeneralReceipt
 import com.saeed.zanjan.receipt.domain.models.RegistrationInfo
 import com.saeed.zanjan.receipt.domain.util.DomainMapper
 
@@ -25,6 +24,10 @@ class RegistrationInfoDtoMapper: DomainMapper<RegistrationInfoDto, RegistrationI
             pageId = domainModel.userId,
             jobTitle = domainModel.jobType
         )
+    }
+
+    override fun mapToDomainList(entityList: List<RegistrationInfoDto>): List<RegistrationInfo> {
+        return emptyList()
     }
 
 

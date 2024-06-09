@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.saeed.zanjan.receipt.domain.models.GeneralReceipt
 import com.saeed.zanjan.receipt.interactor.Backup
+import com.saeed.zanjan.receipt.interactor.ExportExcelFile
 import com.saeed.zanjan.receipt.interactor.ListOfReceipts
 import com.saeed.zanjan.receipt.utils.CsvExportUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -31,7 +32,8 @@ class HomeViewModel
    @Inject constructor(
        private val  sharedPreferences: SharedPreferences,
        private val lisOfReceipts: ListOfReceipts,
-       private val backup: Backup
+       private val backup: Backup,
+       private val exportExcelFile: ExportExcelFile
    ) :ViewModel() {
 
 
@@ -131,27 +133,22 @@ class HomeViewModel
         }.launchIn(viewModelScope)
 
     }
-    fun downloadDb(snackbarHostState: SnackbarHostState){
-        backup.downloadDatabase().onEach { dataState ->
 
+    fun exportExcel(snackbarHostState: SnackbarHostState){
+        exportExcelFile.databaseExport(receiptCategory).onEach { dataState ->
             dataState.loading.let {
                 loading.value=it
-
-
             }
-            dataState.data?.let{
-                databaseSaved.value=true
+            dataState.data?.let {
                 snackbarHostState.showSnackbar(it)
             }
             dataState.error?.let {
                 snackbarHostState.showSnackbar(it)
-
             }
 
         }.launchIn(viewModelScope)
 
     }
-
 
 
 

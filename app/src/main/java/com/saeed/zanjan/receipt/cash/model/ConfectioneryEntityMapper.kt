@@ -41,5 +41,13 @@ class ConfectioneryEntityMapper: DomainMapper<ConfectioneryEntity, Confectionery
 
     }
 
+    override fun mapToDomainList(entityList: List<ConfectioneryEntity>): List<ConfectioneryReceipt?> {
+        val list= mutableListOf<ConfectioneryReceipt?>()
+        entityList.forEach {
+            list.add(mapToDomainModel(it))
+        }
+        return list
+    }
+
 
 }

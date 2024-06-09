@@ -34,7 +34,7 @@ fun Navigation(
     val editReceiptViewModel: EditReceiptViewModel = viewModel()
     val receiptViewMode: ReceiptViewModel = viewModel()
     val splashViewModel: SplashViewModel = viewModel()
-    NavHost(navController = navController, startDestination = Screen.Splash.route) {
+    NavHost(navController = navController, startDestination = Screen.Home.route) {
 
         composable(Screen.Splash.route) {
             SplashScreen(

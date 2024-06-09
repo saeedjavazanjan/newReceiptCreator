@@ -12,7 +12,7 @@ android {
 
     defaultConfig {
         applicationId = "com.saeed.zanjan.receipt"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 7
         versionName = "1.2"
@@ -107,6 +107,9 @@ dependencies {
     implementation("androidx.room:room-ktx:$room_version")
     implementation ("com.opencsv:opencsv:5.5.2")
 
+    //excell export
+    implementation ("org.apache.poi:poi:5.2.3")
+    implementation ("org.apache.poi:poi-ooxml:5.2.3")
 
 
 }

@@ -1,6 +1,7 @@
 package com.saeed.zanjan.receipt.cash.model
 
 import com.saeed.zanjan.receipt.domain.models.GeneralReceipt
+import com.saeed.zanjan.receipt.domain.models.JewelryReceipt
 import com.saeed.zanjan.receipt.domain.models.LaundryReceipt
 import com.saeed.zanjan.receipt.domain.models.RepairsReceipt
 import com.saeed.zanjan.receipt.domain.util.DomainMapper
@@ -39,5 +40,11 @@ class LaundryEntityMapper: DomainMapper<LaundryEntity, LaundryReceipt?> {
 
     }
 
-
+    override fun mapToDomainList(entityList: List<LaundryEntity>): List<LaundryReceipt?> {
+        val list= mutableListOf<LaundryReceipt?>()
+        entityList.forEach {
+            list.add(mapToDomainModel(it))
+        }
+        return list
+    }
 }
