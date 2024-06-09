@@ -86,8 +86,75 @@ class Backup(
                     val success = saveFile(body)
                     if(success){
                         val filePath = getCsvFilePath()
-                        csvExportUtil.repairsImportCsvToDatabase(filePath) // مسیر فایل ذخیره شده را بدست می‌آوریم
-                        emit(DataState.success("دریافت موفق اطلاعات"))
+                        when(receiptCategory){
+                            0 -> {
+                                //repair
+                                csvExportUtil.repairsImportCsvToDatabase(filePath)
+                                emit(DataState.success("دریافت موفق اطلاعات"))                            }
+
+                            1 -> {
+                                //repair
+                                csvExportUtil.repairsImportCsvToDatabase(filePath)
+                                emit(DataState.success("دریافت موفق اطلاعات"))
+
+                            }
+
+                            2 -> {
+                                //  repair
+                                csvExportUtil.repairsImportCsvToDatabase(filePath)
+                                emit(DataState.success("دریافت موفق اطلاعات"))
+                            }
+
+                            3 -> {
+                                //tailoring
+                                csvExportUtil.tailoringImportCsvToDatabase(filePath)
+                                emit(DataState.success("دریافت موفق اطلاعات"))
+                            }
+
+                            4 -> {
+                                //jewelry
+                                csvExportUtil.jewelryImportCsvToDatabase(filePath)
+                                emit(DataState.success("دریافت موفق اطلاعات"))
+                            }
+
+                            5 -> {
+                                //photo
+                                csvExportUtil.photographyImportCsvToDatabase(filePath)
+                                emit(DataState.success("دریافت موفق اطلاعات"))
+
+                            }
+
+                            6 -> {
+                                //laundry
+                                csvExportUtil.laundryImportCsvToDatabase(filePath)
+                                emit(DataState.success("دریافت موفق اطلاعات"))
+
+                            }
+
+                            7 -> {
+                                //confectionery
+                                csvExportUtil.confectioneryImportCsvToDatabase(filePath)
+                                emit(DataState.success("دریافت موفق اطلاعات"))
+
+                            }
+
+                            8 -> {
+                                //otherJobs
+                                csvExportUtil.otherJobsImportCsvToDatabase(filePath)
+                                emit(DataState.success("دریافت موفق اطلاعات"))
+
+                            }
+
+                            else->{
+                                emit(DataState.success("خطای دسته بندی"))
+
+                            }
+
+                        }
+
+
+
+
                     }else{
                         emit(DataState.error("خطا در ذخیره دیتا بیس"))
 

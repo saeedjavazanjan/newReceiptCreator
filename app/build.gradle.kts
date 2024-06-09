@@ -107,6 +107,9 @@ dependencies {
     implementation("androidx.room:room-ktx:$room_version")
     implementation ("com.opencsv:opencsv:5.5.2")
 
+    //excell export
+    implementation ("org.apache.poi:poi:5.2.3")
+    implementation ("org.apache.poi:poi-ooxml:5.2.3")
 
 
 }

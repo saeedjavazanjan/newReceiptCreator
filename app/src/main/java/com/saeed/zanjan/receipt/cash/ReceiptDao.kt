@@ -78,7 +78,19 @@ interface ReceiptDao {
 
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(receipts: List<RepairsEntity>)
+    suspend fun insertAllConfectionery(receipts: List<ConfectioneryEntity>)
+  @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAllJewelry(receipts: List<JewelryEntity>)
+  @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAllLaundry(receipts: List<LaundryEntity>)
+  @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAllOtherJobs(receipts: List<OtherJobsEntity>)
+  @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAllPhotography(receipts: List<PhotographyEntity>)
+  @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAllRepair(receipts: List<RepairsEntity>)
+  @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAllTailoring(receipts: List<TailoringEntity>)
 
 
 

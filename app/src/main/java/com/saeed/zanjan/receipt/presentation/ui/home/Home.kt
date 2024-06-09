@@ -99,7 +99,7 @@ fun Home(
             icon = painterResource(id = R.drawable.group_1)
         ),
         NavigationItem(
-            title = "دریافت خروجی excell",
+            title = "دریافت خروجی Excel",
             icon = painterResource(id = R.drawable.excel),
             premiumIcon = painterResource(id = R.drawable.star)
         ),
