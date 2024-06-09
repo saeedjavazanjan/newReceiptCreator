@@ -18,6 +18,7 @@ import com.saeed.zanjan.receipt.cash.model.RepairsEntityMapper
 import com.saeed.zanjan.receipt.cash.model.TailoringEntityMapper
 import com.saeed.zanjan.receipt.interactor.Backup
 import com.saeed.zanjan.receipt.interactor.BlueToothConnectionClass
+import com.saeed.zanjan.receipt.interactor.ExportExcelFile
 import com.saeed.zanjan.receipt.interactor.ListOfReceipts
 import com.saeed.zanjan.receipt.interactor.ReceiptQueryInDatabase
 import com.saeed.zanjan.receipt.interactor.SendSms
@@ -228,7 +229,33 @@ object AppModule {
         )
     }
 
+    @Singleton
+    @Provides
+    fun provideExportExcel(
+        @ApplicationContext context: Context,
+        receiptDao: ReceiptDao,
+        confectioneryEntityMapper: ConfectioneryEntityMapper,
+        jewelryEntityMapper: JewelryEntityMapper,
+        laundryEntityMapper: LaundryEntityMapper,
+        otherJobsEntityMapper: OtherJobsEntityMapper,
+        photographyEntityMapper: PhotographyEntityMapper,
+        repairsEntityMapper:RepairsEntityMapper,
+        tailoringEntityMapper: TailoringEntityMapper
 
+        ): ExportExcelFile {
+        return ExportExcelFile(
+            context,
+            receiptDao,
+            confectioneryEntityMapper,
+            jewelryEntityMapper,
+            laundryEntityMapper,
+            otherJobsEntityMapper,
+            photographyEntityMapper,
+            repairsEntityMapper,
+            tailoringEntityMapper
+
+        )
+    }
 
     @Singleton
     @Provides

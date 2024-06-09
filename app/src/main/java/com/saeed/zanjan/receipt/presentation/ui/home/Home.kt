@@ -167,7 +167,9 @@ fun Home(
                                                 3->{
                                                     navigateToCustomersList()
                                                 }
-                                                4->{}
+                                                4->{
+                                                    viewModel.exportExcel(snackbarHostState)
+                                                }
                                                 5->{
                                                     viewModel.uploadBackUpOfDatabase(snackbarHostState)
                                                 }

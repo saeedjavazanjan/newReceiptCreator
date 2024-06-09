@@ -12,7 +12,7 @@ android {
 
     defaultConfig {
         applicationId = "com.saeed.zanjan.receipt"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 7
         versionName = "1.2"

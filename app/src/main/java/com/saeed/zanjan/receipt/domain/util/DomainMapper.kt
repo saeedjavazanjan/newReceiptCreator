@@ -8,4 +8,6 @@ interface DomainMapper <T, DomainModel>{
 
     fun mapFromDomainModel(domainModel: DomainModel): T
 
+    fun mapToDomainList(entityList:List<T>):List<DomainModel>
+
 }

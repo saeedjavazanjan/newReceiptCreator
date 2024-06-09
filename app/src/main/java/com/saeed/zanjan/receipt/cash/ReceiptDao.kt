@@ -60,6 +60,8 @@ interface ReceiptDao {
     @Query("SELECT * FROM tailoring")
     fun getAllTailoringReceipts(): List<TailoringEntity>
 
+
+
     @Query("SELECT * FROM confectionery")
     fun getAllConfectioneryCursor(): Cursor
  @Query("SELECT * FROM jewelry")
