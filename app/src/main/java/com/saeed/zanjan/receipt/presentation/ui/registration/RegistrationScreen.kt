@@ -64,7 +64,6 @@ fun RegistrationScreen(
             if(successLogin.value)
             navigateToHome()
         }
-
         var companyName by remember { mutableStateOf("") }
     var address by remember { mutableStateOf("") }
     var phone by remember { mutableStateOf("") }

@@ -8,12 +8,14 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.saeed.zanjan.receipt.presentation.navigation.Screen
+import com.saeed.zanjan.receipt.presentation.ui.profile_edit.ProfileEditScreen
 import com.saeed.zanjan.receipt.presentation.ui.create_receipt.CreateReceiptScreen
 import com.saeed.zanjan.receipt.presentation.ui.create_receipt.CreateReceiptViewModel
 import com.saeed.zanjan.receipt.presentation.ui.editReceipt.EditReceiptScreen
 import com.saeed.zanjan.receipt.presentation.ui.editReceipt.EditReceiptViewModel
 import com.saeed.zanjan.receipt.presentation.ui.home.Home
 import com.saeed.zanjan.receipt.presentation.ui.home.HomeViewModel
+import com.saeed.zanjan.receipt.presentation.ui.profile_edit.ProfileEditViewModel
 import com.saeed.zanjan.receipt.presentation.ui.receipt.ReceiptScreen
 import com.saeed.zanjan.receipt.presentation.ui.receipt.ReceiptViewModel
 import com.saeed.zanjan.receipt.presentation.ui.registration.RegistrationScreen
@@ -34,6 +36,7 @@ fun Navigation(
     val editReceiptViewModel: EditReceiptViewModel = viewModel()
     val receiptViewMode: ReceiptViewModel = viewModel()
     val splashViewModel: SplashViewModel = viewModel()
+    val profileEditViewModel: ProfileEditViewModel = viewModel()
     NavHost(navController = navController, startDestination = Screen.Home.route) {
 
         composable(Screen.Splash.route) {
@@ -64,12 +67,17 @@ fun Navigation(
                     navController.navigate(Screen.CreateReceipt.route)
 
                 },
-                navigateToProfileSetting = {} ,
+                navigateToProfileSetting = {
+
+                    navController.navigate(Screen.ProfileEdit.route)
+                } ,
                 navigateToAboutUs = {},
                 navigateToCustomersList = {}
             )
         }
-
+        composable(Screen.ProfileEdit.route) {
+            ProfileEditScreen(profileEditViewModel ,navController)
+        }
         composable(route = Screen.Receipt.route + "/{receiptId}/{newSaved}/{newUpdate}/{statusChanged}/{paymentChanged}",
             arguments = listOf(
                 navArgument("receiptId") { type = NavType.IntType },
