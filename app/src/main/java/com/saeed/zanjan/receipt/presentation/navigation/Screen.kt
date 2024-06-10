@@ -9,5 +9,6 @@ sealed class Screen(
     object CreateReceipt : Screen("createReceipt")
     object EditReceipt : Screen("editReceipt")
     object Splash : Screen("splash")
+    object ProfileEdit:Screen("profileEdit")
 
 }
