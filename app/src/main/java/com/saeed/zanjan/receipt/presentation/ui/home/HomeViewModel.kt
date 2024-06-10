@@ -118,6 +118,7 @@ class HomeViewModel
         context.startActivity(intent)
     }
 
+    //TODO storage permissin
     fun uploadBackUpOfDatabase(snackbarHostState: SnackbarHostState){
         backup.backupDb().onEach { dataState ->
             dataState.loading.let {
@@ -134,6 +135,7 @@ class HomeViewModel
 
     }
 
+    //TODO storage permissin
     fun exportExcel(snackbarHostState: SnackbarHostState){
         exportExcelFile.databaseExport(receiptCategory).onEach { dataState ->
             dataState.loading.let {
