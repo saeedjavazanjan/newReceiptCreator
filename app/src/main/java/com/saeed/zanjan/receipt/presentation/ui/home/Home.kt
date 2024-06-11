@@ -52,6 +52,7 @@ import com.saeed.zanjan.receipt.presentation.components.AddReceiptCard
 import com.saeed.zanjan.receipt.presentation.components.HomeTopBar
 import com.saeed.zanjan.receipt.presentation.components.ReceiptListCard
 import com.saeed.zanjan.receipt.presentation.components.StatusDialog
+import com.saeed.zanjan.receipt.presentation.components.SubscribeDialog
 import com.saeed.zanjan.receipt.presentation.navigation.Screen
 import com.saeed.zanjan.receipt.ui.theme.CustomColors
 import com.saeed.zanjan.receipt.ui.theme.NewReceiptCreatorTheme
@@ -67,7 +68,7 @@ fun Home(
     navigateToCreateReceiptScreen: () -> Unit,
     navigateToProfileSetting:()->Unit,
     navigateToAboutUs:()->Unit,
-    navigateToCustomersList:()->Unit
+    navigateToCustomersList:()->Unit,
 ) {
 
     val snackbarHostState = remember { SnackbarHostState() }
@@ -78,6 +79,7 @@ fun Home(
 
     var isSearchExpanded by remember { mutableStateOf(false) }
     var openFilterDialog by remember { mutableStateOf(false) }
+    var openSubscribeDialog by remember { mutableStateOf(false) }
     var filtered by remember { mutableStateOf(false) }
 
     val drawerState =rememberDrawerState(initialValue = DrawerValue.Closed )
@@ -108,10 +110,16 @@ fun Home(
             icon = painterResource(id = R.drawable.upload),
             premiumIcon = painterResource(id = R.drawable.star)
         ),
+
+        NavigationItem(
+            title = "خرید اشتراک",
+            icon = painterResource(id = R.drawable.credit_card)
+        ),
         NavigationItem(
             title = "پنل اختصاصی (به زودی)",
             icon = painterResource(id = R.drawable.personal_panel)
         ),
+
     )
     var selectedItemIndex by rememberSaveable {
         mutableStateOf(0)
@@ -174,6 +182,9 @@ fun Home(
                                                     viewModel.uploadBackUpOfDatabase(snackbarHostState)
                                                 }
                                                 6->{
+                                                   openSubscribeDialog=true
+                                                }
+                                                7->{
                                                     coroutineScope.launch {
                                                         snackbarHostState.showSnackbar("این امکان هنوز پیاده سازی نشده است.")
 
@@ -258,7 +269,9 @@ fun Home(
                     )
                 }
 
-
+                if(openSubscribeDialog){
+                    SubscribeDialog()
+                }
 
                 Column(
                     verticalArrangement = Arrangement.Top,

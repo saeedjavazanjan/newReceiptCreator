@@ -72,7 +72,10 @@ fun Navigation(
                     navController.navigate(Screen.ProfileEdit.route)
                 } ,
                 navigateToAboutUs = {},
-                navigateToCustomersList = {}
+                navigateToCustomersList = {
+
+                }
+
             )
         }
         composable(Screen.ProfileEdit.route) {
