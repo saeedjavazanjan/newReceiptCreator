@@ -115,4 +115,8 @@ dependencies {
     implementation ("com.github.bumptech.glide:glide:4.16.0")
     implementation ("com.github.bumptech.glide:compose:1.0.0-beta01")
 
+    //bazar
+    implementation ("com.github.cafebazaar.Poolakey:poolakey:2.1.0")
+
+
 }
