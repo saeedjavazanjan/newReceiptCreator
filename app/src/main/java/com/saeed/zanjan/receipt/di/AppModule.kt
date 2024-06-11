@@ -26,6 +26,7 @@ import com.saeed.zanjan.receipt.interactor.ShareReceipt
 import com.saeed.zanjan.receipt.interactor.UserRegistration
 import com.saeed.zanjan.receipt.network.RetrofitService
 import com.saeed.zanjan.receipt.network.model.OtpDataDtoMapper
+import com.saeed.zanjan.receipt.network.model.ProfileDataDtoMapper
 import com.saeed.zanjan.receipt.network.model.RegistrationInfoDtoMapper
 import com.saeed.zanjan.receipt.utils.CsvExportUtil
 import dagger.Module
@@ -112,16 +113,24 @@ object AppModule {
 
     @Singleton
     @Provides
+    fun provideProfileDataDtoMapper():ProfileDataDtoMapper{
+        return ProfileDataDtoMapper()
+    }
+
+    @Singleton
+    @Provides
     fun provideUserRegistration(
         retrofitService: RetrofitService,
         sharedPreferences: SharedPreferences,
         editor: SharedPreferences.Editor,
         registrationDtoMapper: RegistrationInfoDtoMapper,
-        otpDataDtoMapper: OtpDataDtoMapper
+        otpDataDtoMapper: OtpDataDtoMapper,
+        profileDataDtoMapper: ProfileDataDtoMapper
     ):UserRegistration{
         return UserRegistration(
             retrofitService=retrofitService,
             registrationDtoMapper=registrationDtoMapper,
+            profileDataDtoMapper=profileDataDtoMapper,
             sharedPreferences=sharedPreferences,
             editor=editor,
             otpDataDtoMapper = otpDataDtoMapper
