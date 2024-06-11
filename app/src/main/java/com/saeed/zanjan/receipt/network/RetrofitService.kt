@@ -4,6 +4,7 @@ import com.saeed.zanjan.receipt.domain.models.OtpData
 import com.saeed.zanjan.receipt.domain.models.RegistrationInfo
 import com.saeed.zanjan.receipt.network.model.LoginResponse
 import com.saeed.zanjan.receipt.network.model.OtpDataDto
+import com.saeed.zanjan.receipt.network.model.ProfileDataDto
 import com.saeed.zanjan.receipt.network.model.RegistrationInfoDto
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -19,6 +20,11 @@ import retrofit2.http.Part
 interface RetrofitService {
     @POST("users/signUp")
     suspend fun register(@Body registrationInfo: RegistrationInfoDto): Response<String>
+
+    @POST("users/updateProfile")
+    suspend fun updateProfileData(
+        @Header("Authorization") token: String?,
+        @Body profileDataDto: ProfileDataDto): Response<String>
 
     @POST("users/signIn")
     suspend fun login(@Body otpData: OtpDataDto):Response<String>
