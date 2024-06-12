@@ -270,7 +270,14 @@ fun Home(
                 }
 
                 if(openSubscribeDialog){
-                    SubscribeDialog()
+                    SubscribeDialog(
+                        onDismiss = {
+                            openSubscribeDialog=false
+                        },
+                        buySubscribe = {
+
+                        }
+                    )
                 }
 
                 Column(

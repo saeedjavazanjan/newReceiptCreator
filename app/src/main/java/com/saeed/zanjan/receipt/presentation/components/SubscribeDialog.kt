@@ -1,17 +1,22 @@
 package com.saeed.zanjan.receipt.presentation.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -27,16 +32,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.saeed.zanjan.receipt.ui.theme.CustomColors
 import com.saeed.zanjan.receipt.ui.theme.NewReceiptCreatorTheme
+import okhttp3.internal.wait
+
 @Composable
 fun SubscribeDialog(
-    onDismiss: () -> Unit={},
-    ) {
+    onDismiss: () -> Unit,
+    buySubscribe: (Int) -> Unit
+) {
 
 
-    Dialog(onDismissRequest =  onDismiss ) {
+    Dialog(onDismissRequest = onDismiss) {
         Surface(
             modifier = Modifier.widthIn(max = 500.dp),
-            shape = RoundedCornerShape(8.dp)
+            shape = RoundedCornerShape(16.dp)
         ) {
 
             Column(
@@ -44,22 +52,21 @@ fun SubscribeDialog(
             ) {
                 Card(
                     modifier = Modifier.align(Alignment.CenterHorizontally),
-                    shape = RoundedCornerShape(16.dp),
                     colors = CardDefaults.cardColors(
                         containerColor = Color.White,
                         contentColor = CustomColors.lightBlue,
                     )
 
                 ) {
-                    Row{
+                    Row {
                         Column(
                             verticalArrangement = Arrangement.Center,
-                            modifier = Modifier
-                                .padding(10.dp),
                         ) {
                             TextButton(
                                 modifier = Modifier.padding(5.dp),
-                                onClick = { /*TODO*/ }) {
+                                onClick = {
+                                    buySubscribe(1)
+                                }) {
 
                                 Text(
                                     text = "خرید اشتراک 1 ماهه",
@@ -68,9 +75,21 @@ fun SubscribeDialog(
                                 )
 
                             }
+                            Divider(
+                                color = CustomColors.lightGray,
+                                modifier = Modifier
+                                    .width(60.dp)
+                                    .height(2.dp)
+                                    .padding(horizontal = 5.dp)
+                                    .align(Alignment.CenterHorizontally)
+
+                            )
                             TextButton(
                                 modifier = Modifier.padding(5.dp),
-                                onClick = { /*TODO*/ }) {
+                                onClick = {
+                                    buySubscribe(3)
+
+                                }) {
 
                                 Text(
                                     text = "خرید اشتراک 3 ماهه",
@@ -79,9 +98,19 @@ fun SubscribeDialog(
                                 )
 
                             }
+                            Divider(
+                                color = CustomColors.lightGray,
+                                modifier = Modifier
+                                    .width(60.dp)
+                                    .height(2.dp)
+                                    .padding(horizontal = 5.dp)
+                                    .align(Alignment.CenterHorizontally)
+                            )
                             TextButton(
                                 modifier = Modifier.padding(5.dp),
-                                onClick = { /*TODO*/ }) {
+                                onClick = {
+                                    buySubscribe(12)
+                                }) {
 
                                 Text(
                                     text = "خرید اشتراک 1 ساله",
@@ -94,30 +123,30 @@ fun SubscribeDialog(
                         }
 
                         Column(
-                            modifier= Modifier
-                                .padding(10.dp),
-                            verticalArrangement = Arrangement.Center
+                            modifier = Modifier
+                                .align(Alignment.CenterVertically)
+                                .background(CustomColors.lightBlue),
+                            verticalArrangement = Arrangement.Center,
                         ) {
-                            Text(
-                                modifier = Modifier.padding(5.dp),
-                                text = "از اشتراک شما ",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = CustomColors.darkPurple
-                            )
-                            Spacer(modifier = Modifier.size(20.dp))
-                            Text(
-                                text = "195",
-                                style = MaterialTheme.typography.displayLarge,
-                                color = CustomColors.readyForDelivery
-                            )
                             Spacer(modifier = Modifier.size(20.dp))
 
                             Text(
-                                modifier = Modifier.padding(5.dp),
-                                text = "روز باقی مانده.",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = CustomColors.darkPurple
+                                modifier = Modifier
+                                    .padding(10.dp)
+                                    .align(Alignment.CenterHorizontally),
+                                text = "195",
+                                style = MaterialTheme.typography.displayLarge,
+                                color = CustomColors.yellow
                             )
+                            Spacer(modifier = Modifier.size(10.dp))
+
+                            Text(
+                                modifier = Modifier.padding(5.dp),
+                                text = "روز از اشتراک شماباقی مانده.",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = Color.White
+                            )
+                            Spacer(modifier = Modifier.size(40.dp))
 
 
                         }
