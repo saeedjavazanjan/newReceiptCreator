@@ -1,5 +1,7 @@
 package com.saeed.zanjan.receipt.presentation.components
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -24,6 +26,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -37,7 +41,9 @@ import okhttp3.internal.wait
 @Composable
 fun SubscribeDialog(
     onDismiss: () -> Unit,
-    buySubscribe: (Int) -> Unit
+    buySubscribe: (String) -> Unit,
+    leftTime:MutableState<Long>,
+    context: Context
 ) {
 
 
@@ -65,7 +71,12 @@ fun SubscribeDialog(
                             TextButton(
                                 modifier = Modifier.padding(5.dp),
                                 onClick = {
-                                    buySubscribe(1)
+                                    if(leftTime.value<=0){
+                                        buySubscribe("1month")
+                                        onDismiss()
+                                    }
+                                    else
+                                        Toast.makeText(context,"اشتراک فعلی شما به پایان نرسیده",Toast.LENGTH_SHORT).show()
                                 }) {
 
                                 Text(
@@ -87,7 +98,12 @@ fun SubscribeDialog(
                             TextButton(
                                 modifier = Modifier.padding(5.dp),
                                 onClick = {
-                                    buySubscribe(3)
+                                    if(leftTime.value<=0){
+                                        buySubscribe("3month")
+                                        onDismiss()
+                                    }
+                                    else
+                                        Toast.makeText(context,"اشتراک فعلی شما به پایان نرسیده",Toast.LENGTH_SHORT).show()
 
                                 }) {
 
@@ -109,11 +125,17 @@ fun SubscribeDialog(
                             TextButton(
                                 modifier = Modifier.padding(5.dp),
                                 onClick = {
-                                    buySubscribe(12)
+                                    if(leftTime.value<=0){
+                                        buySubscribe("6month")
+                                        onDismiss()
+
+                                    }
+                                    else
+                                        Toast.makeText(context,"اشتراک فعلی شما به پایان نرسیده",Toast.LENGTH_SHORT).show()
                                 }) {
 
                                 Text(
-                                    text = "خرید اشتراک 1 ساله",
+                                    text = "خرید اشتراک 6 ماهه",
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = CustomColors.darkPurple
                                 )
@@ -134,7 +156,7 @@ fun SubscribeDialog(
                                 modifier = Modifier
                                     .padding(10.dp)
                                     .align(Alignment.CenterHorizontally),
-                                text = "195",
+                                text = leftTime.value.toString(),
                                 style = MaterialTheme.typography.displayLarge,
                                 color = CustomColors.yellow
                             )

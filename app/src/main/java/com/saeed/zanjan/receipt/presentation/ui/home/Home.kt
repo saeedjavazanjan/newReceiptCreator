@@ -1,8 +1,7 @@
 package com.saeed.zanjan.receipt.presentation.ui.home
 
 import android.annotation.SuppressLint
-import android.content.Intent
-import android.net.Uri
+import androidx.activity.compose.LocalActivityResultRegistryOwner
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -31,6 +30,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -45,7 +45,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat.startActivity
 import com.saeed.zanjan.receipt.R
 import com.saeed.zanjan.receipt.domain.models.GeneralReceipt
 import com.saeed.zanjan.receipt.presentation.components.AddReceiptCard
@@ -74,8 +73,14 @@ fun Home(
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope= rememberCoroutineScope()
     val context= LocalContext.current
+    val activityResultRegistry= LocalActivityResultRegistryOwner.current?.activityResultRegistry
+
     val loading = viewModel.loading.value
     val receiptsList = viewModel.receiptList
+
+    val leftTime=viewModel.expireTime
+    val bazarConnectionState=viewModel.bazarConnectionState.value
+    val purchaseBuyState=viewModel.purchaseBuyState
 
     var isSearchExpanded by remember { mutableStateOf(false) }
     var openFilterDialog by remember { mutableStateOf(false) }
@@ -100,6 +105,7 @@ fun Home(
             title = "لیست مشتریان",
             icon = painterResource(id = R.drawable.group_1)
         ),
+        //TODO dilog for save location
         NavigationItem(
             title = "دریافت خروجی Excel",
             icon = painterResource(id = R.drawable.excel),
@@ -124,7 +130,10 @@ fun Home(
     var selectedItemIndex by rememberSaveable {
         mutableStateOf(0)
     }
+
     val focusRequester = remember { FocusRequester() }
+
+
     LaunchedEffect(isSearchExpanded) {
         if (isSearchExpanded) {
             focusRequester.requestFocus()
@@ -132,11 +141,29 @@ fun Home(
     }
     LaunchedEffect(Unit) {
         viewModel.getListOfReceipts(snackbarHostState)
+            viewModel.connectToBazar(context)
        // viewModel.downloadDb(snackbarHostState)
     }
+
+    LaunchedEffect(key1 = purchaseBuyState.value){
+        if (bazarConnectionState){
+            viewModel.getUserSubscribes(context)
+        }
+    }
+
+
+
     LaunchedEffect(key1 = viewModel.databaseSaved.value){
        // viewModel.getListOfReceipts(snackbarHostState)
     }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            viewModel.restartState()
+        }
+    }
+
+
     NewReceiptCreatorTheme(
         displayProgressBar = loading,
         themColor = Color.Transparent
@@ -176,10 +203,16 @@ fun Home(
                                                     navigateToCustomersList()
                                                 }
                                                 4->{
+                                                    if(leftTime.value>0)
                                                     viewModel.exportExcel(snackbarHostState)
+                                                    else
+                                                        openSubscribeDialog=true
                                                 }
                                                 5->{
+                                                    if(leftTime.value>0)
                                                     viewModel.uploadBackUpOfDatabase(snackbarHostState)
+                                                    else
+                                                        openSubscribeDialog=true
                                                 }
                                                 6->{
                                                    openSubscribeDialog=true
@@ -269,14 +302,37 @@ fun Home(
                     )
                 }
 
+
+
                 if(openSubscribeDialog){
+                    if(bazarConnectionState){
+                        viewModel.getUserSubscribes(context)
+                    }
+
                     SubscribeDialog(
                         onDismiss = {
                             openSubscribeDialog=false
                         },
                         buySubscribe = {
+                             coroutineScope.launch {
+                                 if(bazarConnectionState){
+                                     viewModel.buySubscribe(
+                                         activityResultRegistry!!,
+                                         "testSub",
+                                         it,
+                                         context = context
+                                     )
+                                 }else{
+                                     snackbarHostState.showSnackbar("ارتباط شما با برنامه بازار برقرار نیست")
+                                 }
 
-                        }
+
+                             }
+
+                        },
+                        leftTime = leftTime,
+                        context
+
                     )
                 }
 
