@@ -11,6 +11,8 @@ import com.saeed.zanjan.receipt.presentation.navigation.Screen
 import com.saeed.zanjan.receipt.presentation.ui.profile_edit.ProfileEditScreen
 import com.saeed.zanjan.receipt.presentation.ui.create_receipt.CreateReceiptScreen
 import com.saeed.zanjan.receipt.presentation.ui.create_receipt.CreateReceiptViewModel
+import com.saeed.zanjan.receipt.presentation.ui.customers_list.CustomersListScreen
+import com.saeed.zanjan.receipt.presentation.ui.customers_list.CustomersListViewModel
 import com.saeed.zanjan.receipt.presentation.ui.editReceipt.EditReceiptScreen
 import com.saeed.zanjan.receipt.presentation.ui.editReceipt.EditReceiptViewModel
 import com.saeed.zanjan.receipt.presentation.ui.home.Home
@@ -37,6 +39,7 @@ fun Navigation(
     val receiptViewMode: ReceiptViewModel = viewModel()
     val splashViewModel: SplashViewModel = viewModel()
     val profileEditViewModel: ProfileEditViewModel = viewModel()
+    val customersListViewModel: CustomersListViewModel = viewModel()
     NavHost(navController = navController, startDestination = Screen.Home.route) {
 
         composable(Screen.Splash.route) {
@@ -73,7 +76,7 @@ fun Navigation(
                 } ,
                 navigateToAboutUs = {},
                 navigateToCustomersList = {
-
+                    navController.navigate(Screen.CustomersList.route)
                 }
 
             )
@@ -100,11 +103,16 @@ fun Navigation(
 
                 )
         }
-        composable(Screen.CreateReceipt.route) { navBackStackEntry ->
+        composable(Screen.CreateReceipt.route) {
             CreateReceiptScreen(
                 navController = navController,
                 viewModel = createReceiptViewModel,
 
+                )
+        }
+        composable(Screen.CustomersList.route) {
+            CustomersListScreen(
+                viewModel = customersListViewModel,
                 )
         }
 

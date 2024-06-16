@@ -45,17 +45,3 @@ data class ConfectioneryEntity(
     var prepayment:String?
 
 )
-/*
-confectionery="CREATE  TABLE  IF NOT EXISTS \"confectionery\" (" +
-"\"id\" INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL , " +
-"\"status\" INTEGER , " +
-"\"name\" TEXT NOT NULL , " +
-"\"phone\" TEXT, " +
-"\"OrderName\" TEXT, " +
-"\"OrderSpecification\" TEXT, " +
-"\"OrderWeight\" TEXT, " +
-"\"Description\" TEXT, " +
-"\"deliveryTime\" TEXT, " +
-"\"receiptTime\" TEXT, " +
-"\"cost\" TEXT, " +
-"\"prepayment\" TEXT)";*/

@@ -3,6 +3,8 @@ package com.saeed.zanjan.receipt.interactor
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Environment
+import com.saeed.zanjan.receipt.cash.ReceiptDao
+import com.saeed.zanjan.receipt.cash.model.CustomerEntity
 import com.saeed.zanjan.receipt.domain.dataState.DataState
 import com.saeed.zanjan.receipt.network.RetrofitService
 import com.saeed.zanjan.receipt.utils.CsvExportUtil
@@ -24,24 +26,25 @@ class Backup(
     val context: Context,
     val retrofitService: RetrofitService,
     private val csvExportUtil: CsvExportUtil,
-    private val sharedPreferences: SharedPreferences
+    private val sharedPreferences: SharedPreferences,
+    private val receiptDao: ReceiptDao
+
 ) {
 
-    val receiptCategory=1//sharedPreferences.getInt("JOB_SUBJECT",-1)
-
-
+    val receiptCategory = 1//sharedPreferences.getInt("JOB_SUBJECT",-1)
 
     //TODO check Network State
     //todo currect token
 
-    fun backupDb():Flow<DataState<String>> = flow{
+    fun backupDb(): Flow<DataState<String>> = flow {
         emit(DataState.loading())
 
         try {
-            val dataBasePart=getDatabaseAsPart()
-           val result= retrofitService.uploadDatabase(
-               "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0IiwibmFtZSI6ImZ2YmZiIiwiZW1haWwiOiIwOTE5MzQ4MDI2MyIsImV4cCI6MzI5NTY3Mzk1NiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDozOTc4IiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDozOTc4In0.KR0AN0NF4WEJi6aR8-ZyvGCqlZrTXKpf9DITCIIG2vY",
-               dataBasePart)
+            val dataBasePart = getDatabaseAsPart()
+            val result = retrofitService.uploadDatabase(
+                "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0IiwibmFtZSI6ImZ2YmZiIiwiZW1haWwiOiIwOTE5MzQ4MDI2MyIsImV4cCI6MzI5NTY3Mzk1NiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDozOTc4IiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDozOTc4In0.KR0AN0NF4WEJi6aR8-ZyvGCqlZrTXKpf9DITCIIG2vY",
+                dataBasePart
+            )
             if (result.isSuccessful) {
                 emit(DataState.success(result.body()!!))
             } else if (result.code() == 401) {
@@ -59,7 +62,7 @@ class Backup(
                 }
             }
 
-        }catch (e:Exception){
+        } catch (e: Exception) {
 
             emit(DataState.error(e.message.toString()))
 
@@ -77,23 +80,24 @@ class Backup(
 
     }
 
-    fun downloadDatabase():Flow<DataState<String>> = flow {
+    fun downloadDatabase(): Flow<DataState<String>> = flow {
         emit(DataState.loading())
         try {
-            val response =retrofitService.downloadDatabase(
+            val response = retrofitService.downloadDatabase(
                 "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0IiwibmFtZSI6ImZ2YmZiIiwiZW1haWwiOiIwOTE5MzQ4MDI2MyIsImV4cCI6MzI5NTY3Mzk1NiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDozOTc4IiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDozOTc4In0.KR0AN0NF4WEJi6aR8-ZyvGCqlZrTXKpf9DITCIIG2vY"
 
-                )
+            )
             if (response.isSuccessful) {
                 response.body()?.let { body ->
                     val success = saveFile(body)
-                    if(success){
+                    if (success) {
                         val filePath = getCsvFilePath()
-                        when(receiptCategory){
+                        when (receiptCategory) {
                             0 -> {
                                 //repair
                                 csvExportUtil.repairsImportCsvToDatabase(filePath)
-                                emit(DataState.success("دریافت موفق اطلاعات"))                            }
+                                emit(DataState.success("دریافت موفق اطلاعات"))
+                            }
 
                             1 -> {
                                 //repair
@@ -148,7 +152,7 @@ class Backup(
 
                             }
 
-                            else->{
+                            else -> {
                                 emit(DataState.success("خطای دسته بندی"))
 
                             }
@@ -156,14 +160,12 @@ class Backup(
                         }
 
 
-
-
-                    }else{
+                    } else {
                         emit(DataState.error("خطا در ذخیره دیتا بیس"))
 
                     }
                 }
-            }else if (response.code() == 401) {
+            } else if (response.code() == 401) {
                 emit(DataState.error("شما دسترسی لازم را ندارید"))
             } else {
                 try {
@@ -179,9 +181,21 @@ class Backup(
             }
 
 
-        }catch (e:Exception){
+        } catch (e: Exception) {
             emit(DataState.error(e.message.toString()))
 
+        }
+
+    }
+
+
+    fun fillCustomerTable(): Flow<DataState<Boolean>> = flow {
+        emit(DataState.loading())
+        val transferResult = transferData()
+        if (transferResult == 1) {
+            emit(DataState.success(true))
+        } else {
+            emit(DataState.error("خطای انتقال اطلاعات"))
         }
 
     }
@@ -211,11 +225,173 @@ class Backup(
         }
     }
 
-    private fun exportDatabaseToCsv():File {
+    private fun exportDatabaseToCsv(): File {
         return csvExportUtil.exportDatabaseToCsv(receiptCategory)
     }
 
     fun getCsvFilePath(): String {
         return File(context.filesDir, "downloaded_receipt.csv").absolutePath
     }
+
+    fun transferData(): Int {
+        try {
+            when (receiptCategory) {
+                0 -> {
+                    //repair
+                    val contacts = receiptDao.getRepairsContacts()
+
+                    contacts.forEach { temporary ->
+                        val entity = CustomerEntity(
+                            id = 0,
+                            name = temporary.name,
+                            phoneNumber = temporary.phone,
+                            payedAmount = temporary.prepayment,
+                            totalAmount = temporary.cost
+                        )
+                        receiptDao.insertCustomer(entity)
+                    }
+                }
+
+                1 -> {
+                    //repair
+                    val contacts = receiptDao.getRepairsContacts()
+
+                    contacts.forEach { temporary ->
+                        val entity = CustomerEntity(
+                            id = 0,
+                            name = temporary.name,
+                            phoneNumber = temporary.phone,
+                            payedAmount = temporary.prepayment,
+                            totalAmount = temporary.cost
+                        )
+                        receiptDao.insertCustomer(entity)
+                    }
+                }
+
+                2 -> {
+                    //  repair
+                    val contacts = receiptDao.getRepairsContacts()
+
+                    contacts.forEach { temporary ->
+                        val entity = CustomerEntity(
+                            id = 0,
+                            name = temporary.name,
+                            phoneNumber = temporary.phone,
+                            payedAmount = temporary.prepayment,
+                            totalAmount = temporary.cost
+                        )
+                        receiptDao.insertCustomer(entity)
+                    }
+                }
+
+                3 -> {
+                    //tailoring
+                    val contacts = receiptDao.getTailoringContacts()
+
+                    contacts.forEach { temporary ->
+                        val entity = CustomerEntity(
+                            id = 0,
+                            name = temporary.name,
+                            phoneNumber = temporary.phone,
+                            payedAmount = temporary.prepayment,
+                            totalAmount = temporary.cost
+                        )
+                        receiptDao.insertCustomer(entity)
+                    }
+                }
+
+                4 -> {
+                    //jewelry
+                    val contacts = receiptDao.getJewelryContacts()
+
+                    contacts.forEach { temporary ->
+                        val entity = CustomerEntity(
+                            id = 0,
+                            name = temporary.name,
+                            phoneNumber = temporary.phone,
+                            payedAmount = temporary.prepayment,
+                            totalAmount = temporary.cost
+                        )
+                        receiptDao.insertCustomer(entity)
+                    }
+                }
+
+                5 -> {
+                    //photo
+                    val contacts = receiptDao.getPhotographyContacts()
+
+                    contacts.forEach { temporary ->
+                        val entity = CustomerEntity(
+                            id = 0,
+                            name = temporary.name,
+                            phoneNumber = temporary.phone,
+                            payedAmount = temporary.prepayment,
+                            totalAmount = temporary.cost
+                        )
+                        receiptDao.insertCustomer(entity)
+                    }
+                }
+
+                6 -> {
+                    //laundry
+                    val contacts = receiptDao.getLaundryContacts()
+
+                    contacts.forEach { temporary ->
+                        val entity = CustomerEntity(
+                            id = 0,
+                            name = temporary.name,
+                            phoneNumber = temporary.phone,
+                            payedAmount = temporary.prepayment,
+                            totalAmount = temporary.cost
+                        )
+                        receiptDao.insertCustomer(entity)
+                    }
+                }
+
+                7 -> {
+                    //confectionery
+                    val contacts = receiptDao.getConfectioneryContacts()
+
+                    contacts.forEach { temporary ->
+                        val entity = CustomerEntity(
+                            id = 0,
+                            name = temporary.name,
+                            phoneNumber = temporary.phone,
+                            payedAmount = temporary.prepayment,
+                            totalAmount = temporary.cost
+                        )
+                        receiptDao.insertCustomer(entity)
+                    }
+                }
+
+                8 -> {
+                    //otherJobs
+                    val contacts = receiptDao.getOtherJobsContacts()
+
+                    contacts.forEach { temporary ->
+                        val entity = CustomerEntity(
+                            id = 0,
+                            name = temporary.name,
+                            phoneNumber = temporary.phone,
+                            payedAmount = temporary.prepayment,
+                            totalAmount = temporary.cost
+                        )
+                        receiptDao.insertCustomer(entity)
+                    }
+                }
+
+                else -> {
+                    return -1
+                }
+
+            }
+
+            return 1
+        } catch (e: Exception) {
+            return -1
+        }
+
+    }
+
+
 }
