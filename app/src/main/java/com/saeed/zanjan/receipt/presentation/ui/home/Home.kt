@@ -102,8 +102,10 @@ fun Home(
             icon = painterResource(id = R.drawable.comment)
         ),
         NavigationItem(
-            title = "لیست مشتریان",
-            icon = painterResource(id = R.drawable.group_1)
+            title = "ارسال پیامک گروهی",
+            icon = painterResource(id = R.drawable.group_1),
+            premiumIcon = painterResource(id = R.drawable.star)
+
         ),
         //TODO dilog for save location
         NavigationItem(
