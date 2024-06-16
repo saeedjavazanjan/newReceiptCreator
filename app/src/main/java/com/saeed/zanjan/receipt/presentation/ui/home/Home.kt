@@ -49,6 +49,7 @@ import com.saeed.zanjan.receipt.R
 import com.saeed.zanjan.receipt.domain.models.GeneralReceipt
 import com.saeed.zanjan.receipt.presentation.components.AddReceiptCard
 import com.saeed.zanjan.receipt.presentation.components.HomeTopBar
+import com.saeed.zanjan.receipt.presentation.components.ListOfReceipts
 import com.saeed.zanjan.receipt.presentation.components.ReceiptListCard
 import com.saeed.zanjan.receipt.presentation.components.StatusDialog
 import com.saeed.zanjan.receipt.presentation.components.SubscribeDialog
@@ -81,6 +82,8 @@ fun Home(
     val leftTime=viewModel.expireTime
     val bazarConnectionState=viewModel.bazarConnectionState.value
     val purchaseBuyState=viewModel.purchaseBuyState
+
+    val focusRequester = remember { FocusRequester() }
 
     var isSearchExpanded by remember { mutableStateOf(false) }
     var openFilterDialog by remember { mutableStateOf(false) }
@@ -133,7 +136,6 @@ fun Home(
         mutableStateOf(0)
     }
 
-    val focusRequester = remember { FocusRequester() }
 
 
     LaunchedEffect(isSearchExpanded) {
@@ -422,37 +424,6 @@ fun Home(
 
 }
 
-@Composable
-fun ListOfReceipts(
-    modifier: Modifier,
-    receiptCategory: Int,
-    receipts: List<GeneralReceipt>,
-    navigateToScreen: (Int) -> Unit
 
-) {
-    LazyColumn(
-        state = rememberLazyListState(),
-        modifier = modifier
-    ) {
-        itemsIndexed(
-            items = receipts
-        ) { index, rec ->
-
-            ReceiptListCard(
-                receiptCategory = receiptCategory,
-                receipt = rec,
-                onReceiptClickListener = {
-                    navigateToScreen(it)
-
-                }
-            )
-
-        }
-        item {
-            Spacer(modifier = Modifier.height(100.dp)) // Adjust the height based on BottomAppBar height
-        }
-    }
-
-}
 
 

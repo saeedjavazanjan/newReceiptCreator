@@ -7,6 +7,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import com.saeed.zanjan.receipt.cash.model.RepairsEntity
 import com.saeed.zanjan.receipt.cash.ReceiptDao
 import com.saeed.zanjan.receipt.cash.model.ConfectioneryEntity
+import com.saeed.zanjan.receipt.cash.model.CustomerEntity
 import com.saeed.zanjan.receipt.cash.model.JewelryEntity
 import com.saeed.zanjan.receipt.cash.model.LaundryEntity
 import com.saeed.zanjan.receipt.cash.model.OtherJobsEntity
@@ -21,13 +22,15 @@ import com.saeed.zanjan.receipt.cash.model.TailoringEntity
         PhotographyEntity::class,
         LaundryEntity::class,
         ConfectioneryEntity::class,
-        OtherJobsEntity::class],
-    version = 2)
-abstract class AppDatabase: RoomDatabase() {
+        OtherJobsEntity::class,
+        CustomerEntity::class],
+    version = 3
+)
+abstract class AppDatabase : RoomDatabase() {
 
     abstract fun receiptDao(): ReceiptDao
 
-  //  abstract fun bookMark():BookMarkedSewEntity
+    //  abstract fun bookMark():BookMarkedSewEntity
 
     companion object {
         val DATABASE_NAME: String = "receipt.sqlite"
@@ -35,7 +38,8 @@ abstract class AppDatabase: RoomDatabase() {
             override fun migrate(database: SupportSQLiteDatabase) {
                 //repairs
                 // Create the new table
-                database.execSQL("""
+                database.execSQL(
+                    """
                     CREATE TABLE IF NOT EXISTS `repairs_new` (
                         `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
                         `status` INTEGER,
@@ -50,14 +54,17 @@ abstract class AppDatabase: RoomDatabase() {
                         `cost` TEXT,
                         `prepayment` TEXT
                     )
-                """.trimIndent())
+                """.trimIndent()
+                )
 
                 // Copy the data
-                database.execSQL("""
+                database.execSQL(
+                    """
                     INSERT INTO `repairs_new` (`id`, `status`, `name`, `phone`, `loanerName`, `loanerProblems`, `Risks`, `deliveryTime`, `receiptTime`, `accessories`, `cost`, `prepayment`)
                     SELECT `id`, `status`, `name`, `phone`, `loanerName`, `loanerProblems`, `Risks`, `deliveryTime`, `receiptTime`, `accessories`, `cost`, `prepayment`
                     FROM `repairs`
-                """.trimIndent())
+                """.trimIndent()
+                )
 
                 // Remove the old table
                 database.execSQL("DROP TABLE `repairs`")
@@ -67,7 +74,8 @@ abstract class AppDatabase: RoomDatabase() {
 
 
                 //tailoring
-                database.execSQL("""
+                database.execSQL(
+                    """
                     CREATE TABLE IF NOT EXISTS `tailoring_new` (
                         `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
                         `status` INTEGER,
@@ -81,14 +89,17 @@ abstract class AppDatabase: RoomDatabase() {
                         `cost` TEXT,
                         `prepayment` TEXT
                     )
-                """.trimIndent())
+                """.trimIndent()
+                )
 
                 // Copy the data
-                database.execSQL("""
+                database.execSQL(
+                    """
                     INSERT INTO `tailoring_new` (`id`, `status`, `name`, `phone`, `loanerName`, `OrderSpecification`,`deliveryTime`, `receiptTime`, `sizes`, `cost`, `prepayment`)
                     SELECT `id`, `status`, `name`, `phone`, `loanerName`, `OrderSpecification`, `deliveryTime`, `receiptTime`, `sizes`, `cost`, `prepayment`
                     FROM `tailoring`
-                """.trimIndent())
+                """.trimIndent()
+                )
 
                 // Remove the old table
                 database.execSQL("DROP TABLE `tailoring`")
@@ -98,7 +109,8 @@ abstract class AppDatabase: RoomDatabase() {
 
 
                 //jewelry
-                database.execSQL("""
+                database.execSQL(
+                    """
                     CREATE TABLE IF NOT EXISTS `jewelry_new` (
                         `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
                         `status` INTEGER,
@@ -113,14 +125,17 @@ abstract class AppDatabase: RoomDatabase() {
                         `cost` TEXT,
                         `prepayment` TEXT
                     )
-                """.trimIndent())
+                """.trimIndent()
+                )
 
                 // Copy the data
-                database.execSQL("""
+                database.execSQL(
+                    """
                     INSERT INTO `jewelry_new` (`id`, `status`, `name`, `phone`, `loanerName`, `OrderSpecification`,`loanerProblems`,`loanerSpecification`,`deliveryTime`, `receiptTime`, `cost`, `prepayment`)
                     SELECT `id`, `status`, `name`, `phone`, `loanerName`, `OrderSpecification`,`loanerProblems`,`loanerSpecification`,`deliveryTime`, `receiptTime`,`cost`, `prepayment`
                     FROM `jewelry`
-                """.trimIndent())
+                """.trimIndent()
+                )
 
                 // Remove the old table
                 database.execSQL("DROP TABLE `jewelry`")
@@ -130,7 +145,8 @@ abstract class AppDatabase: RoomDatabase() {
 
 
                 //photography
-                database.execSQL("""
+                database.execSQL(
+                    """
                     CREATE TABLE IF NOT EXISTS `photography_new` (
                         `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
                         `status` INTEGER,
@@ -144,14 +160,17 @@ abstract class AppDatabase: RoomDatabase() {
                         `cost` TEXT,
                         `prepayment` TEXT
                     )
-                """.trimIndent())
+                """.trimIndent()
+                )
 
                 // Copy the data
-                database.execSQL("""
+                database.execSQL(
+                    """
                     INSERT INTO `photography_new` (`id`, `status`, `name`, `phone`, `OrderName`, `OrderSize`,`OrderNumber`,`deliveryTime`, `receiptTime`, `cost`, `prepayment`)
                     SELECT `id`, `status`, `name`, `phone`, `OrderName`, `OrderSize`,`OrderNumber`,`deliveryTime`, `receiptTime`,`cost`, `prepayment`
                     FROM `photography`
-                """.trimIndent())
+                """.trimIndent()
+                )
 
                 // Remove the old table
                 database.execSQL("DROP TABLE `photography`")
@@ -161,7 +180,8 @@ abstract class AppDatabase: RoomDatabase() {
 
 
                 //laundry
-                database.execSQL("""
+                database.execSQL(
+                    """
                     CREATE TABLE IF NOT EXISTS `laundry_new` (
                         `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
                         `status` INTEGER,
@@ -175,14 +195,17 @@ abstract class AppDatabase: RoomDatabase() {
                         `cost` TEXT,
                         `prepayment` TEXT
                     )
-                """.trimIndent())
+                """.trimIndent()
+                )
 
                 // Copy the data
-                database.execSQL("""
+                database.execSQL(
+                    """
                     INSERT INTO `laundry_new` (`id`, `status`, `name`, `phone`, `loanerName`, `OrderType`,`Description`,`deliveryTime`, `receiptTime`, `cost`, `prepayment`)
                     SELECT `id`, `status`, `name`, `phone`, `loanerName`, `OrderType`,`Description`,`deliveryTime`, `receiptTime`,`cost`, `prepayment`
                     FROM `laundry`
-                """.trimIndent())
+                """.trimIndent()
+                )
 
                 // Remove the old table
                 database.execSQL("DROP TABLE `laundry`")
@@ -192,7 +215,8 @@ abstract class AppDatabase: RoomDatabase() {
 
 
                 //confectionery
-                database.execSQL("""
+                database.execSQL(
+                    """
                     CREATE TABLE IF NOT EXISTS `confectionery_new` (
                         `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
                         `status` INTEGER,
@@ -207,14 +231,17 @@ abstract class AppDatabase: RoomDatabase() {
                         `cost` TEXT,
                         `prepayment` TEXT
                     )
-                """.trimIndent())
+                """.trimIndent()
+                )
 
                 // Copy the data
-                database.execSQL("""
+                database.execSQL(
+                    """
                     INSERT INTO `confectionery_new` (`id`, `status`, `name`, `phone`, `OrderName`,`OrderSpecification`,`OrderWeight`,`Description`,`deliveryTime`, `receiptTime`, `cost`, `prepayment`)
                     SELECT `id`, `status`, `name`, `phone`, `OrderName`, `OrderSpecification`,`OrderWeight`,`Description`,`deliveryTime`,`receiptTime`,`cost`, `prepayment`
                     FROM `confectionery`
-                """.trimIndent())
+                """.trimIndent()
+                )
 
                 // Remove the old table
                 database.execSQL("DROP TABLE `confectionery`")
@@ -224,7 +251,8 @@ abstract class AppDatabase: RoomDatabase() {
 
 
                 //otherJobs
-                database.execSQL("""
+                database.execSQL(
+                    """
                     CREATE TABLE IF NOT EXISTS `otherJobs_new` (
                         `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
                         `status` INTEGER,
@@ -238,14 +266,17 @@ abstract class AppDatabase: RoomDatabase() {
                         `cost` TEXT,
                         `prepayment` TEXT
                     )
-                """.trimIndent())
+                """.trimIndent()
+                )
 
                 // Copy the data
-                database.execSQL("""
+                database.execSQL(
+                    """
                     INSERT INTO `otherJobs_new` (`id`, `status`, `name`, `phone`, `OrderName`,`Description`,`OrderNumber`,`deliveryTime`, `receiptTime`, `cost`, `prepayment`)
                     SELECT `id`, `status`, `name`, `phone`, `OrderName`, `Description`,`OrderNumber`,`deliveryTime`, `receiptTime`,`cost`, `prepayment`
                     FROM `otherJobs`
-                """.trimIndent())
+                """.trimIndent()
+                )
 
                 // Remove the old table
                 database.execSQL("DROP TABLE `otherJobs`")

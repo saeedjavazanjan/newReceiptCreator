@@ -1,8 +1,6 @@
 package com.saeed.zanjan.receipt.presentation.ui.customers_list
 
-import androidx.activity.compose.LocalActivityResultRegistryOwner
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -19,22 +17,24 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.saeed.zanjan.receipt.R
-import com.saeed.zanjan.receipt.presentation.components.AddReceiptCard
-import com.saeed.zanjan.receipt.presentation.components.HomeTopBar
-import com.saeed.zanjan.receipt.presentation.navigation.Screen
-import com.saeed.zanjan.receipt.presentation.ui.home.ListOfReceipts
+import com.saeed.zanjan.receipt.domain.models.Customer
+import com.saeed.zanjan.receipt.presentation.components.CustomersListTopBar
+import com.saeed.zanjan.receipt.presentation.components.ListOfCustomers
 import com.saeed.zanjan.receipt.ui.theme.CustomColors
 import com.saeed.zanjan.receipt.ui.theme.NewReceiptCreatorTheme
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -46,6 +46,19 @@ fun CustomersListScreen(
     val context= LocalContext.current
 
     val loading = viewModel.loading.value
+    val customersList = mutableListOf(
+        Customer(1, "Alice", "1234567890", 1500000),
+        Customer(2, "Bob", "0987654321", 1000000),
+        Customer(3, "Charlie", "1122334455", 500000)
+    )// viewModel.customersList
+
+    val focusRequester = remember { FocusRequester() }
+
+    var isSearchExpanded by remember { mutableStateOf(false) }
+    var openFilterDialog by remember { mutableStateOf(false) }
+    var filtered by remember { mutableStateOf(false) }
+
+
 
     NewReceiptCreatorTheme(
         displayProgressBar = loading,
@@ -54,7 +67,7 @@ fun CustomersListScreen(
         Scaffold(
             snackbarHost = { SnackbarHost(snackbarHostState) },
             topBar = {
-                HomeTopBar(
+                CustomersListTopBar(
                     modifier = Modifier.padding(15.dp),
                     focusRequester = focusRequester,
                     isSearchExpanded = isSearchExpanded,
@@ -63,7 +76,7 @@ fun CustomersListScreen(
                     },
                     search = {
 
-                        viewModel.searchReceipt(
+                        viewModel.searchCustomer(
                             it,
                             snackbarHostState
                         )
@@ -73,7 +86,7 @@ fun CustomersListScreen(
                         openFilterDialog = true
 
                     },
-                    menu = {
+                    back = {
 
                     }
                 )
@@ -100,7 +113,7 @@ fun CustomersListScreen(
                             .align(Alignment.CenterHorizontally)
                         ,
                         onClick = {
-                            viewModel.getListOfReceipts(snackbarHostState)
+                            viewModel.getListOfCustomers(snackbarHostState)
                             filtered=false
                         },
                         border = BorderStroke(width = 2.dp, color = CustomColors.lightGray)
@@ -111,7 +124,7 @@ fun CustomersListScreen(
                         )
                     }
                 }
-                if (!loading && receiptsList.value.isEmpty()) {
+                if (!loading && customersList.isEmpty()) {
                     Column(
                         verticalArrangement = Arrangement.Center,
                         modifier = Modifier
@@ -141,17 +154,13 @@ fun CustomersListScreen(
 
 
                 } else {
-                    ListOfReceipts(
+                    ListOfCustomers(
                         modifier = Modifier
                             .weight(1f)
                             .padding(),
                         receiptCategory = viewModel.receiptCategory,
-                        receipts = receiptsList.value,
-                        navigateToScreen = { id ->
-                            val route =
-                                Screen.Receipt.route + "/${id}/${false}/${false}/${false}/${false}"
-                            navigateToReceiptScreen(route)
-                        }
+                        customers = customersList,
+
                     )
 
                 }

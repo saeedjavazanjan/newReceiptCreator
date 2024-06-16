@@ -7,12 +7,14 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.saeed.zanjan.receipt.cash.model.ConfectioneryEntity
+import com.saeed.zanjan.receipt.cash.model.CustomerEntity
 import com.saeed.zanjan.receipt.cash.model.JewelryEntity
 import com.saeed.zanjan.receipt.cash.model.LaundryEntity
 import com.saeed.zanjan.receipt.cash.model.OtherJobsEntity
 import com.saeed.zanjan.receipt.cash.model.PhotographyEntity
 import com.saeed.zanjan.receipt.cash.model.RepairsEntity
 import com.saeed.zanjan.receipt.cash.model.TailoringEntity
+import com.saeed.zanjan.receipt.cash.model.TemporaryCustomerDto
 
 
 @Dao
@@ -76,6 +78,31 @@ interface ReceiptDao {
     fun getAllRepairsCursor(): Cursor
  @Query("SELECT * FROM tailoring")
     fun getAllTailoringCursor(): Cursor
+
+
+    @Query("SELECT name, phone,prepayment,cost FROM confectionery GROUP BY phone")
+    fun getConfectioneryContacts(): List<TemporaryCustomerDto>
+ @Query("SELECT name, phone,prepayment,cost FROM jewelry GROUP BY phone")
+    fun getJewelryContacts(): List<TemporaryCustomerDto>
+ @Query("SELECT name, phone,prepayment,cost FROM laundry GROUP BY phone")
+    fun getLaundryContacts(): List<TemporaryCustomerDto>
+ @Query("SELECT name, phone,prepayment,cost FROM otherJobs GROUP BY phone")
+    fun getOtherJobsContacts(): List<TemporaryCustomerDto>
+ @Query("SELECT name, phone,prepayment,cost FROM photography GROUP BY phone")
+    fun getPhotographyContacts(): List<TemporaryCustomerDto>
+ @Query("SELECT name, phone,prepayment,cost FROM repairs GROUP BY phone")
+    fun getRepairsContacts(): List<TemporaryCustomerDto>
+ @Query("SELECT name, phone,prepayment,cost FROM tailoring GROUP BY phone")
+    fun getTailoringContacts(): List<TemporaryCustomerDto>
+
+
+    @Query("SELECT COUNT(*) FROM customer WHERE phone = :phoneNumber")
+    fun countByPhoneNumber(phoneNumber: String): Int
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    fun insertCustomer(customerEntity: CustomerEntity):Long
+
+
 
 
 

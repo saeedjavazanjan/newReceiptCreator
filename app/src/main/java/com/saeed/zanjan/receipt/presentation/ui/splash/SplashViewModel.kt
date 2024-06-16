@@ -32,8 +32,7 @@ class SplashViewModel
 
                 }
                 dataState.data?.let{
-                    databaseSaved.value=true
-                    snackbarHostState.showSnackbar(it)
+                    fillCustomersTable(snackbarHostState)
                 }
                 dataState.error?.let {
                     snackbarHostState.showSnackbar(it)
@@ -44,5 +43,28 @@ class SplashViewModel
             }.launchIn(viewModelScope)
 
         }
+
+
+    fun fillCustomersTable(snackbarHostState: SnackbarHostState){
+        backup.fillCustomerTable().onEach { dataState ->
+            dataState.loading.let {
+                loading.value=it
+            }
+            dataState.data?.let {
+                if(it)
+                    databaseSaved.value=true
+                else{
+                    databaseSaved.value=false
+                    loading.value=false
+                }
+            }
+            dataState.error?.let {
+                snackbarHostState.showSnackbar(it)
+            }
+
+        }.launchIn(viewModelScope)
+
+
+    }
 
 }

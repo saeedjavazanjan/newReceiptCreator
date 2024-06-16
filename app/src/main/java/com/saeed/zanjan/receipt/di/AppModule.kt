@@ -232,13 +232,15 @@ object AppModule {
         retrofitService: RetrofitService,
         @ApplicationContext context: Context,
         csvExportUtil: CsvExportUtil,
-        sharedPreferences: SharedPreferences
+        sharedPreferences: SharedPreferences,
+        receiptDao: ReceiptDao
     ): Backup{
         return Backup(
             retrofitService = retrofitService,
             context = context,
             csvExportUtil = csvExportUtil,
-            sharedPreferences = sharedPreferences
+            sharedPreferences = sharedPreferences,
+            receiptDao = receiptDao
         )
     }
 
