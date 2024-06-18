@@ -23,7 +23,7 @@ fun ListOfReceipts(
         modifier = modifier
     ) {
         itemsIndexed(
-            items = receipts
+            items = receipts.reversed()
         ) { index, rec ->
 
             ReceiptListCard(

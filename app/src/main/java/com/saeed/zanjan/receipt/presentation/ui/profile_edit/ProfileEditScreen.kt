@@ -181,6 +181,7 @@ fun ProfileEditScreen(
                            viewModel.saveData(profileData = profileData,
                                snackbarHostState=snackbarHostState)
                        }
+                        navController.popBackStack()
 
                     })
                 }

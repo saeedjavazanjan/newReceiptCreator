@@ -21,6 +21,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -45,51 +46,96 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun CustomerListCard(
     customer: Customer,
-    onDelete:(Int)->Unit={}
+    onDelete:(Int)->Unit,
+    onSelect:(Customer)->Unit,
+    deSelect:(Customer)->Unit
 ) {
 
     var offset by remember { mutableStateOf(0f) }
-
-    Box(
+    var checkState by remember { mutableStateOf(false) }
+Box(
+    modifier = Modifier
+        .fillMaxWidth()
+        .padding(8.dp)
+        .background(CustomColors.lightBlue, RoundedCornerShape(16.dp))
+    ) {
+    Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp)
-            .background(Color.White, RoundedCornerShape(8.dp))
             .pointerInput(Unit) {
                 detectHorizontalDragGestures { _, dragAmount ->
-                    offset = (offset + dragAmount).coerceIn(-200f, 0f)
+                    offset = (offset - dragAmount).coerceIn(-70f, 0f)
                 }
             }
+            .offset(x = offset.dp),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = CustomColors.lightGray,
+            contentColor = CustomColors.darkPurple
+        )
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Color.LightGray)
                 .padding(16.dp)
-                .offset(x = offset.dp)
                 .animateContentSize()
         ) {
             Checkbox(
-                checked = false,
+                checked = checkState,
                 onCheckedChange = {
-
-                }
+                                  checkState=it
+                    if(it){
+                        onSelect(customer)
+                    }else{
+                        deSelect(customer)
+                    }
+                },
+                colors = CheckboxDefaults.colors(
+                    checkedColor = CustomColors.readyForDelivery,
+                    uncheckedColor = CustomColors.lightBlue
+                )
             )
             Spacer(modifier = Modifier.width(16.dp))
             Column {
-                Text(customer.name!!, fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                Text(customer.phoneNumber!!, fontSize = 14.sp, color = Color.Gray)
-                Text(customer.dept.toString(), fontSize = 14.sp, color = Color.Gray)
+                Text(customer.name!!,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp,
+                    color = CustomColors.darkPurple
+                )
+                Text(customer.phoneNumber!!,
+                    fontSize = 14.sp ,
+                    color = CustomColors.darkPurple)
+
+                Row {
+                    Text(text = "بدهی:  ",
+                        fontSize = 14.sp,
+                        color = CustomColors.darkPurple)
+                    Text(customer.dept.toString(),
+                        fontSize = 14.sp,
+                        color = CustomColors.darkPurple)
+                }
+
             }
         }
-        if (offset == -200f) {
-            IconButton(
-                onClick = { onDelete(1) },
-                modifier = Modifier.align(Alignment.CenterEnd).padding(8.dp)
-            ) {
-                Icon(Icons.Filled.Delete, contentDescription = "Delete")
-            }
+
+    }
+    if (offset  in  -70f..-20f) {
+        IconButton(
+            onClick = {
+                offset=0f
+                onDelete(customer.id)
+                      },
+            modifier = Modifier
+                .align(Alignment.CenterEnd)
+                .padding(8.dp)
+        ) {
+            Icon(painter = painterResource(id = R.drawable.delete),
+                tint = Color.White,
+                contentDescription = "Delete"
+            )
         }
     }
+
+}
 
 }

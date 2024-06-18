@@ -96,13 +96,27 @@ interface ReceiptDao {
     fun getTailoringContacts(): List<TemporaryCustomerDto>
 
 
+
+    //customers
     @Query("SELECT COUNT(*) FROM customer WHERE phone = :phoneNumber")
     fun countByPhoneNumber(phoneNumber: String): Int
-
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertCustomer(customerEntity: CustomerEntity):Long
+    @Query("SELECT * FROM customer")
+    fun getAllCustomers(): List<CustomerEntity>
+    @Query("DELETE FROM customer WHERE id = :primaryKey")
+    suspend fun deleteCustomer(primaryKey: Int): Int
+    @Query("""
+        SELECT * FROM customer 
+        WHERE name LIKE '%' || :query || '%'
+        OR phone LIKE '%' || :query || '%' 
+        """)
+    suspend fun searchCustomer(
+        query: String,
+    ): List<CustomerEntity>
 
-
+    @Query("UPDATE customer SET prepayment=:payedAmount,cost=:totalAmount WHERE phone = :phoneNumber")
+    fun updateCustomer(phoneNumber: String,payedAmount:String,totalAmount:String)
 
 
 

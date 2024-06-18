@@ -2,10 +2,13 @@ package com.saeed.zanjan.receipt.interactor
 
 import android.content.SharedPreferences
 import android.telephony.SmsManager
+import android.telephony.SmsMessage
 import com.saeed.zanjan.receipt.domain.dataState.DataState
 import com.saeed.zanjan.receipt.domain.models.GeneralReceipt
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 
 class SendSms(
     val sharedPreferences: SharedPreferences
@@ -157,6 +160,28 @@ class SendSms(
     }
 
 
+    fun sendCustomTextSMS(
+        phoneNumber:List<String>,
+        messageText:String
+    ):Flow<DataState<String>> = flow<DataState<String>> {
+    try {
+      phoneNumber.forEach {phone->
+          val parts = smsManager.divideMessage(messageText)
+          smsManager.sendMultipartTextMessage(
+              phone,
+              null,
+              parts,
+              null,
+              null
+          )
+      }
+       emit(DataState.success("پیامک ارسال شد"))
+
+    }   catch (e:Exception){
+        emit(DataState.error(e.message.toString()))
+    }
+
+    }.flowOn(Dispatchers.IO)
 
     private fun repairSmsPattern():Int{
         val massageText: String

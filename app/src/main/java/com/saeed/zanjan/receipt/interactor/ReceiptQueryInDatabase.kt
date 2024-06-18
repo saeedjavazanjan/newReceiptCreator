@@ -2,15 +2,17 @@ package com.saeed.zanjan.receipt.interactor
 
 import com.saeed.zanjan.receipt.cash.ReceiptDao
 import com.saeed.zanjan.receipt.cash.model.CustomerEntity
+import com.saeed.zanjan.receipt.cash.model.CustomerEntityMapper
 import com.saeed.zanjan.receipt.cash.model.EntitiesGeneralMapper
 import com.saeed.zanjan.receipt.domain.dataState.DataState
+import com.saeed.zanjan.receipt.domain.models.Customer
 import com.saeed.zanjan.receipt.domain.models.GeneralReceipt
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 class ReceiptQueryInDatabase(
     val receiptDao: ReceiptDao,
-   val generalMapper: EntitiesGeneralMapper
+   val generalMapper: EntitiesGeneralMapper,
 ) {
 
 
@@ -142,6 +144,7 @@ class ReceiptQueryInDatabase(
 
         emit(DataState.loading())
         try {
+
             when (receiptCategory) {
                 0 -> {
                     //repair
@@ -199,7 +202,21 @@ class ReceiptQueryInDatabase(
 
             }
 
-                emit(DataState.success("با موفقیت به روز رسانی شد"))
+            if(receiptDao.countByPhoneNumber(generalReceipt.phone!!)==0){
+                val newCustomer=CustomerEntity(
+                    id=0,
+                    name = generalReceipt.name,
+                    phoneNumber = generalReceipt.phone,
+                    payedAmount = generalReceipt.prepayment,
+                    totalAmount = generalReceipt.cost
+                )
+                receiptDao.insertCustomer(newCustomer)
+            }else{
+                receiptDao.updateCustomer(generalReceipt.phone!!,generalReceipt.prepayment!!,generalReceipt.cost!!)
+
+            }
+
+            emit(DataState.success("با موفقیت به روز رسانی شد"))
 
 
 

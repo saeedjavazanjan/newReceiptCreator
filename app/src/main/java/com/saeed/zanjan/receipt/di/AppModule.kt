@@ -18,7 +18,9 @@ import com.saeed.zanjan.receipt.cash.model.RepairsEntityMapper
 import com.saeed.zanjan.receipt.cash.model.TailoringEntityMapper
 import com.saeed.zanjan.receipt.interactor.Backup
 import com.saeed.zanjan.receipt.bazar.BazarInAppBill
+import com.saeed.zanjan.receipt.cash.model.CustomerEntityMapper
 import com.saeed.zanjan.receipt.interactor.BlueToothConnectionClass
+import com.saeed.zanjan.receipt.interactor.CustomersQueries
 import com.saeed.zanjan.receipt.interactor.ExportExcelFile
 import com.saeed.zanjan.receipt.interactor.ListOfReceipts
 import com.saeed.zanjan.receipt.interactor.ReceiptQueryInDatabase
@@ -283,6 +285,23 @@ object AppModule {
         sharedPreferences: SharedPreferences
     ): BlueToothConnectionClass {
         return BlueToothConnectionClass(sharedPreferences)
+    }
+
+    @Singleton
+    @Provides
+    fun provideCustomerEntityMapper(): CustomerEntityMapper {
+        return CustomerEntityMapper()
+    }
+    @Singleton
+    @Provides
+    fun provideCustomerQueries(
+        receiptDao: ReceiptDao,
+        customerEntityMapper: CustomerEntityMapper
+    ): CustomersQueries {
+        return CustomersQueries(
+            receiptDao,
+            customerEntityMapper
+        )
     }
 
     @Singleton

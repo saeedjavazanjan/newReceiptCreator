@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -52,7 +53,8 @@ fun  CustomersListTopBar(
     modifier: Modifier,
     search: (String) -> Unit,
     back:()->Unit,
-    filter:()->Unit
+    filter:()->Unit,
+    searchExit:()->Unit
 ) {
     var searchValue by remember {
         mutableStateOf("")
@@ -156,6 +158,7 @@ fun  CustomersListTopBar(
                                 Icon(
                                     modifier = Modifier.clickable {
                                         expandSearchBar(false)
+                                        searchExit()
                                     },
                                     painter = painterResource(id = R.drawable.close),
                                     tint = CustomColors.darkPurple,
@@ -201,22 +204,14 @@ fun  CustomersListTopBar(
                 // Card content: Name and circular image
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(vertical = 5.dp, horizontal = 10.dp)
+                    modifier = Modifier.padding(vertical = 5.dp, horizontal = 10.dp).height(40.dp)
                 ) {
                     Text(
-                        "سعید غفاری",
+                        "انتخاب همه",
                         style = MaterialTheme.typography.bodyMedium,
                         color = Color.White
                     )
-                    Spacer(modifier = Modifier.width(10.dp))
 
-                    Image(
-                        painter = painterResource(id = R.drawable.profile),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(40.dp)
-                            .clip(CircleShape)
-                    )
 
                 }
             }
