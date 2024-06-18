@@ -17,6 +17,8 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,34 +31,53 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.saeed.zanjan.receipt.R
 import com.saeed.zanjan.receipt.domain.models.Customer
+import com.saeed.zanjan.receipt.presentation.components.CustomAcceptDialog
+import com.saeed.zanjan.receipt.presentation.components.CustomSMSTextDialog
+import com.saeed.zanjan.receipt.presentation.components.CustomersBottomBar
 import com.saeed.zanjan.receipt.presentation.components.CustomersListTopBar
 import com.saeed.zanjan.receipt.presentation.components.ListOfCustomers
 import com.saeed.zanjan.receipt.ui.theme.CustomColors
 import com.saeed.zanjan.receipt.ui.theme.NewReceiptCreatorTheme
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomersListScreen(
-    viewModel:CustomersListViewModel
+    viewModel:CustomersListViewModel,
+    navController: NavController
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope= rememberCoroutineScope()
     val context= LocalContext.current
 
     val loading = viewModel.loading.value
-    val customersList = mutableListOf(
-        Customer(1, "Alice", "1234567890", 1500000),
-        Customer(2, "Bob", "0987654321", 1000000),
-        Customer(3, "Charlie", "1122334455", 500000)
-    )// viewModel.customersList
+    val customersList = viewModel.customersList.value
 
     val focusRequester = remember { FocusRequester() }
 
     var isSearchExpanded by remember { mutableStateOf(false) }
     var openFilterDialog by remember { mutableStateOf(false) }
+    var openDeleteDialog by remember { mutableStateOf(-1) }
+    var openSMSTextDialog by remember { mutableStateOf(false) }
+
+
+
     var filtered by remember { mutableStateOf(false) }
+    var selectedCustomers = mutableListOf<Customer>()
+
+    LaunchedEffect(Unit){
+        viewModel.getListOfCustomers(snackbarHostState)
+    }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            viewModel.restartState()
+            selectedCustomers.clear()
+        }
+    }
 
 
 
@@ -87,15 +108,69 @@ fun CustomersListScreen(
 
                     },
                     back = {
+                        navController.popBackStack()
 
+                    },
+                    searchExit = {
+                        viewModel.restartState()
+                        viewModel.getListOfCustomers(snackbarHostState)
                     }
                 )
             },
             bottomBar = {
+                CustomersBottomBar(cardClick = {
+                    if(selectedCustomers.isEmpty()){
+                        coroutineScope.launch {
+                            snackbarHostState.showSnackbar("لطفا مخاطب را انتخاب کنید.")
 
+                        }
+                    }else{
+                        openSMSTextDialog=true
+
+                    }
+                })
             }
 
         ) {
+
+            if(openSMSTextDialog){
+
+                CustomSMSTextDialog(onDismiss = {
+                           openSMSTextDialog=false
+                }, onAccept ={message->
+
+                        val destinations= mutableListOf<String>()
+                        selectedCustomers.forEach {cus->
+                            cus.phoneNumber?.let { it1 -> destinations.add(it1) }
+                        }
+                        viewModel.sendSmsToCustomers(
+                            message=message,
+                            destinations =destinations ,
+                            snackbarHostState=snackbarHostState
+                        )
+
+
+                    openSMSTextDialog=false
+
+                } )
+            }
+            if(openDeleteDialog!=-1){
+                CustomAcceptDialog(
+                    onDismiss = {openDeleteDialog=-1 },
+                    onAccept = {
+                        viewModel.deleteCustomer(openDeleteDialog,snackbarHostState)
+                        customersList.removeAt(customersList.indexOfFirst { it.id == openDeleteDialog })
+
+                        openDeleteDialog=-1
+                    },
+                    title ="حذف مشتری" ,
+                    description ="آیا حذف این مورد از لیست مشتریان مطمئنید؟" ,
+                    acceptText = "حذف"
+                )
+            }
+
+
+
             Column(
                 verticalArrangement = Arrangement.Top,
                 modifier = Modifier
@@ -160,7 +235,17 @@ fun CustomersListScreen(
                             .padding(),
                         receiptCategory = viewModel.receiptCategory,
                         customers = customersList,
+                        onDelete = {id->
+                                openDeleteDialog=id
+                        },
+                        onSelect = {cus->
+                               selectedCustomers.add(cus)
 
+                        },
+                        deSelect = {cus->
+                            selectedCustomers.remove(cus)
+
+                        }
                     )
 
                 }

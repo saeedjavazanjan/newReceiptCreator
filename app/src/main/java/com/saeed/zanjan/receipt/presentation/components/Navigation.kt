@@ -113,6 +113,7 @@ fun Navigation(
         composable(Screen.CustomersList.route) {
             CustomersListScreen(
                 viewModel = customersListViewModel,
+                navController=navController
                 )
         }
 

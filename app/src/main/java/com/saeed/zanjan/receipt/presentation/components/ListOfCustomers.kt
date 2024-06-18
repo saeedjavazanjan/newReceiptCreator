@@ -16,16 +16,30 @@ fun ListOfCustomers(
     modifier: Modifier,
     receiptCategory: Int,
     customers: List<Customer>,
+    onDelete:(Int)->Unit,
+    onSelect:(Customer)->Unit,
+    deSelect:(Customer)->Unit
 ) {
     LazyColumn(
         state = rememberLazyListState(),
         modifier = modifier
     ) {
         itemsIndexed(
-            items = customers
+            items = customers.reversed()
         ) { index, cus ->
 
-            CustomerListCard(cus)
+            CustomerListCard(
+                cus,
+                onDelete = {
+                           onDelete(it)
+                },
+                onSelect = {
+                           onSelect(it)
+                },
+                deSelect = {
+                    deSelect(it)
+                }
+            )
 
         }
         item {
