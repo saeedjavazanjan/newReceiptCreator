@@ -37,7 +37,7 @@ class CustomersListViewModel
                 loading.value=it
             }
             dataState.data?.let {
-                customersList.value.addAll(it)
+                customersList.value= it.toMutableList()
             }
             dataState.error?.let {
                 snackbarHostState.showSnackbar(it)
@@ -88,6 +88,10 @@ class CustomersListViewModel
             destinations,
             message
         ).onEach { dataState ->
+
+            dataState.loading.let {
+                loading.value=it
+            }
         dataState.data?.let {
             snackbarHostState.showSnackbar(it)
         }
@@ -100,6 +104,17 @@ class CustomersListViewModel
     }
 
 
+    fun filterCustomers(snackbarHostState: SnackbarHostState){
+       var indebtedCustomers= mutableListOf<Customer>()
+        customersList.value.forEach {cus->
+            if(cus.dept!! > 0){
+                indebtedCustomers.add(cus)
+            }
+            customersList.value=indebtedCustomers
+        }
+
+
+    }
     fun restartState(){
         customersList.value= mutableListOf()
 

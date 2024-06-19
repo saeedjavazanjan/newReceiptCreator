@@ -14,11 +14,11 @@ import com.saeed.zanjan.receipt.domain.models.GeneralReceipt
 @Composable
 fun ListOfCustomers(
     modifier: Modifier,
-    receiptCategory: Int,
     customers: List<Customer>,
     onDelete:(Int)->Unit,
     onSelect:(Customer)->Unit,
-    deSelect:(Customer)->Unit
+    deSelect:(Customer)->Unit,
+    selectAll:Boolean
 ) {
     LazyColumn(
         state = rememberLazyListState(),
@@ -38,7 +38,8 @@ fun ListOfCustomers(
                 },
                 deSelect = {
                     deSelect(it)
-                }
+                },
+                selectAll=selectAll
             )
 
         }

@@ -164,6 +164,7 @@ class SendSms(
         phoneNumber:List<String>,
         messageText:String
     ):Flow<DataState<String>> = flow<DataState<String>> {
+        emit(DataState.loading())
     try {
       phoneNumber.forEach {phone->
           val parts = smsManager.divideMessage(messageText)

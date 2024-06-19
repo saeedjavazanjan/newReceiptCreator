@@ -48,11 +48,12 @@ fun CustomerListCard(
     customer: Customer,
     onDelete:(Int)->Unit,
     onSelect:(Customer)->Unit,
-    deSelect:(Customer)->Unit
+    deSelect:(Customer)->Unit,
+    selectAll:Boolean
 ) {
 
     var offset by remember { mutableStateOf(0f) }
-    var checkState by remember { mutableStateOf(false) }
+    var checkState by remember { mutableStateOf(selectAll) }
 Box(
     modifier = Modifier
         .fillMaxWidth()
@@ -124,6 +125,8 @@ Box(
             onClick = {
                 offset=0f
                 onDelete(customer.id)
+                deSelect(customer)
+                checkState=false
                       },
             modifier = Modifier
                 .align(Alignment.CenterEnd)

@@ -52,7 +52,8 @@ fun HomeTopBar(
     modifier: Modifier,
     search: (String) -> Unit,
     menu:()->Unit,
-    filter:()->Unit
+    filter:()->Unit,
+    searchExit:()->Unit
 ) {
 
     var searchValue by remember {
@@ -157,6 +158,7 @@ fun HomeTopBar(
                                 Icon(
                                     modifier = Modifier.clickable {
                                         expandSearchBar(false)
+                                        searchExit()
                                     },
                                     painter = painterResource(id = R.drawable.close),
                                     tint = CustomColors.darkPurple,

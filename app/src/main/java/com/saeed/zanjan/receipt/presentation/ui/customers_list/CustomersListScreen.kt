@@ -19,6 +19,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,6 +38,7 @@ import com.saeed.zanjan.receipt.domain.models.Customer
 import com.saeed.zanjan.receipt.presentation.components.CustomAcceptDialog
 import com.saeed.zanjan.receipt.presentation.components.CustomSMSTextDialog
 import com.saeed.zanjan.receipt.presentation.components.CustomersBottomBar
+import com.saeed.zanjan.receipt.presentation.components.CustomersFilterDialog
 import com.saeed.zanjan.receipt.presentation.components.CustomersListTopBar
 import com.saeed.zanjan.receipt.presentation.components.ListOfCustomers
 import com.saeed.zanjan.receipt.ui.theme.CustomColors
@@ -46,12 +48,12 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomersListScreen(
-    viewModel:CustomersListViewModel,
+    viewModel: CustomersListViewModel,
     navController: NavController
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
-    val coroutineScope= rememberCoroutineScope()
-    val context= LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
 
     val loading = viewModel.loading.value
     val customersList = viewModel.customersList.value
@@ -63,12 +65,13 @@ fun CustomersListScreen(
     var openDeleteDialog by remember { mutableStateOf(-1) }
     var openSMSTextDialog by remember { mutableStateOf(false) }
 
+    var selectAllState by remember { mutableStateOf(false) }
 
 
     var filtered by remember { mutableStateOf(false) }
     var selectedCustomers = mutableListOf<Customer>()
 
-    LaunchedEffect(Unit){
+    LaunchedEffect(Unit) {
         viewModel.getListOfCustomers(snackbarHostState)
     }
 
@@ -112,20 +115,28 @@ fun CustomersListScreen(
 
                     },
                     searchExit = {
-                        viewModel.restartState()
                         viewModel.getListOfCustomers(snackbarHostState)
+                    },
+                    selectAll = {
+
+                        selectAllState = true
+                        selectedCustomers.addAll(customersList)
+                    },
+                    deselectAll = {
+                        selectAllState = false
+                        selectedCustomers.clear()
                     }
                 )
             },
             bottomBar = {
                 CustomersBottomBar(cardClick = {
-                    if(selectedCustomers.isEmpty()){
+                    if (selectedCustomers.isEmpty()) {
                         coroutineScope.launch {
                             snackbarHostState.showSnackbar("لطفا مخاطب را انتخاب کنید.")
 
                         }
-                    }else{
-                        openSMSTextDialog=true
+                    } else {
+                        openSMSTextDialog = true
 
                     }
                 })
@@ -133,42 +144,54 @@ fun CustomersListScreen(
 
         ) {
 
-            if(openSMSTextDialog){
+
+            if (openSMSTextDialog) {
 
                 CustomSMSTextDialog(onDismiss = {
-                           openSMSTextDialog=false
-                }, onAccept ={message->
+                    openSMSTextDialog = false
+                }, onAccept = { message ->
 
-                        val destinations= mutableListOf<String>()
-                        selectedCustomers.forEach {cus->
-                            cus.phoneNumber?.let { it1 -> destinations.add(it1) }
-                        }
-                        viewModel.sendSmsToCustomers(
-                            message=message,
-                            destinations =destinations ,
-                            snackbarHostState=snackbarHostState
-                        )
+                    val destinations = mutableListOf<String>()
+                    selectedCustomers.forEach { cus ->
+                        cus.phoneNumber?.let { it1 -> destinations.add(it1) }
+                    }
+                    viewModel.sendSmsToCustomers(
+                        message = message,
+                        destinations = destinations,
+                        snackbarHostState = snackbarHostState
+                    )
 
 
-                    openSMSTextDialog=false
+                    openSMSTextDialog = false
 
-                } )
+                })
             }
-            if(openDeleteDialog!=-1){
+            if (openDeleteDialog != -1) {
                 CustomAcceptDialog(
-                    onDismiss = {openDeleteDialog=-1 },
+                    onDismiss = { openDeleteDialog = -1 },
                     onAccept = {
-                        viewModel.deleteCustomer(openDeleteDialog,snackbarHostState)
+                        viewModel.deleteCustomer(openDeleteDialog, snackbarHostState)
                         customersList.removeAt(customersList.indexOfFirst { it.id == openDeleteDialog })
 
-                        openDeleteDialog=-1
+                        openDeleteDialog = -1
                     },
-                    title ="حذف مشتری" ,
-                    description ="آیا حذف این مورد از لیست مشتریان مطمئنید؟" ,
+                    title = "حذف مشتری",
+                    description = "آیا حذف این مورد از لیست مشتریان مطمئنید؟",
                     acceptText = "حذف"
                 )
             }
+            if (openFilterDialog) {
+                CustomersFilterDialog(onDismiss = {
+                    openFilterDialog=false
+                },
+                    onFilterSelected = {
+                        openFilterDialog=false
+                        filtered=true
+                        viewModel.filterCustomers(snackbarHostState = snackbarHostState)
+                    }
+                )
 
+            }
 
 
             Column(
@@ -181,19 +204,19 @@ fun CustomersListScreen(
                         top = it.calculateTopPadding(),
                     )
             ) {
-                if(filtered){
+                if (filtered) {
                     TextButton(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .align(Alignment.CenterHorizontally)
-                        ,
+                            .align(Alignment.CenterHorizontally),
                         onClick = {
                             viewModel.getListOfCustomers(snackbarHostState)
-                            filtered=false
+                            filtered = false
                         },
                         border = BorderStroke(width = 2.dp, color = CustomColors.lightGray)
                     ) {
-                        Text(text = "حذف فیلتر",
+                        Text(
+                            text = "حذف فیلتر",
                             style = MaterialTheme.typography.bodyMedium,
                             color = CustomColors.darkPurple
                         )
@@ -227,26 +250,47 @@ fun CustomersListScreen(
                     }
 
 
-
                 } else {
-                    ListOfCustomers(
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(),
-                        receiptCategory = viewModel.receiptCategory,
-                        customers = customersList,
-                        onDelete = {id->
-                                openDeleteDialog=id
-                        },
-                        onSelect = {cus->
-                               selectedCustomers.add(cus)
+                    if (selectAllState) {
+                        ListOfCustomers(
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(),
+                            customers = customersList,
+                            onDelete = { id ->
+                                openDeleteDialog = id
+                            },
+                            onSelect = { cus ->
+                                selectedCustomers.add(cus)
 
-                        },
-                        deSelect = {cus->
-                            selectedCustomers.remove(cus)
+                            },
+                            deSelect = { cus ->
+                                selectedCustomers.remove(cus)
 
-                        }
-                    )
+                            },
+                            selectAll = selectAllState
+                        )
+                    } else {
+                        ListOfCustomers(
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(),
+                            customers = customersList,
+                            onDelete = { id ->
+                                openDeleteDialog = id
+                            },
+                            onSelect = { cus ->
+                                selectedCustomers.add(cus)
+
+                            },
+                            deSelect = { cus ->
+                                selectedCustomers.remove(cus)
+
+                            },
+                            selectAll = selectAllState
+                        )
+                    }
+
 
                 }
 
@@ -254,5 +298,5 @@ fun CustomersListScreen(
             }
 
         }
-}
+    }
 }

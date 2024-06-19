@@ -54,11 +54,18 @@ fun  CustomersListTopBar(
     search: (String) -> Unit,
     back:()->Unit,
     filter:()->Unit,
-    searchExit:()->Unit
+    searchExit:()->Unit,
+    selectAll:()->Unit,
+    deselectAll:()->Unit
 ) {
     var searchValue by remember {
         mutableStateOf("")
     }
+
+    var selectAllState by remember {
+        mutableStateOf(false)
+    }
+
     Row(modifier = modifier) {
         Button(
             contentPadding = PaddingValues(0.dp),
@@ -192,7 +199,16 @@ fun  CustomersListTopBar(
             exit = fadeOut()
         ) {
             Card(
+                modifier=Modifier.clickable {
+                    if (!selectAllState){
+                        selectAll()
+                        selectAllState=true
+                    }else{
+                        deselectAll()
+                        selectAllState=false
+                    }
 
+                },
                 shape = CircleShape,
                 colors = CardDefaults.cardColors(
                     containerColor = CustomColors.lightBlue,
@@ -204,10 +220,12 @@ fun  CustomersListTopBar(
                 // Card content: Name and circular image
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(vertical = 5.dp, horizontal = 10.dp).height(40.dp)
+                    modifier = Modifier
+                        .padding(vertical = 5.dp, horizontal = 10.dp)
+                        .height(40.dp)
                 ) {
                     Text(
-                        "انتخاب همه",
+                        text= if(!selectAllState) "انتخاب همه" else "لغو انتخاب گروهی",
                         style = MaterialTheme.typography.bodyMedium,
                         color = Color.White
                     )
