@@ -19,6 +19,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -62,6 +63,8 @@ fun CustomersListScreen(
     var openFilterDialog by remember { mutableStateOf(false) }
     var openDeleteDialog by remember { mutableStateOf(-1) }
     var openSMSTextDialog by remember { mutableStateOf(false) }
+
+    var selectAllState by remember { mutableStateOf(false) }
 
 
 
@@ -114,6 +117,15 @@ fun CustomersListScreen(
                     searchExit = {
                         viewModel.restartState()
                         viewModel.getListOfCustomers(snackbarHostState)
+                    },
+                    selectAll = {
+
+                        selectAllState=true
+                        selectedCustomers.addAll(customersList)
+                    },
+                    deselectAll = {
+                        selectAllState=false
+                        selectedCustomers.clear()
                     }
                 )
             },
@@ -132,6 +144,8 @@ fun CustomersListScreen(
             }
 
         ) {
+
+
 
             if(openSMSTextDialog){
 
@@ -229,24 +243,47 @@ fun CustomersListScreen(
 
 
                 } else {
-                    ListOfCustomers(
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(),
-                        receiptCategory = viewModel.receiptCategory,
-                        customers = customersList,
-                        onDelete = {id->
+                    if(selectAllState){
+                        ListOfCustomers(
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(),
+                            customers = customersList,
+                            onDelete = {id->
                                 openDeleteDialog=id
-                        },
-                        onSelect = {cus->
-                               selectedCustomers.add(cus)
+                            },
+                            onSelect = {cus->
+                                selectedCustomers.add(cus)
 
-                        },
-                        deSelect = {cus->
-                            selectedCustomers.remove(cus)
+                            },
+                            deSelect = {cus->
+                                selectedCustomers.remove(cus)
 
-                        }
-                    )
+                            },
+                            selectAll = selectAllState
+                        )
+                    }else{
+                        ListOfCustomers(
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(),
+                            customers = customersList,
+                            onDelete = {id->
+                                openDeleteDialog=id
+                            },
+                            onSelect = {cus->
+                                selectedCustomers.add(cus)
+
+                            },
+                            deSelect = {cus->
+                                selectedCustomers.remove(cus)
+
+                            },
+                            selectAll = selectAllState
+                        )
+                    }
+
+
 
                 }
 
