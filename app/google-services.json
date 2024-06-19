@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "748700380874",
+    "project_id": "receipt-creator-cee45",
+    "storage_bucket": "receipt-creator-cee45.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:748700380874:android:feedd23a4261f22b4d0e33",
+        "android_client_info": {
+          "package_name": "com.saeed.zanjan.receipt"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDe9YiIh2WMKrMzsrdRvEM8AQ7nwgbqCJc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
