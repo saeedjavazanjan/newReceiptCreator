@@ -15,8 +15,10 @@ dependencyResolutionManagement {
         }
 
     }
+
 }
 
 rootProject.name = "NewReceiptCreator"
 include(":app")
+
  

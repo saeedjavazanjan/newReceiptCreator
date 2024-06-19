@@ -1,6 +1,7 @@
 package com.saeed.zanjan.receipt
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Box
@@ -15,10 +16,12 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.google.firebase.messaging.FirebaseMessaging
 import com.saeed.zanjan.receipt.presentation.components.Navigation
 import com.saeed.zanjan.receipt.utils.ConnectivityManager
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+import kotlin.math.log
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -136,6 +139,14 @@ class MainActivity : ComponentActivity() {
             }
             //ReceiptCreatorApp()
 //TestTabRow()
+        }
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val token = task.result
+                Log.i("FCM",token)
+
+                // این توکن را به سرور خود ارسال کنید یا ذخیره کنید
+            }
         }
     }
 }
