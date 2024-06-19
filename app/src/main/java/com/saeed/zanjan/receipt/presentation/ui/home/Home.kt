@@ -204,7 +204,10 @@ fun Home(
                                                   viewModel.commentOnApp(context)
                                                 }
                                                 3->{
-                                                    navigateToCustomersList()
+                                                    if(leftTime.value>0)
+                                                        navigateToCustomersList()
+                                                    else
+                                                        openSubscribeDialog=true
                                                 }
                                                 4->{
                                                     if(leftTime.value>0)
@@ -275,8 +278,10 @@ fun Home(
                         menu = {
                             coroutineScope.launch {
                                 drawerState.open()
-
                             }
+                        },
+                        searchExit = {
+                            viewModel.getListOfReceipts(snackbarHostState)
                         }
                     )
                 },

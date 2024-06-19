@@ -118,8 +118,6 @@ interface ReceiptDao {
     @Query("UPDATE customer SET prepayment=:payedAmount,cost=:totalAmount WHERE phone = :phoneNumber")
     fun updateCustomer(phoneNumber: String,payedAmount:String,totalAmount:String)
 
-
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAllConfectionery(receipts: List<ConfectioneryEntity>)
   @Insert(onConflict = OnConflictStrategy.REPLACE)
