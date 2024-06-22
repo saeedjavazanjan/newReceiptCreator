@@ -1,6 +1,7 @@
 package com.saeed.zanjan.receipt.presentation.ui.registration
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -19,6 +21,8 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
+import androidx.compose.material3.TabRowDefaults
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
@@ -150,11 +154,25 @@ fun RegistrationScreen(
                     selectedTabIndex = if (isSignInTabSelected) 0 else 1,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(10.dp)
+                        .padding(10.dp),
+                    contentColor = CustomColors.darkBlue,
+                    indicator = { tabPositions ->
+                        TabRowDefaults.Indicator(
+                            Modifier
+                                .tabIndicatorOffset(tabPositions[if (isSignInTabSelected) 0 else 1])
+                                .fillMaxWidth()
+                                .height(4.dp),
+                            color = CustomColors.darkBlue
+                        )
+                    }
+
                 ) {
                     Tab(
                         selected = isSignInTabSelected,
-                        onClick = { isSignInTabSelected = true }
+                        onClick = { isSignInTabSelected = true },
+                        selectedContentColor = CustomColors.darkBlue,
+                        unselectedContentColor = CustomColors.gray
+
                     ) {
                         Text(
                             modifier = Modifier
@@ -166,7 +184,9 @@ fun RegistrationScreen(
                     }
                     Tab(
                         selected = !isSignInTabSelected,
-                        onClick = { isSignInTabSelected = false }
+                        onClick = { isSignInTabSelected = false },
+                        selectedContentColor = CustomColors.darkBlue,
+                        unselectedContentColor = CustomColors.gray
                     ) {
                         Text(
                             modifier = Modifier
@@ -199,7 +219,9 @@ fun RegistrationScreen(
                             containerColor = Color.Transparent, // Set light gray background
                             cursorColor = MaterialTheme.colorScheme.primary,
                             focusedBorderColor = CustomColors.lightGray, // Transparent to clear the outline
-                            unfocusedBorderColor = Color.Transparent // Transparent to clear the outline
+                            unfocusedBorderColor = Color.Transparent,// Transparent to clear the outline
+                            focusedLabelColor = CustomColors.darkBlue
+
                         ),
                     )
 
@@ -227,7 +249,12 @@ fun RegistrationScreen(
                                 }
 
                             },
-                            modifier = Modifier.fillMaxWidth().height(56.dp)
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(56.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = CustomColors.darkBlue
+                            )
                         ) {
                             Text(
                                 text = if (countdownEnabled) " بعد از  $remainingSeconds ثانیه تلاش کنید. "
@@ -252,7 +279,9 @@ fun RegistrationScreen(
                             containerColor = Color.Transparent, // Set light gray background
                             cursorColor = MaterialTheme.colorScheme.primary,
                             focusedBorderColor = CustomColors.lightGray, // Transparent to clear the outline
-                            unfocusedBorderColor = Color.Transparent // Transparent to clear the outline
+                            unfocusedBorderColor = Color.Transparent ,// Transparent to clear the outline
+                            focusedLabelColor = CustomColors.darkBlue
+
                         ),
                     )
                     OutlinedTextField(
@@ -268,7 +297,9 @@ fun RegistrationScreen(
                             containerColor = Color.Transparent, // Set light gray background
                             cursorColor = MaterialTheme.colorScheme.primary,
                             focusedBorderColor = CustomColors.lightGray, // Transparent to clear the outline
-                            unfocusedBorderColor = Color.Transparent // Transparent to clear the outline
+                            unfocusedBorderColor = Color.Transparent ,// Transparent to clear the outline
+                            focusedLabelColor = CustomColors.darkBlue
+
                         ),
                     )
                     OutlinedTextField(
@@ -287,7 +318,8 @@ fun RegistrationScreen(
                             containerColor = Color.Transparent, // Set light gray background
                             cursorColor = MaterialTheme.colorScheme.primary,
                             focusedBorderColor = CustomColors.lightGray, // Transparent to clear the outline
-                            unfocusedBorderColor = Color.Transparent // Transparent to clear the outline
+                            unfocusedBorderColor = Color.Transparent, // Transparent to clear the outline
+                            focusedLabelColor = CustomColors.darkBlue
                         ),
                     )
                     OutlinedTextField(
@@ -297,15 +329,19 @@ fun RegistrationScreen(
                             userId = it
 
                                         },
-                        label = { Text("آیدی پیج کاری") },
+                        label = { Text("شماره تماس مجموعه") },
                         modifier = Modifier.fillMaxWidth(),
                         isError = error,
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
                         shape = RoundedCornerShape(30.dp) ,// Adjust the radius for rounded corners
                         colors = TextFieldDefaults.outlinedTextFieldColors(
                             containerColor = Color.Transparent, // Set light gray background
                             cursorColor = MaterialTheme.colorScheme.primary,
                             focusedBorderColor = CustomColors.lightGray, // Transparent to clear the outline
-                            unfocusedBorderColor = Color.Transparent // Transparent to clear the outline
+                            unfocusedBorderColor = Color.Transparent ,
+                            focusedLabelColor = CustomColors.darkBlue
+                            // Transparent to clear the outline
                         ),
 
                         )
@@ -351,7 +387,12 @@ fun RegistrationScreen(
                             }
 
                         },
-                        modifier = Modifier.fillMaxWidth().height(56.dp)
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(56.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = CustomColors.darkBlue
+                        )
                     ) {
                         Text(
                             text = if (countdownEnabled) " بعد از  $remainingSeconds ثانیه تلاش کنید. "

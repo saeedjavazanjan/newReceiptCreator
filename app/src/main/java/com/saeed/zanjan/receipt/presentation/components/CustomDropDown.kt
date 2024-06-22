@@ -29,6 +29,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import com.saeed.zanjan.receipt.ui.theme.CustomColors
 
@@ -45,6 +46,12 @@ fun CustomDropdown(
 
     var expanded by remember { mutableStateOf(false) }
     val focusRequester = FocusRequester()
+    val focusManager = LocalFocusManager.current
+
+    if(!expanded){
+        focusManager.clearFocus()
+    }
+
 
     Column(
         modifier = modifier
@@ -79,7 +86,8 @@ fun CustomDropdown(
                 containerColor = Color.Transparent, // Set light gray background
                 cursorColor = MaterialTheme.colorScheme.primary,
                 focusedBorderColor = CustomColors.lightGray, // Transparent to clear the outline
-                unfocusedBorderColor = Color.Transparent // Transparent to clear the outline
+                unfocusedBorderColor = Color.Transparent ,// Transparent to clear the outline
+                focusedLabelColor = CustomColors.darkBlue
             ),
         )
 
