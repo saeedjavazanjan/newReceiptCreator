@@ -20,6 +20,7 @@ import com.saeed.zanjan.receipt.interactor.Backup
 import com.saeed.zanjan.receipt.bazar.BazarInAppBill
 import com.saeed.zanjan.receipt.cash.model.CustomerEntityMapper
 import com.saeed.zanjan.receipt.interactor.BlueToothConnectionClass
+import com.saeed.zanjan.receipt.interactor.CheckVersion
 import com.saeed.zanjan.receipt.interactor.CustomersQueries
 import com.saeed.zanjan.receipt.interactor.ExportExcelFile
 import com.saeed.zanjan.receipt.interactor.ListOfReceipts
@@ -121,6 +122,15 @@ object AppModule {
     @Provides
     fun provideBazarInAppBill(): BazarInAppBill {
         return BazarInAppBill()
+    }
+    @Singleton
+    @Provides
+    fun provideCheckVersion(
+        retrofitService: RetrofitService
+    ): CheckVersion {
+        return CheckVersion(
+            retrofitService = retrofitService
+        )
     }
 
     @Singleton
