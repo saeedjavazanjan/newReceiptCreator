@@ -17,9 +17,9 @@ class CheckVersion(
         isNetworkAvailable: Boolean
 
     ):Flow<DataState<String?>> = flow {
+        emit(DataState.loading())
 
         if(isNetworkAvailable){
-            emit(DataState.loading())
             try {
                 val result=retrofitService.checkVersion()
                 delay(3000)

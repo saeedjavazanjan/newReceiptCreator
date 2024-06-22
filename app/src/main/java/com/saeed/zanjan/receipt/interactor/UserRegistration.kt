@@ -102,7 +102,6 @@ class UserRegistration(
             }
 
 
-
         }else{
             emit(DataState.error("شما به اینترنت دسترسی ندارید"))
 

@@ -31,7 +31,7 @@ class SplashViewModel
     :ViewModel() {
 
 
-    //TODO test is update and data saved
+    //TODO test is update
 
     val dataSaved = sharedPreferences.getBoolean("SAVED",false)
 

@@ -4,6 +4,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -131,13 +133,18 @@ fun SplashScreen(
                 )
                 Spacer(modifier = Modifier.weight(1f))
 
-                if(loading){
-                    CircularProgressIndicator(
-                        modifier = Modifier
-                            .align(Alignment.CenterHorizontally),
-                        color = Color.White
-                    )
+                Column(
+                    modifier = Modifier.height(70.dp).fillMaxWidth()
+                ) {
+                    if(loading){
+                        CircularProgressIndicator(
+                            modifier = Modifier
+                                .align(Alignment.CenterHorizontally),
+                            color = Color.White
+                        )
+                    }
                 }
+
 
                 Spacer(modifier = Modifier.weight(1f))
 
