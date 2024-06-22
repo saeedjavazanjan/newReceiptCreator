@@ -47,4 +47,8 @@ interface RetrofitService {
     suspend fun downloadDatabase(
         @Header("Authorization") token: String?
     ): Response<ResponseBody>
+
+
+    @GET("/version/")
+    suspend fun checkVersion():Response<String>
 }
