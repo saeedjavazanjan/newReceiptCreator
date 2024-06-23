@@ -1,7 +1,6 @@
 package com.saeed.zanjan.receipt.presentation.ui.registration
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -68,12 +67,11 @@ fun RegistrationScreen(
             if(successLogin.value)
             navigateToHome()
         }
-        var companyName by remember { mutableStateOf("") }
-    var address by remember { mutableStateOf("") }
-    var phone by remember { mutableStateOf("") }
-    var userId by remember { mutableStateOf("") }
-    var jobType by remember { mutableStateOf("") }
-
+        var companyName by remember { mutableStateOf(viewModel.companyName.value) }
+        var phone by remember { mutableStateOf(viewModel.phone.value) }
+        var address by remember { mutableStateOf(viewModel.companyAddress.value) }
+        var companyLink by remember { mutableStateOf(viewModel.companyLink.value) }
+        var jobType by remember { mutableStateOf(viewModel.jobType.value) }
 
     var isSignInTabSelected by remember { mutableStateOf(false) }
 
@@ -114,7 +112,7 @@ fun RegistrationScreen(
                     password=enteredOtp,
                     address = address,
                     phone = phone,
-                    userId = userId,
+                    userId = companyLink,
                     jobType = jobType
                 )
                    viewModel.senOtp(
@@ -323,17 +321,16 @@ fun RegistrationScreen(
                         ),
                     )
                     OutlinedTextField(
-                        value = userId,
+                        value = companyLink,
                         onValueChange = {
                             if (it.length <= 20)
-                            userId = it
+                            companyLink = it
 
                                         },
-                        label = { Text("شماره تماس مجموعه") },
+                        label = { Text("لینک ارتباطی") },
                         modifier = Modifier.fillMaxWidth(),
                         isError = error,
                         singleLine = true,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
                         shape = RoundedCornerShape(30.dp) ,// Adjust the radius for rounded corners
                         colors = TextFieldDefaults.outlinedTextFieldColors(
                             containerColor = Color.Transparent, // Set light gray background
@@ -376,7 +373,7 @@ fun RegistrationScreen(
                                         password="",
                                         address = address,
                                         phone = phone,
-                                        userId = userId,
+                                        userId = companyLink,
                                         jobType = jobType
                                     )
                                 viewModel.registerRequest(

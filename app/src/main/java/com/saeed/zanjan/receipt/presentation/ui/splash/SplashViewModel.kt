@@ -33,59 +33,17 @@ class SplashViewModel
 
     //TODO test is update
 
-    val dataSaved = sharedPreferences.getBoolean("SAVED",false)
+    val dataSaved = sharedPreferences.getBoolean("SAVED_IN_SERVER",false)
 
 
     val loading= mutableStateOf(false)
-   //val databaseSaved= mutableStateOf(false)
    val isUpdate= mutableStateOf(false)
    val versionGotFromServer= mutableStateOf(false)
    val forceToHome= mutableStateOf(false)
     val version= mutableStateOf("--")
 
 
-        fun downloadDb(snackbarHostState: SnackbarHostState){
-            backup.downloadDatabase().onEach { dataState ->
 
-                dataState.loading.let {
-                    loading.value=it
-                }
-                dataState.data?.let{
-                  //  fillCustomersTable(snackbarHostState)
-                }
-                dataState.error?.let {
-                    snackbarHostState.showSnackbar(it)
-
-                }
-
-            }.launchIn(viewModelScope)
-
-        }
-
-
-/*
-    fun fillCustomersTable(snackbarHostState: SnackbarHostState){
-        backup.fillCustomerTable().onEach { dataState ->
-            dataState.loading.let {
-                loading.value=it
-            }
-            dataState.data?.let {
-                if(it)
-                    databaseSaved.value=true
-                else{
-                    databaseSaved.value=false
-                    loading.value=false
-                }
-            }
-            dataState.error?.let {
-                snackbarHostState.showSnackbar(it)
-            }
-
-        }.launchIn(viewModelScope)
-
-
-    }
-*/
 
     fun checkVersionFromServer(
         snackbarHostState: SnackbarHostState

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -83,12 +84,13 @@ fun OtpScreen(
                         singleLine = true,
                         modifier = Modifier.fillMaxWidth(),
                         isError = (otp.isEmpty() || otp.length < 4) && checkOtpClicked,
-                        textStyle = MaterialTheme.typography.bodySmall,
+                        textStyle = MaterialTheme.typography.bodyMedium,
                         colors = TextFieldDefaults.outlinedTextFieldColors(
                             containerColor = Color.Transparent, // Set light gray background
                             cursorColor = MaterialTheme.colorScheme.primary,
-                            focusedBorderColor = CustomColors.lightGray, // Transparent to clear the outline
-                            unfocusedBorderColor = Color.Transparent // Transparent to clear the outline
+                            focusedBorderColor = CustomColors.lightGray,
+                            unfocusedBorderColor = Color.Transparent,
+                            focusedLabelColor = CustomColors.darkBlue
                         ),
                         )
                     if ((otp.isEmpty() || otp.length < 4) && checkOtpClicked) {
@@ -107,7 +109,8 @@ fun OtpScreen(
                             onClick = onDismiss
                         ) {
                             Text("انصراف",
-                                    style = MaterialTheme.typography.bodyMedium
+                                    style = MaterialTheme.typography.bodyMedium,
+                                color = CustomColors.darkBlue
                             )
                         }
                         Button(
@@ -117,10 +120,14 @@ fun OtpScreen(
                                     onSendOtpClicked(otp)
 
                                 }
-                            }
+                            },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = CustomColors.darkBlue
+                            )
                         ) {
                             Text("ارسال",
-                                    style = MaterialTheme.typography.bodyMedium
+                                    style = MaterialTheme.typography.bodyMedium,
+                                color = Color.White
 
                                 )
                         }

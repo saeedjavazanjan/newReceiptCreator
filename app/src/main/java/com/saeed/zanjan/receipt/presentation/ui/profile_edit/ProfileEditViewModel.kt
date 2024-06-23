@@ -49,9 +49,9 @@ class ProfileEditViewModel
         avatar.value=sharedPreferences.getString("AVATAR_URI","")!!
         companyName.value=sharedPreferences.getString("COMPANY","")!!
         // due to the first version company phone key is channel link and not changed
-        companyPhone.value=sharedPreferences.getString("CHANNEL_LINK","")!!
+        companyPhone.value=sharedPreferences.getString("COMPANY_PHONE","")!!
         companyAddress.value=sharedPreferences.getString("ADDRESS","")!!
-        companyLink.value=sharedPreferences.getString("COMPANY_LINK","")!!
+        companyLink.value=sharedPreferences.getString("CHANNEL_LINK","")!!
         companyRules.value=sharedPreferences.getString("COMPANY_RULES","")!!
         jobType.value=
             when( sharedPreferences.getInt("JOB_SUBJECT",0)){
@@ -78,8 +78,8 @@ class ProfileEditViewModel
             editor.putString("AVATAR_URI", profileData.avatar )
                 .putString("COMPANY", profileData.companyName )
                 .putString("ADDRESS",profileData.companyAddress )
-                .putString("CHANNEL_LINK", profileData.companyPhone )
-                .putString("COMPANY_LINK", profileData.companyLink)
+                .putString("COMPANY_PHONE", profileData.companyPhone )
+                .putString("CHANNEL_LINK", profileData.companyLink)
                 .putString("COMPANY_RULES", profileData.companyRules)
                 .putInt("JOB_SUBJECT", getIdOfJob(profileData.jobType))
                 .commit()

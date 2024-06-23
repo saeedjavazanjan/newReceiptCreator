@@ -46,11 +46,6 @@ fun CustomDropdown(
 
     var expanded by remember { mutableStateOf(false) }
     val focusRequester = FocusRequester()
-    val focusManager = LocalFocusManager.current
-
-    if(!expanded){
-        focusManager.clearFocus()
-    }
 
 
     Column(

@@ -175,6 +175,7 @@ class UserRegistration(
             .putInt("JOB_SUBJECT", jobId(body!!.userData!!.jobTitle))
             .putString("JWTToken",body!!.tok)
             .putBoolean("SAVED", true)
+            .putBoolean("SAVED_IN_SERVER",true)
             .commit()
 
     }

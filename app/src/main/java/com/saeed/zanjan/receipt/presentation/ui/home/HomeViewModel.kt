@@ -43,7 +43,7 @@ class HomeViewModel
 
 
 
-    val receiptCategory = 1//sharedPreferences.getInt("JOB_SUBJECT",-1)
+    val receiptCategory = sharedPreferences.getInt("JOB_SUBJECT",-1)
     val loading = mutableStateOf(false)
     val receiptList: MutableState<List<GeneralReceipt>> = mutableStateOf(ArrayList())
     val databaseSaved = mutableStateOf(false)
