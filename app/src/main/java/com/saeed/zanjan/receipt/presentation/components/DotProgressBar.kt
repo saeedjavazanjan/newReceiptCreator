@@ -18,6 +18,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.tooling.preview.Preview
+import com.saeed.zanjan.receipt.ui.theme.CustomColors
 
 val dotSize = 24.dp // made it bigger for demo
 val delayUnit = 300 // you can change delay to change animation speed
@@ -33,7 +34,7 @@ fun DotsPulsing() {
             .size(dotSize)
             .scale(scale)
             .background(
-                color = MaterialTheme.colorScheme.primary,
+                color =  CustomColors.darkBlue,
                 shape = CircleShape
             )
     )
@@ -84,7 +85,7 @@ fun DotsElastic() {
             .size(dotSize)
             .scale(scaleX = minScale, scaleY = scale)
             .background(
-                color = MaterialTheme.colorScheme.primary,
+                color =  CustomColors.darkBlue,
                 shape = CircleShape
             )
     )
@@ -135,7 +136,7 @@ fun DotsFlashing() {
             .size(dotSize)
             .alpha(alpha)
             .background(
-                color = MaterialTheme.colorScheme.primary,
+                color =  CustomColors.darkBlue,
                 shape = CircleShape
             )
     )
@@ -186,7 +187,7 @@ fun DotsTyping() {
             .size(dotSize)
             .offset(y = -offset.dp)
             .background(
-                color = MaterialTheme.colorScheme.primary,
+                color =  CustomColors.darkBlue,
                 shape = CircleShape
             )
     )
@@ -239,7 +240,7 @@ fun DotsCollision() {
             .size(dotSize)
             .offset(x = offset.dp)
             .background(
-                color = MaterialTheme.colorScheme.primary,
+                color =  CustomColors.darkBlue,
                 shape = CircleShape
             )
     )

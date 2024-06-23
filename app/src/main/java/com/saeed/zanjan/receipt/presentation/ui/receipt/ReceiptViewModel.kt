@@ -31,7 +31,7 @@ class ReceiptViewModel
     val blueToothConnectionClass: BlueToothConnectionClass
 ) : ViewModel() {
 
-    val receiptCategory = 1//sharedPreferences.getInt("JOB_SUBJECT",-1)
+    val receiptCategory = sharedPreferences.getInt("JOB_SUBJECT",-1)
     val loading = mutableStateOf(false)
     val deleteState = mutableStateOf(false)
     val otpCode = mutableStateOf(0)

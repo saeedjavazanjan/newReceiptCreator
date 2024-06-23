@@ -1,6 +1,7 @@
 package com.saeed.zanjan.receipt.presentation.ui.registration
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.widget.Toast
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.mutableStateOf
@@ -9,6 +10,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.saeed.zanjan.receipt.domain.models.OtpData
 import com.saeed.zanjan.receipt.domain.models.RegistrationInfo
+import com.saeed.zanjan.receipt.interactor.Backup
 import com.saeed.zanjan.receipt.interactor.UserRegistration
 import com.saeed.zanjan.receipt.network.RetrofitService
 import com.saeed.zanjan.receipt.utils.ConnectivityManager
@@ -28,6 +30,9 @@ class RegistrationViewModel
 constructor(
     private val userRegistration: UserRegistration,
     private val connectivityManager: ConnectivityManager,
+    private val sharedPreferences: SharedPreferences,
+    private val backup: Backup,
+
     ):ViewModel() {
     private val rateLimit=60
     val loading = mutableStateOf(false)
@@ -35,7 +40,43 @@ constructor(
     val successLogin= mutableStateOf(false)
     var countdownEnabled =  mutableStateOf(false)
     var remainingSeconds = mutableStateOf(rateLimit)
+    val databaseSaved= mutableStateOf(false)
 
+
+    val avatar= mutableStateOf("")
+    val companyName= mutableStateOf("")
+    val phone= mutableStateOf("")
+    val companyAddress= mutableStateOf("")
+    val companyLink= mutableStateOf("")
+    val companyRules= mutableStateOf("")
+    val jobType= mutableStateOf("")
+
+    init {
+        getDataFromSharedPreferences()
+    }
+    fun getDataFromSharedPreferences(){
+        avatar.value=sharedPreferences.getString("AVATAR_URI","")!!
+        companyName.value=sharedPreferences.getString("COMPANY","")!!
+        phone.value=sharedPreferences.getString("PHONE","")!!
+        companyAddress.value=sharedPreferences.getString("ADDRESS","")!!
+        companyLink.value=sharedPreferences.getString("CHANNEL_LINK","")!!
+        companyRules.value=sharedPreferences.getString("COMPANY_RULES","")!!
+        jobType.value=
+            when( sharedPreferences.getInt("JOB_SUBJECT",0)){
+                0->{ "تعمیرات موبایل"}
+                1->{"تعمیرات کامپیوتر"}
+                2->{ "تعمیرات لوازم برقی"}
+                3->{"خیاطی"}
+                4->{ "جواهر سازی"}
+                5->{ "عکاسی"}
+                6->{ "خشکشویی"}
+                7->{ "قنادی"}
+                8->{ "سایر مشاغل"}
+                else -> {""}
+            }
+
+
+    }
     fun registerRequest(
         registrationInfo: RegistrationInfo,
         snackbarHostState: SnackbarHostState
@@ -108,7 +149,7 @@ constructor(
                 loading.value=it
             }
             dataState.data?.let {
-                successLogin.value=true
+                downloadDb(snackbarHostState)
                 registerRequestState.value=false
                 snackbarHostState.showSnackbar("ورود موفق")
             }
@@ -122,6 +163,52 @@ constructor(
         }.launchIn(viewModelScope)
 
     }
+
+    fun downloadDb(snackbarHostState: SnackbarHostState){
+        backup.downloadDatabase().onEach { dataState ->
+
+            dataState.loading.let {
+                loading.value=it
+            }
+            dataState.data?.let{
+                  fillCustomersTable(snackbarHostState)
+                successLogin.value=true
+
+            }
+            dataState.error?.let {
+                snackbarHostState.showSnackbar(it)
+                successLogin.value=true
+
+            }
+
+        }.launchIn(viewModelScope)
+
+    }
+
+
+        fun fillCustomersTable(snackbarHostState: SnackbarHostState){
+            backup.fillCustomerTable().onEach { dataState ->
+                dataState.loading.let {
+                    loading.value=it
+                }
+                dataState.data?.let {
+                    if(it)
+                        databaseSaved.value=true
+                    else{
+                        databaseSaved.value=false
+                        loading.value=false
+                    }
+                }
+                dataState.error?.let {
+                    snackbarHostState.showSnackbar(it)
+                }
+
+            }.launchIn(viewModelScope)
+
+
+        }
+
+
 
 
     private fun startCountdownTimer() {

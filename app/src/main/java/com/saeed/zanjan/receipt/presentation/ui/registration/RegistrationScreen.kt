@@ -1,8 +1,11 @@
 package com.saeed.zanjan.receipt.presentation.ui.registration
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -19,6 +23,8 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
+import androidx.compose.material3.TabRowDefaults
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
@@ -31,11 +37,15 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.saeed.zanjan.receipt.R
 import com.saeed.zanjan.receipt.domain.models.OtpData
 import com.saeed.zanjan.receipt.domain.models.RegistrationInfo
 import com.saeed.zanjan.receipt.presentation.components.CustomDropdown
+import com.saeed.zanjan.receipt.presentation.components.OtpCodeShowDialog
+import com.saeed.zanjan.receipt.presentation.components.TextShowDialog
 import com.saeed.zanjan.receipt.ui.theme.CustomColors
 import com.saeed.zanjan.receipt.ui.theme.NewReceiptCreatorTheme
 import kotlinx.coroutines.launch // Import launch function
@@ -44,92 +54,93 @@ import kotlinx.coroutines.launch // Import launch function
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegistrationScreen(
-   viewModel:RegistrationViewModel,
-   navigateToHome:()->Unit
+    viewModel: RegistrationViewModel,
+    navigateToHome: () -> Unit
 ) {
 
 
-
-    val loading =viewModel.loading.value
-    val registerRequestState=viewModel.registerRequestState.value
+    val loading = viewModel.loading.value
+    val registerRequestState = viewModel.registerRequestState.value
     val countdownEnabled = viewModel.countdownEnabled.value
-    val remainingSeconds =  viewModel.remainingSeconds.value
-    val successLogin=viewModel.successLogin
+    val remainingSeconds = viewModel.remainingSeconds.value
+    val successLogin = viewModel.successLogin
     NewReceiptCreatorTheme(
-        displayProgressBar=loading,
+        displayProgressBar = loading,
         themColor = Color.Transparent
     ) {
 
-        LaunchedEffect(successLogin.value){
-            if(successLogin.value)
-            navigateToHome()
+        LaunchedEffect(successLogin.value) {
+            if (successLogin.value)
+                navigateToHome()
         }
-        var companyName by remember { mutableStateOf("") }
-    var address by remember { mutableStateOf("") }
-    var phone by remember { mutableStateOf("") }
-    var userId by remember { mutableStateOf("") }
-    var jobType by remember { mutableStateOf("") }
+        var companyName by remember { mutableStateOf(viewModel.companyName.value) }
+        var phone by remember { mutableStateOf(viewModel.phone.value) }
+        var address by remember { mutableStateOf(viewModel.companyAddress.value) }
+        var companyLink by remember { mutableStateOf(viewModel.companyLink.value) }
+        var jobType by remember { mutableStateOf(viewModel.jobType.value) }
 
+        var isSignInTabSelected by remember { mutableStateOf(false) }
 
-    var isSignInTabSelected by remember { mutableStateOf(false) }
+        var sendOtpClicked by remember { mutableStateOf(false) }
 
-    var sendOtpClicked by remember { mutableStateOf(false) }
+        var isOtpScreenVisible by remember { mutableStateOf(false) }
+        var isRulesDialogVisible by remember { mutableStateOf(false) }
 
-    var isOtpScreenVisible by remember { mutableStateOf(false) }
-
-    var error by remember { mutableStateOf(false) }
-    val jobTypes = listOf(
-        "تعمیرات موبایل",
-        "تعمیرات کامپیوتر",
-        "تعمیرات لوازم برقی",
-        "خیاطی",
-        "جواهر سازی",
-        "عکاسی",
-        "خشکشویی",
-        "قنادی",
-        "سایر مشاغل",
+        var error by remember { mutableStateOf(false) }
+        val jobTypes = listOf(
+            "تعمیرات موبایل",
+            "تعمیرات کامپیوتر",
+            "تعمیرات لوازم برقی",
+            "خیاطی",
+            "جواهر سازی",
+            "عکاسی",
+            "خشکشویی",
+            "قنادی",
+            "سایر مشاغل",
         )
-
-
 
 
         val snackbarHostState = remember { SnackbarHostState() }
-    val coroutineScope = rememberCoroutineScope()
+        val coroutineScope = rememberCoroutineScope()
 
-        val context= LocalContext.current
+        val context = LocalContext.current
 
-    if (isOtpScreenVisible) {
-        OtpScreen(
-            onSendOtpClicked = {enteredOtp->
-                val otpData=OtpData(
-                    phoneNumber = phone,
-                    password = enteredOtp
-                )
-                val registrationInfo = RegistrationInfo(
-                    companyName = companyName,
-                    password=enteredOtp,
-                    address = address,
-                    phone = phone,
-                    userId = userId,
-                    jobType = jobType
-                )
-                   viewModel.senOtp(
-                       otpData=otpData,
-                       registrationInfo=registrationInfo,
-                       snackbarHostState = snackbarHostState,
-                       isSignIn=isSignInTabSelected,
-                       context=context
-                   )
+        if (isOtpScreenVisible) {
+            OtpScreen(
+                onSendOtpClicked = { enteredOtp ->
+                    val otpData = OtpData(
+                        phoneNumber = phone,
+                        password = enteredOtp
+                    )
+                    val registrationInfo = RegistrationInfo(
+                        companyName = companyName,
+                        password = enteredOtp,
+                        address = address,
+                        phone = phone,
+                        userId = companyLink,
+                        jobType = jobType
+                    )
+                    viewModel.senOtp(
+                        otpData = otpData,
+                        registrationInfo = registrationInfo,
+                        snackbarHostState = snackbarHostState,
+                        isSignIn = isSignInTabSelected,
+                        context = context
+                    )
 
-            },
-            onDismiss = {
-                isOtpScreenVisible = false
-            }
+                },
+                onDismiss = {
+                    isOtpScreenVisible = false
+                }
 
-        )
-    }
-
-
+            )
+        }
+        if(isRulesDialogVisible){
+            TextShowDialog(onDismiss = {
+                                 isRulesDialogVisible=false
+                                        },
+                text = stringResource(id = R.string.rules) )
+        }
 
         Scaffold(
             snackbarHost = { SnackbarHost(snackbarHostState) }
@@ -141,8 +152,8 @@ fun RegistrationScreen(
                     .padding(horizontal = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                LaunchedEffect(registerRequestState){
-                    isOtpScreenVisible=registerRequestState
+                LaunchedEffect(registerRequestState) {
+                    isOtpScreenVisible = registerRequestState
                 }
 
                 // Tabs for sign-in and sign-up
@@ -150,11 +161,25 @@ fun RegistrationScreen(
                     selectedTabIndex = if (isSignInTabSelected) 0 else 1,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(10.dp)
+                        .padding(10.dp),
+                    contentColor = CustomColors.darkBlue,
+                    indicator = { tabPositions ->
+                        TabRowDefaults.Indicator(
+                            Modifier
+                                .tabIndicatorOffset(tabPositions[if (isSignInTabSelected) 0 else 1])
+                                .fillMaxWidth()
+                                .height(4.dp),
+                            color = CustomColors.darkBlue
+                        )
+                    }
+
                 ) {
                     Tab(
                         selected = isSignInTabSelected,
-                        onClick = { isSignInTabSelected = true }
+                        onClick = { isSignInTabSelected = true },
+                        selectedContentColor = CustomColors.darkBlue,
+                        unselectedContentColor = CustomColors.gray
+
                     ) {
                         Text(
                             modifier = Modifier
@@ -166,7 +191,9 @@ fun RegistrationScreen(
                     }
                     Tab(
                         selected = !isSignInTabSelected,
-                        onClick = { isSignInTabSelected = false }
+                        onClick = { isSignInTabSelected = false },
+                        selectedContentColor = CustomColors.darkBlue,
+                        unselectedContentColor = CustomColors.gray
                     ) {
                         Text(
                             modifier = Modifier
@@ -194,47 +221,53 @@ fun RegistrationScreen(
                         singleLine = true,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
                         modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(30.dp) ,// Adjust the radius for rounded corners
+                        shape = RoundedCornerShape(30.dp),// Adjust the radius for rounded corners
                         colors = TextFieldDefaults.outlinedTextFieldColors(
                             containerColor = Color.Transparent, // Set light gray background
                             cursorColor = MaterialTheme.colorScheme.primary,
                             focusedBorderColor = CustomColors.lightGray, // Transparent to clear the outline
-                            unfocusedBorderColor = Color.Transparent // Transparent to clear the outline
+                            unfocusedBorderColor = Color.Transparent,// Transparent to clear the outline
+                            focusedLabelColor = CustomColors.darkBlue
+
                         ),
                     )
 
-                        Button(
-                            enabled = !countdownEnabled,
-                            onClick = {
-                                // Sign In button clicked
-                                sendOtpClicked = true
-                                if (phone.isEmpty() || phone.length < 11) {
-                                    coroutineScope.launch {
-                                        snackbarHostState.showSnackbar("شماره تلفن را به درستی وارد کنید")
-                                    }
-
-                                } else {
-
-                                    val otpData=OtpData(
-                                        phoneNumber = phone,
-                                        password = ""
-                                    )
-                                    viewModel.loginRequest(
-                                        otpData = otpData,
-                                        snackbarHostState=snackbarHostState
-                                    )
-
+                    Button(
+                        enabled = !countdownEnabled,
+                        onClick = {
+                            // Sign In button clicked
+                            sendOtpClicked = true
+                            if (phone.isEmpty() || phone.length < 11 || phone.length > 11) {
+                                coroutineScope.launch {
+                                    snackbarHostState.showSnackbar("شماره تلفن را به درستی وارد کنید")
                                 }
 
-                            },
-                            modifier = Modifier.fillMaxWidth().height(56.dp)
-                        ) {
-                            Text(
-                                text = if (countdownEnabled) " بعد از  $remainingSeconds ثانیه تلاش کنید. "
-                                else "ثبت", style = MaterialTheme.typography.titleLarge)
-                        }
+                            } else {
 
+                                val otpData = OtpData(
+                                    phoneNumber = phone,
+                                    password = ""
+                                )
+                                viewModel.loginRequest(
+                                    otpData = otpData,
+                                    snackbarHostState = snackbarHostState
+                                )
 
+                            }
+
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(56.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = CustomColors.darkBlue
+                        )
+                    ) {
+                        Text(
+                            text = if (countdownEnabled) " بعد از  $remainingSeconds ثانیه تلاش کنید. "
+                            else "ثبت", style = MaterialTheme.typography.titleLarge
+                        )
+                    }
 
 
                 } else {
@@ -244,15 +277,17 @@ fun RegistrationScreen(
                         onValueChange = {
                             if (it.length <= 20)
                                 companyName = it
-                                        },
+                        },
                         label = { Text("نام مجموعه") },
                         modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(30.dp) ,// Adjust the radius for rounded corners
+                        shape = RoundedCornerShape(30.dp),// Adjust the radius for rounded corners
                         colors = TextFieldDefaults.outlinedTextFieldColors(
                             containerColor = Color.Transparent, // Set light gray background
                             cursorColor = MaterialTheme.colorScheme.primary,
                             focusedBorderColor = CustomColors.lightGray, // Transparent to clear the outline
-                            unfocusedBorderColor = Color.Transparent // Transparent to clear the outline
+                            unfocusedBorderColor = Color.Transparent,// Transparent to clear the outline
+                            focusedLabelColor = CustomColors.darkBlue
+
                         ),
                     )
                     OutlinedTextField(
@@ -260,57 +295,63 @@ fun RegistrationScreen(
                         onValueChange = {
                             if (it.length <= 500)
                                 address = it
-                                        },
+                        },
                         label = { Text("آدرس") },
                         modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(30.dp) ,// Adjust the radius for rounded corners
+                        shape = RoundedCornerShape(30.dp),// Adjust the radius for rounded corners
                         colors = TextFieldDefaults.outlinedTextFieldColors(
                             containerColor = Color.Transparent, // Set light gray background
                             cursorColor = MaterialTheme.colorScheme.primary,
                             focusedBorderColor = CustomColors.lightGray, // Transparent to clear the outline
-                            unfocusedBorderColor = Color.Transparent // Transparent to clear the outline
+                            unfocusedBorderColor = Color.Transparent,// Transparent to clear the outline
+                            focusedLabelColor = CustomColors.darkBlue
+
                         ),
                     )
                     OutlinedTextField(
                         value = phone,
                         onValueChange = { phoneNumber ->
                             if (phoneNumber.length <= 11)
-                            phone = phoneNumber
+                                phone = phoneNumber
                         },
                         label = { Text("شماره تلفن") },
                         isError = (phone.isEmpty() || phone.length < 11) && sendOtpClicked,
                         singleLine = true,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
                         modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(30.dp) ,// Adjust the radius for rounded corners
+                        shape = RoundedCornerShape(30.dp),// Adjust the radius for rounded corners
                         colors = TextFieldDefaults.outlinedTextFieldColors(
                             containerColor = Color.Transparent, // Set light gray background
                             cursorColor = MaterialTheme.colorScheme.primary,
                             focusedBorderColor = CustomColors.lightGray, // Transparent to clear the outline
-                            unfocusedBorderColor = Color.Transparent // Transparent to clear the outline
+                            unfocusedBorderColor = Color.Transparent, // Transparent to clear the outline
+                            focusedLabelColor = CustomColors.darkBlue
                         ),
                     )
                     OutlinedTextField(
-                        value = userId,
+                        value = companyLink,
                         onValueChange = {
                             if (it.length <= 20)
-                            userId = it
+                                companyLink = it
 
-                                        },
-                        label = { Text("آیدی پیج کاری") },
+                        },
+                        label = { Text("لینک ارتباطی") },
                         modifier = Modifier.fillMaxWidth(),
                         isError = error,
-                        shape = RoundedCornerShape(30.dp) ,// Adjust the radius for rounded corners
+                        singleLine = true,
+                        shape = RoundedCornerShape(30.dp),// Adjust the radius for rounded corners
                         colors = TextFieldDefaults.outlinedTextFieldColors(
                             containerColor = Color.Transparent, // Set light gray background
                             cursorColor = MaterialTheme.colorScheme.primary,
                             focusedBorderColor = CustomColors.lightGray, // Transparent to clear the outline
-                            unfocusedBorderColor = Color.Transparent // Transparent to clear the outline
+                            unfocusedBorderColor = Color.Transparent,
+                            focusedLabelColor = CustomColors.darkBlue
+                            // Transparent to clear the outline
                         ),
 
                         )
                     CustomDropdown(
-                        items =jobTypes,
+                        items = jobTypes,
                         selectedItem = jobType,
                         onItemSelected = { selected ->
                             jobType = selected
@@ -320,6 +361,24 @@ fun RegistrationScreen(
                         isError = jobType == "" && sendOtpClicked
                     )
 
+                    Spacer(modifier = Modifier.weight(1f))
+                    Row(
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    ) {
+                        Text(
+                            modifier = Modifier.clickable {
+                                isRulesDialogVisible = true
+                            },
+                            text = "قوانین و شرایط ",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = CustomColors.darkBlue
+                        )
+                        Text(
+                            text = "را خوانده و می پذیرم.",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = CustomColors.darkPurple
+                        )
+                    }
                     Button(
                         enabled = !countdownEnabled,
                         onClick = {
@@ -330,32 +389,38 @@ fun RegistrationScreen(
                                     snackbarHostState.showSnackbar("شماره تلفن را به درستی وارد کنید")
                                 }
                             } else if (jobType == "") {
-                                    coroutineScope.launch {
-                                        snackbarHostState.showSnackbar("عنوان شغلی را انتخاب کنید")
-                                    }
+                                coroutineScope.launch {
+                                    snackbarHostState.showSnackbar("عنوان شغلی را انتخاب کنید")
+                                }
                             } else {
 
-                                    val registrationInfo = RegistrationInfo(
-                                        companyName = companyName,
-                                        password="",
-                                        address = address,
-                                        phone = phone,
-                                        userId = userId,
-                                        jobType = jobType
-                                    )
+                                val registrationInfo = RegistrationInfo(
+                                    companyName = companyName,
+                                    password = "",
+                                    address = address,
+                                    phone = phone,
+                                    userId = companyLink,
+                                    jobType = jobType
+                                )
                                 viewModel.registerRequest(
                                     registrationInfo = registrationInfo,
-                                    snackbarHostState=snackbarHostState
+                                    snackbarHostState = snackbarHostState
 
                                 )
                             }
 
                         },
-                        modifier = Modifier.fillMaxWidth().height(56.dp)
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 16.dp, start = 16.dp, end = 16.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = CustomColors.darkBlue
+                        )
                     ) {
                         Text(
                             text = if (countdownEnabled) " بعد از  $remainingSeconds ثانیه تلاش کنید. "
-                            else "ثبت", style = MaterialTheme.typography.titleLarge)
+                            else "ثبت", style = MaterialTheme.typography.titleLarge
+                        )
                     }
                 }
             }

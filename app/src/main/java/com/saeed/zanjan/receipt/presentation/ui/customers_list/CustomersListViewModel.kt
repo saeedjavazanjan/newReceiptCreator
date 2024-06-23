@@ -1,5 +1,6 @@
 package com.saeed.zanjan.receipt.presentation.ui.customers_list
 
+import android.content.SharedPreferences
 import android.telephony.SmsMessage
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.MutableState
@@ -19,10 +20,11 @@ import javax.inject.Inject
 class CustomersListViewModel
    @Inject constructor(
        private val customersQueries: CustomersQueries,
-       private val sendSms: SendSms
+       private val sendSms: SendSms,
+       private val sharedPreferences: SharedPreferences
    ):ViewModel() {
 
-    val receiptCategory = 1//sharedPreferences.getInt("JOB_SUBJECT",-1)
+    val receiptCategory = sharedPreferences.getInt("JOB_SUBJECT",-1)
     val loading = mutableStateOf(false)
     var customersList= mutableStateOf( mutableListOf<Customer>())
 

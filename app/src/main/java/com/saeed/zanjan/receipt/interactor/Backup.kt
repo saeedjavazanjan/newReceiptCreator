@@ -31,7 +31,7 @@ class Backup(
 
 ) {
 
-    val receiptCategory = 1//sharedPreferences.getInt("JOB_SUBJECT",-1)
+    val receiptCategory = sharedPreferences.getInt("JOB_SUBJECT",-1)
 
     //TODO check Network State
     //todo currect token

@@ -224,16 +224,16 @@ fun ProfileEditScreen(
                             contentAlignment = Alignment.BottomEnd
 
                         ){
-                            Image(
+                           /* Image(
                                 painter = painterResource(id = R.drawable.profile),
                                 contentDescription = null,
                                 modifier = Modifier
                                     .size(70.dp)
                                     .clip(CircleShape)
-                            )
+                            )*/
                             GlideImage(
                                 model = imageUri,
-                                loading = placeholder(R.drawable.profile),
+                                loading = placeholder(R.drawable.receipt_app_icon),
                                 contentDescription = "",
                                 modifier = Modifier
                                     .size(70.dp)

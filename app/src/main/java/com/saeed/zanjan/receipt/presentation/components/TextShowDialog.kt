@@ -20,10 +20,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.saeed.zanjan.receipt.ui.theme.CustomColors
+
 @Composable
-fun OtpCodeShowDialog(
+fun TextShowDialog(
     onDismiss:()->Unit,
-    code:Int
+    text:String
 ) {
     Dialog(onDismissRequest = { onDismiss() }) {
         Surface(
@@ -37,9 +38,9 @@ fun OtpCodeShowDialog(
                     .padding(top = 40.dp, bottom = 16.dp)
                     .fillMaxWidth()
             ) {
-            Text(text = "$code",
-                style = MaterialTheme.typography.headlineLarge,
-                color = CustomColors.darkPurple
+                Text(text = text,
+                    style = MaterialTheme.typography.headlineLarge,
+                    color = CustomColors.darkPurple
                 )
 
                 Spacer(modifier = Modifier.size(10.dp))
@@ -58,7 +59,7 @@ fun OtpCodeShowDialog(
                     )
                 }
 
-        }
+            }
 
         }
     }
