@@ -42,8 +42,12 @@ import com.saeed.zanjan.receipt.R
 import com.saeed.zanjan.receipt.ui.theme.CustomColors
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.layout.ContentScale
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
+import com.bumptech.glide.integration.compose.placeholder
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalGlideComposeApi::class)
 @Composable
 fun HomeTopBar(
     focusRequester: FocusRequester,
@@ -51,9 +55,12 @@ fun HomeTopBar(
     expandSearchBar: (Boolean) -> Unit,
     modifier: Modifier,
     search: (String) -> Unit,
-    menu:()->Unit,
-    filter:()->Unit,
-    searchExit:()->Unit
+    menu: () -> Unit,
+    filter: () -> Unit,
+    searchExit: () -> Unit,
+    profileEdit: () -> Unit,
+    companyName: String,
+    avatarUri: String
 ) {
 
     var searchValue by remember {
@@ -69,7 +76,7 @@ fun HomeTopBar(
                 containerColor = CustomColors.lightGray
             ),
             onClick = {
-                      menu()
+                menu()
             },
         ) {
             Icon(
@@ -89,7 +96,7 @@ fun HomeTopBar(
                 containerColor = CustomColors.lightGray
             ),
             onClick = {
-                      filter()
+                filter()
             },
         ) {
             Icon(
@@ -192,7 +199,9 @@ fun HomeTopBar(
             exit = fadeOut()
         ) {
             Card(
-
+                modifier = Modifier.clickable {
+                    profileEdit()
+                },
                 shape = CircleShape,
                 colors = CardDefaults.cardColors(
                     containerColor = CustomColors.lightBlue,
@@ -207,19 +216,27 @@ fun HomeTopBar(
                     modifier = Modifier.padding(vertical = 5.dp, horizontal = 10.dp)
                 ) {
                     Text(
-                        "سعید غفاری",
+                        companyName,
                         style = MaterialTheme.typography.bodyMedium,
                         color = Color.White
                     )
                     Spacer(modifier = Modifier.width(10.dp))
-
-                    Image(
-                        painter = painterResource(id = R.drawable.profile),
-                        contentDescription = null,
+                    GlideImage(
+                        model = avatarUri,
+                        loading = placeholder(R.drawable.receipt_app_icon),
+                        contentDescription = "",
                         modifier = Modifier
                             .size(40.dp)
-                            .clip(CircleShape)
+                            .clip(CircleShape),
+                        contentScale = ContentScale.Crop,
                     )
+                    /* Image(
+                         painter = painterResource(id = R.drawable.receipt_app_icon),
+                         contentDescription = null,
+                         modifier = Modifier
+                             .size(40.dp)
+                             .clip(CircleShape)
+                     )*/
 
                 }
             }

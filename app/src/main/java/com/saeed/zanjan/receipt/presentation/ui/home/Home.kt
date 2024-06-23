@@ -1,6 +1,8 @@
 package com.saeed.zanjan.receipt.presentation.ui.home
 
 import android.annotation.SuppressLint
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivityResultRegistryOwner
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -144,6 +146,7 @@ fun Home(
         }
     }
     LaunchedEffect(Unit) {
+        viewModel.getDataFromSharedPreferences()
         viewModel.getListOfReceipts(snackbarHostState)
             viewModel.connectToBazar(context)
        // viewModel.downloadDb(snackbarHostState)
@@ -282,7 +285,12 @@ fun Home(
                         },
                         searchExit = {
                             viewModel.getListOfReceipts(snackbarHostState)
-                        }
+                        },
+                        profileEdit = {
+                            navigateToProfileSetting()
+                        },
+                        avatarUri = viewModel.avatar.value,
+                        companyName = viewModel.companyName.value
                     )
                 },
                 bottomBar = {
@@ -407,7 +415,7 @@ fun Home(
                             modifier = Modifier
                                 .weight(1f)
                                 .padding(),
-                            receiptCategory = viewModel.receiptCategory,
+                            receiptCategory = viewModel.receiptCategory.value,
                             receipts = receiptsList.value,
                             navigateToScreen = { id ->
                                 val route =
@@ -426,7 +434,20 @@ fun Home(
         }
 
     }
+    var lastBackPressedTime by remember { mutableStateOf(0L) }
 
+    BackHandler {
+        val currentTime = System.currentTimeMillis()
+        if (currentTime - lastBackPressedTime < 2000) {
+            // Exit the app
+            (context as? ComponentActivity)?.finish()
+        } else {
+            lastBackPressedTime = currentTime
+            coroutineScope.launch {
+                snackbarHostState.showSnackbar("برای خروج مجددا کلیک کنید")
+            }
+        }
+    }
 }
 
 

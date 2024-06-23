@@ -66,7 +66,7 @@ fun ReceiptCardForShare(
 
                 ) {
                     Image(
-                        painter = painterResource(id = R.drawable.profile),
+                        painter = painterResource(id = R.drawable.receipt_app_icon),
                         contentDescription = null,
                         modifier = Modifier
                             .size(40.dp)

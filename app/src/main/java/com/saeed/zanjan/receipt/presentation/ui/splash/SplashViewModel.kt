@@ -35,7 +35,6 @@ class SplashViewModel
 
     val dataSaved = sharedPreferences.getBoolean("SAVED_IN_SERVER",false)
 
-
     val loading= mutableStateOf(false)
    val isUpdate= mutableStateOf(false)
    val versionGotFromServer= mutableStateOf(false)

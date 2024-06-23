@@ -42,8 +42,9 @@ class HomeViewModel
 ) : ViewModel() {
 
 
-
-    val receiptCategory = sharedPreferences.getInt("JOB_SUBJECT",-1)
+    val receiptCategory = mutableStateOf(-1)
+    val avatar= mutableStateOf("")
+    val companyName= mutableStateOf("")
     val loading = mutableStateOf(false)
     val receiptList: MutableState<List<GeneralReceipt>> = mutableStateOf(ArrayList())
     val databaseSaved = mutableStateOf(false)
@@ -62,11 +63,20 @@ class HomeViewModel
     val expireTime= mutableStateOf(0L)
     var userPurchaseInfo= mutableListOf<UserPurchaseInfo>()
 
+
+    fun getDataFromSharedPreferences(){
+         receiptCategory.value = sharedPreferences.getInt("JOB_SUBJECT",-1)
+         avatar.value=sharedPreferences.getString("AVATAR_URI","")!!
+         companyName.value=sharedPreferences.getString("COMPANY","")!!
+    }
+
+
+
     fun getListOfReceipts(
         snackbarHostState: SnackbarHostState
     ) {
         lisOfReceipts.getListOfReceipts(
-            receiptCategory
+            receiptCategory.value
         ).onEach { dataState ->
 
             dataState.loading.let {
@@ -92,7 +102,7 @@ class HomeViewModel
 
 
     fun searchReceipt(query: String, snackbarHostState: SnackbarHostState) {
-        lisOfReceipts.searchReceipt(query, receiptCategory).onEach { dataState ->
+        lisOfReceipts.searchReceipt(query, receiptCategory.value).onEach { dataState ->
 
             dataState.loading.let {
                 loading.value = it
@@ -110,7 +120,7 @@ class HomeViewModel
     }
 
     fun filterReceipt(status: Int, snackbarHostState: SnackbarHostState) {
-        lisOfReceipts.filterReceipts(status, receiptCategory).onEach { dataState ->
+        lisOfReceipts.filterReceipts(status, receiptCategory.value).onEach { dataState ->
 
             dataState.loading.let {
                 loading.value = it
@@ -155,7 +165,7 @@ class HomeViewModel
 
     //TODO storage permissin
     fun exportExcel(snackbarHostState: SnackbarHostState) {
-        exportExcelFile.databaseExport(receiptCategory).onEach { dataState ->
+        exportExcelFile.databaseExport(receiptCategory.value).onEach { dataState ->
             dataState.loading.let {
                 loading.value = it
             }
