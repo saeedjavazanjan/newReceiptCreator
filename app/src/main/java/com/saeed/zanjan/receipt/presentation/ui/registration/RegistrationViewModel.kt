@@ -171,13 +171,14 @@ constructor(
                 loading.value=it
             }
             dataState.data?.let{
-                  fillCustomersTable(snackbarHostState)
                 successLogin.value=true
+                fillCustomersTable(snackbarHostState)
 
             }
             dataState.error?.let {
-                snackbarHostState.showSnackbar(it)
                 successLogin.value=true
+
+             //   snackbarHostState.showSnackbar(it)
 
             }
 

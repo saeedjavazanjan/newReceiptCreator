@@ -206,8 +206,10 @@ class UserRegistration(
 
     if(isNetworkAvailable){
         try {
+             val token = sharedPreferences.getString("JWTToken","")
+
             val response=retrofitService.updateProfileData(
-                "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0IiwibmFtZSI6ImZ2YmZiIiwiZW1haWwiOiIwOTE5MzQ4MDI2MyIsImV4cCI6MzI5NTY3Mzk1NiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDozOTc4IiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDozOTc4In0.KR0AN0NF4WEJi6aR8-ZyvGCqlZrTXKpf9DITCIIG2vY",
+                token=token,
                 profileDataDtoMapper.mapFromDomainModel(profileData)
             )
             if (response.isSuccessful){

@@ -32,7 +32,6 @@ class Backup(
 ) {
 
     val receiptCategory = sharedPreferences.getInt("JOB_SUBJECT",-1)
-    private val token = sharedPreferences.getString("JWTToken","")
 
     //TODO check Network State
     //todo currect token
@@ -41,6 +40,8 @@ class Backup(
         emit(DataState.loading())
 
         try {
+            val token = sharedPreferences.getString("JWTToken","")
+
             val dataBasePart = getDatabaseAsPart()
             val result = retrofitService.uploadDatabase(
                 token = token,
@@ -84,6 +85,7 @@ class Backup(
     fun downloadDatabase(): Flow<DataState<String>> = flow {
         emit(DataState.loading())
         try {
+            val token = sharedPreferences.getString("JWTToken","")
             val response = retrofitService.downloadDatabase(
                 token = token
             )

@@ -2,6 +2,7 @@ package com.saeed.zanjan.receipt.interactor
 
 import android.content.SharedPreferences
 import android.net.NetworkRequest
+import android.util.Log
 import com.saeed.zanjan.receipt.domain.dataState.DataState
 import com.saeed.zanjan.receipt.network.RetrofitService
 import kotlinx.coroutines.flow.Flow
@@ -13,7 +14,6 @@ class RequestPersonalPanel(
     val retrofitService: RetrofitService
 ) {
 
-    private val token = sharedPreferences.getString("JWTToken","")
 
 
 
@@ -21,11 +21,14 @@ class RequestPersonalPanel(
     fun requestPanel():Flow<DataState<String?>> = flow{
         emit(DataState.loading())
         try {
+             val token = sharedPreferences.getString("JWTToken","")
 
             val response=retrofitService.requestPanel(token)
 
             if (response.isSuccessful) {
                 emit(DataState.success(response.body()))
+            }else if (response.code() == 401) {
+                emit(DataState.error("شما دسترسی لازم را ندارید"))
             }else {
                 try {
                     val errMsg = response.errorBody()?.string()?.let {
