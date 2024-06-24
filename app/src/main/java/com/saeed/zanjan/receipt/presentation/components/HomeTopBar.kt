@@ -43,6 +43,7 @@ import com.saeed.zanjan.receipt.ui.theme.CustomColors
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.style.TextOverflow
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
@@ -216,9 +217,13 @@ fun HomeTopBar(
                     modifier = Modifier.padding(vertical = 5.dp, horizontal = 10.dp)
                 ) {
                     Text(
-                        companyName,
+                        modifier = Modifier
+                            .width(80.dp),
+                       text= companyName,
+                        maxLines = 1,
                         style = MaterialTheme.typography.bodyMedium,
-                        color = Color.White
+                        color = Color.White,
+                        overflow = TextOverflow.Ellipsis
                     )
                     Spacer(modifier = Modifier.width(10.dp))
                     GlideImage(

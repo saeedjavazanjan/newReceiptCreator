@@ -4,10 +4,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -32,17 +35,20 @@ fun TextShowDialog(
             shape = RoundedCornerShape(8.dp)
         ) {
             Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(16.dp),
                 modifier = Modifier
-                    .padding(top = 40.dp, bottom = 16.dp)
-                    .fillMaxWidth()
+                    .padding(vertical =  40.dp, horizontal = 16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Text(text = text,
-                    style = MaterialTheme.typography.headlineLarge,
-                    color = CustomColors.darkPurple
-                )
-
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth().height(500.dp)
+                        .verticalScroll(rememberScrollState())
+                ) {
+                    Text(text = text,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = CustomColors.darkPurple
+                    )
+                }
                 Spacer(modifier = Modifier.size(10.dp))
                 TextButton(
                     onClick = {
@@ -58,8 +64,8 @@ fun TextShowDialog(
                         color = Color.White
                     )
                 }
-
             }
+
 
         }
     }

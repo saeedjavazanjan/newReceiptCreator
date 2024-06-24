@@ -25,6 +25,7 @@ import com.saeed.zanjan.receipt.interactor.CustomersQueries
 import com.saeed.zanjan.receipt.interactor.ExportExcelFile
 import com.saeed.zanjan.receipt.interactor.ListOfReceipts
 import com.saeed.zanjan.receipt.interactor.ReceiptQueryInDatabase
+import com.saeed.zanjan.receipt.interactor.RequestPersonalPanel
 import com.saeed.zanjan.receipt.interactor.SendSms
 import com.saeed.zanjan.receipt.interactor.ShareReceipt
 import com.saeed.zanjan.receipt.interactor.UserRegistration
@@ -130,6 +131,17 @@ object AppModule {
     ): CheckVersion {
         return CheckVersion(
             retrofitService = retrofitService
+        )
+    }
+    @Singleton
+    @Provides
+    fun provideRequestPersonalPanel(
+        retrofitService: RetrofitService,
+        sharedPreferences: SharedPreferences
+    ): RequestPersonalPanel {
+        return RequestPersonalPanel(
+            retrofitService = retrofitService,
+            sharedPreferences = sharedPreferences
         )
     }
 

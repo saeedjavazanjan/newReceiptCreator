@@ -173,7 +173,7 @@ class UserRegistration(
             // due to the first version company phone key is channel link and not changed
             .putString("CHANNEL_LINK", body!!.userData!!.pageId)
             .putInt("JOB_SUBJECT", jobId(body!!.userData!!.jobTitle))
-            .putString("JWTToken",body!!.tok)
+            .putString("JWTToken","Bearer ${body!!.tok}")
             .putBoolean("SAVED", true)
             .putBoolean("SAVED_IN_SERVER",true)
             .commit()

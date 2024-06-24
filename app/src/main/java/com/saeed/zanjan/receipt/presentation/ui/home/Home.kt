@@ -4,6 +4,12 @@ import android.annotation.SuppressLint
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivityResultRegistryOwner
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -46,15 +52,18 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.saeed.zanjan.receipt.R
 import com.saeed.zanjan.receipt.domain.models.GeneralReceipt
 import com.saeed.zanjan.receipt.presentation.components.AddReceiptCard
+import com.saeed.zanjan.receipt.presentation.components.CustomAcceptDialog
 import com.saeed.zanjan.receipt.presentation.components.HomeTopBar
 import com.saeed.zanjan.receipt.presentation.components.ListOfReceipts
 import com.saeed.zanjan.receipt.presentation.components.ReceiptListCard
 import com.saeed.zanjan.receipt.presentation.components.StatusDialog
 import com.saeed.zanjan.receipt.presentation.components.SubscribeDialog
+import com.saeed.zanjan.receipt.presentation.components.TextShowDialog
 import com.saeed.zanjan.receipt.presentation.navigation.Screen
 import com.saeed.zanjan.receipt.ui.theme.CustomColors
 import com.saeed.zanjan.receipt.ui.theme.NewReceiptCreatorTheme
@@ -69,7 +78,6 @@ fun Home(
     navigateToReceiptScreen: (String) -> Unit,
     navigateToCreateReceiptScreen: () -> Unit,
     navigateToProfileSetting:()->Unit,
-    navigateToAboutUs:()->Unit,
     navigateToCustomersList:()->Unit,
 ) {
 
@@ -89,6 +97,8 @@ fun Home(
 
     var isSearchExpanded by remember { mutableStateOf(false) }
     var openFilterDialog by remember { mutableStateOf(false) }
+    var openAboutUsDialog by remember { mutableStateOf(false) }
+    var openPersonalPanelDialog by remember { mutableStateOf(false) }
     var openSubscribeDialog by remember { mutableStateOf(false) }
     var filtered by remember { mutableStateOf(false) }
 
@@ -201,7 +211,7 @@ fun Home(
                                                     navigateToProfileSetting()
                                                 }
                                                 1->{
-                                                    navigateToAboutUs()
+                                                    openAboutUsDialog=true
                                                 }
                                                 2->{
                                                   viewModel.commentOnApp(context)
@@ -228,10 +238,7 @@ fun Home(
                                                    openSubscribeDialog=true
                                                 }
                                                 7->{
-                                                    coroutineScope.launch {
-                                                        snackbarHostState.showSnackbar("این امکان هنوز پیاده سازی نشده است.")
-
-                                                    }
+                                                   openPersonalPanelDialog=true
                                                 }
                                             }
 
@@ -319,38 +326,61 @@ fun Home(
                     )
                 }
 
-
-
                 if(openSubscribeDialog){
                     if(bazarConnectionState){
                         viewModel.getUserSubscribes(context)
                     }
 
-                    SubscribeDialog(
-                        onDismiss = {
-                            openSubscribeDialog=false
-                        },
-                        buySubscribe = {
-                             coroutineScope.launch {
-                                 if(bazarConnectionState){
-                                     viewModel.buySubscribe(
-                                         activityResultRegistry!!,
-                                         "testSub",
-                                         it,
-                                         context = context
-                                     )
-                                 }else{
-                                     snackbarHostState.showSnackbar("ارتباط شما با برنامه بازار برقرار نیست")
-                                 }
+                        SubscribeDialog(
+                            onDismiss = {
+                                openSubscribeDialog=false
+                            },
+                            buySubscribe = {
+                                coroutineScope.launch {
+                                    if(bazarConnectionState){
+                                        viewModel.buySubscribe(
+                                            activityResultRegistry!!,
+                                            productID =it, //"testSub",
+                                            payload = viewModel.companyName.value,
+                                            context = context
+                                        )
+                                    }else{
+                                        snackbarHostState.showSnackbar("ارتباط شما با برنامه بازار برقرار نیست")
+                                    }
 
 
-                             }
+                                }
 
-                        },
-                        leftTime = leftTime,
-                        context
+                            },
+                            leftTime = leftTime,
+                            context
+                        )
 
+
+                }
+                
+                if(openAboutUsDialog){
+                    
+                    TextShowDialog(onDismiss = {
+                                               openAboutUsDialog=false
+                                               },
+                        text = stringResource(id = R.string.about_us))
+                    
+                }
+                
+                if(openPersonalPanelDialog){
+                    CustomAcceptDialog(
+                        onDismiss = { openPersonalPanelDialog=false },
+                        onAccept = {
+                            viewModel.requestPanel(snackbarHostState)
+                                   openPersonalPanelDialog=false
+                                   },
+                        title ="پنل اختصاصی" ,
+                        description = stringResource(id = R.string.personal_panel_description),
+                        acceptText = "در خواست"
                     )
+                    
+                    
                 }
 
                 Column(

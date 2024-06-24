@@ -40,7 +40,7 @@ fun Navigation(
     val splashViewModel: SplashViewModel = viewModel()
     val profileEditViewModel: ProfileEditViewModel = viewModel()
     val customersListViewModel: CustomersListViewModel = viewModel()
-    NavHost(navController = navController, startDestination = Screen.Splash.route) {
+    NavHost(navController = navController, startDestination = Screen.Home.route) {
 
         composable(Screen.Splash.route) {
             SplashScreen(
@@ -74,7 +74,6 @@ fun Navigation(
 
                     navController.navigate(Screen.ProfileEdit.route)
                 } ,
-                navigateToAboutUs = {},
                 navigateToCustomersList = {
                     navController.navigate(Screen.CustomersList.route)
                 }
