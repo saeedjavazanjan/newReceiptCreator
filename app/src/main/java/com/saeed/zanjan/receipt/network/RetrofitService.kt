@@ -51,4 +51,10 @@ interface RetrofitService {
 
     @GET("/version/")
     suspend fun checkVersion():Response<String>
+
+
+    @POST("users/requestPanel")
+    suspend fun requestPanel(
+        @Header("Authorization") token: String?
+        ): Response<String>
 }

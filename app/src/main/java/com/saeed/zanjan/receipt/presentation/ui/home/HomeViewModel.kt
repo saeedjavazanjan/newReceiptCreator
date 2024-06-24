@@ -18,6 +18,7 @@ import com.saeed.zanjan.receipt.bazar.BazarInAppBill
 import com.saeed.zanjan.receipt.bazar.UserPurchaseInfo
 import com.saeed.zanjan.receipt.interactor.ExportExcelFile
 import com.saeed.zanjan.receipt.interactor.ListOfReceipts
+import com.saeed.zanjan.receipt.interactor.RequestPersonalPanel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import ir.cafebazaar.poolakey.Connection
 import ir.cafebazaar.poolakey.Payment
@@ -38,7 +39,7 @@ class HomeViewModel
     private val lisOfReceipts: ListOfReceipts,
     private val backup: Backup,
     private val exportExcelFile: ExportExcelFile,
-    private val bazarInAppBill: BazarInAppBill
+    private val requestPersonalPanel: RequestPersonalPanel
 ) : ViewModel() {
 
 
@@ -303,5 +304,22 @@ class HomeViewModel
         purchaseBuyState.value=false
         paymentConnection.disconnect()
 
+    }
+
+
+    fun requestPanel(snackbarHostState: SnackbarHostState){
+        requestPersonalPanel.requestPanel().onEach { dataState ->
+            dataState.loading.let {
+                loading.value=it
+            }
+            dataState.data?.let {
+                snackbarHostState.showSnackbar(it)
+            }
+            dataState.error?.let {
+                snackbarHostState.showSnackbar(it)
+
+            }
+
+        }.launchIn(viewModelScope)
     }
 }

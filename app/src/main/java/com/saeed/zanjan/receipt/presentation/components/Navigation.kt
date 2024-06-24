@@ -74,7 +74,6 @@ fun Navigation(
 
                     navController.navigate(Screen.ProfileEdit.route)
                 } ,
-                navigateToAboutUs = {},
                 navigateToCustomersList = {
                     navController.navigate(Screen.CustomersList.route)
                 }
