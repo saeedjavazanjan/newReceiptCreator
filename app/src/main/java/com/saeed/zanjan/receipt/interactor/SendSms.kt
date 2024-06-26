@@ -21,8 +21,8 @@ class SendSms(
 
     private fun getDataFromSharedPreferences(){
          companyName.value=sharedPreferences.getString("COMPANY","")!!
-         companyPhone.value=sharedPreferences.getString("PHONE","")!!
-         link.value=sharedPreferences.getString("LINK","")!!
+         companyPhone.value=sharedPreferences.getString("COMPANY_PHONE","")!!
+         link.value=sharedPreferences.getString("CHANNEL_LINK","")!!
 
     }
 
@@ -129,7 +129,7 @@ class SendSms(
     ):Int{
         try{
             getDataFromSharedPreferences()
-        val massageText ="مجموعا مبلغ  " +payedAmount + " توسط " +generalReceipt.name+ " به " +companyName.value+" پرداخت شده است."+
+        val massageText ="مجموعا مبلغ  " +payedAmount +" تومان" +" توسط " +generalReceipt.name+ " به " +companyName.value+" پرداخت شده است."+
                     System.getProperty("line.separator") +
                     "شماره رسید:" + generalReceipt.id+ System.getProperty("line.separator") +
                     link.value
@@ -203,16 +203,16 @@ class SendSms(
          try {
              when (generalReceipt.status) {
                  2 -> massageText =
-                     companyName.value + System.getProperty("line.separator") + "با سلام.مشتری عزیز" +
+                     companyName.value + System.getProperty("line.separator") +  "با سلام.مشتری عزیز " +
                              generalReceipt.name + " در روند سفارش شما مشکلی به وجود آمده جهت اطلاعات بیشتر با شماره " +
-                             companyPhone.value + "تماس بگیرید."+
+                             companyPhone.value + " تماس بگیرید."+
                              System.getProperty("line.separator")+
                              "شماره رسید:" + generalReceipt.id+ System.getProperty("line.separator") +
 
                              link.value
 
                  3 -> massageText =
-                     companyName.value+ System.getProperty("line.separator") + "با سلام.مشتری عزیز  " +
+                     companyName.value+ System.getProperty("line.separator") +  "با سلام.مشتری عزیز   " +
                              generalReceipt.name + "  سفارش شما آماده تحویل است ."+
                              System.getProperty("line.separator") +
                              "شماره رسید:" + generalReceipt.id+ System.getProperty("line.separator") +
@@ -261,15 +261,15 @@ class SendSms(
          try {
              when (generalReceipt.status) {
                  2 -> massageText =
-                     companyName.value + System.getProperty("line.separator") + "با سلام.مشتری عزیز" +
+                     companyName.value + System.getProperty("line.separator") +  "با سلام.مشتری عزیز " +
                              generalReceipt.name + " در روند سفارش شما مشکلی به وجود آمده جهت اطلاعات بیشتر با شماره " +
-                             companyPhone.value + "تماس بگیرید."+ System.getProperty("line.separator") +
+                             companyPhone.value + " تماس بگیرید."+ System.getProperty("line.separator") +
                              "شماره رسید:" + generalReceipt.id+ System.getProperty("line.separator") +
 
                              link.value
 
                  3 -> massageText =
-                     companyName.value + System.getProperty("line.separator") + "با سلام.مشتری عزیز  " +
+                     companyName.value + System.getProperty("line.separator") +  "با سلام.مشتری عزیز   " +
                              generalReceipt.name + "  سفارش شما آماده تحویل است ."+
                              System.getProperty("line.separator") +
                              "شماره رسید:" + generalReceipt.id+ System.getProperty("line.separator") +
@@ -282,7 +282,7 @@ class SendSms(
                                  "نام سفارش:" + generalReceipt.orderName + System.getProperty("line.separator") +
                                  "مشخصات:" + generalReceipt.confectioneryOrderSpecification + System.getProperty("line.separator") +
                                  "توضیحات:" + generalReceipt.confectioneryDescription + System.getProperty("line.separator") +
-                                 "وزن:" + generalReceipt.confectioneryOrderWeight + System.getProperty("line.separator") +
+                                 "وزن:" + generalReceipt.confectioneryOrderWeight +" کیلوگرم"+ System.getProperty("line.separator") +
                                  "موعد تحویل:" + generalReceipt.deliveryTime + System.getProperty("line.separator") +
                                  System.getProperty("line.separator") +
                                  "جمع هزینه:" + generalReceipt.cost +" تومان" + System.getProperty("line.separator") +
@@ -319,16 +319,16 @@ class SendSms(
              when (generalReceipt.status) {
                  2 -> massageText =
                      companyName.value + System.getProperty("line.separator") +
-                             "با سلام.مشتری عزیز" + generalReceipt.name +
+                              "با سلام.مشتری عزیز " + generalReceipt.name +
                              " در روند سفارش شما مشکلی به وجود آمده جهت اطلاعات بیشتر با شماره " +
-                             companyPhone.value + "تماس بگیرید."+ System.getProperty("line.separator") +
+                             companyPhone.value + " تماس بگیرید."+ System.getProperty("line.separator") +
                              "شماره رسید:" + generalReceipt.id+ System.getProperty("line.separator") +
 
                              link.value
 
                  3 -> massageText =
                      companyName.value + System.getProperty("line.separator") +
-                             "با سلام.مشتری عزیز  " + generalReceipt.name +
+                              "با سلام.مشتری عزیز " + generalReceipt.name +
                              "  سفارش شما آماده تحویل است ."+ System.getProperty("line.separator") +
                              "شماره رسید:" + generalReceipt.id+ System.getProperty("line.separator") +
 
@@ -350,7 +350,7 @@ class SendSms(
                      smsManager.sendTextMessage(
                          generalReceipt.phone,
                          null,
-                         "مشتری عزیز:"+ generalReceipt.name + System.getProperty("line.separator") +
+                         "مشتری عزیز: "+ generalReceipt.name + System.getProperty("line.separator") +
                                  "درصورت صحت اطلاعات زیر عدد 1 را ارسال نمایید",
                          null,
                          null
@@ -379,9 +379,9 @@ class SendSms(
                  2 -> massageText =
                      companyName.value +
                              System.getProperty("line.separator") +
-                             "با سلام.مشتری عزیز" + generalReceipt.name +
+                              "با سلام.مشتری عزیز " + generalReceipt.name +
                              " در روند سفارش شما مشکلی به وجود آمده جهت اطلاعات بیشتر با شماره "+
-                             companyPhone.value + "تماس بگیرید."+ System.getProperty("line.separator") +
+                             companyPhone.value + " تماس بگیرید."+ System.getProperty("line.separator") +
                              "شماره رسید:" + generalReceipt.id+ System.getProperty("line.separator") +
 
                              link.value
@@ -389,7 +389,7 @@ class SendSms(
                  3 -> massageText =
                      companyName.value +
                              System.getProperty("line.separator") +
-                             "با سلام.مشتری عزیز  " + generalReceipt.name +
+                              "با سلام.مشتری عزیز " + generalReceipt.name +
                              "  سفارش شما آماده تحویل است ."+
                              System.getProperty("line.separator") +
                              "شماره رسید:" + generalReceipt.id+ System.getProperty("line.separator") +
@@ -440,9 +440,9 @@ class SendSms(
                  2 -> massageText =
                      companyName.value +
                              System.getProperty("line.separator") +
-                             "با سلام.مشتری عزیز" + generalReceipt.name +
+                              "با سلام.مشتری عزیز " + generalReceipt.name +
                              " در روند سفارش شما مشکلی به وجود آمده جهت اطلاعات بیشتر با شماره " +
-                             companyPhone.value + "تماس بگیرید."+ System.getProperty("line.separator") +
+                             companyPhone.value + " تماس بگیرید."+ System.getProperty("line.separator") +
                              "شماره رسید:" + generalReceipt.id+ System.getProperty("line.separator") +
 
                              link.value
@@ -450,7 +450,7 @@ class SendSms(
                  3 -> massageText =
                      companyName.value +
                              System.getProperty("line.separator") +
-                             "با سلام.مشتری عزیز  " + generalReceipt.name +
+                              "با سلام.مشتری عزیز   " + generalReceipt.name +
                              "  سفارش شما آماده تحویل است ."+
                              System.getProperty("line.separator") +
                              "شماره رسید:" + generalReceipt.id+ System.getProperty("line.separator") +
@@ -501,16 +501,16 @@ class SendSms(
                  2 -> massageText =
                      companyName.value +
                              System.getProperty("line.separator") +
-                             "با سلام.مشتری عزیز" + generalReceipt.name +
+                              "با سلام.مشتری عزیز " + generalReceipt.name +
                              " در روند سفارش شما مشکلی به وجود آمده جهت اطلاعات بیشتر با شماره " +
-                             companyPhone.value + "تماس بگیرید."+ System.getProperty("line.separator") +
+                             companyPhone.value + " تماس بگیرید."+ System.getProperty("line.separator") +
                              "شماره رسید:" + generalReceipt.id+ System.getProperty("line.separator") +
                              link.value
 
                  3 -> massageText =
                      companyName.value +
                              System.getProperty("line.separator") +
-                             "با سلام.مشتری عزیز  " + generalReceipt.name +
+                              "با سلام.مشتری عزیز   " + generalReceipt.name +
                              "  سفارش شما آماده تحویل است ."+ System.getProperty("line.separator") +
                              "شماره رسید:" + generalReceipt.id+ System.getProperty("line.separator") +
 
@@ -559,17 +559,17 @@ class SendSms(
              when (generalReceipt.status) {
                  2 -> massageText =
                      companyName.value +
-                             System.getProperty("line.separator") + "با سلام.مشتری عزیز" +
+                             System.getProperty("line.separator") +  "با سلام.مشتری عزیز  " +
                              generalReceipt.name +
                              " در روند سفارش شما مشکلی به وجود آمده جهت اطلاعات بیشتر با شماره " +
-                             companyPhone.value + "تماس بگیرید."+ System.getProperty("line.separator") +
+                             companyPhone.value + " تماس بگیرید."+ System.getProperty("line.separator") +
                              "شماره رسید:" + generalReceipt.id+ System.getProperty("line.separator") +
 
                              link.value
 
                  3 -> massageText =
                      companyName.value + System.getProperty("line.separator") +
-                             "با سلام.مشتری عزیز  " + generalReceipt.name +
+                              "با سلام.مشتری عزیز   " + generalReceipt.name +
                              "  سفارش شما آماده تحویل است ."+ System.getProperty("line.separator") +
                              "شماره رسید:" + generalReceipt.id+ System.getProperty("line.separator") +
 

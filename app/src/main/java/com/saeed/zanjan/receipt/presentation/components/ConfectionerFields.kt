@@ -105,7 +105,7 @@ fun ConfectioneryFields(
         Column {
             Text(
                 modifier = Modifier,
-                text = "وزن",
+                text = "وزن(کیلو گرم)",
                 style = MaterialTheme.typography.bodyMedium,
                 color = CustomColors.bitterDarkPurple
             )

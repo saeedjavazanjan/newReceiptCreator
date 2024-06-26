@@ -4,6 +4,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.net.Uri
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -47,6 +48,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -67,6 +69,7 @@ import com.saeed.zanjan.receipt.domain.models.ProfileData
 import com.saeed.zanjan.receipt.presentation.components.CustomDropdown
 import com.saeed.zanjan.receipt.presentation.components.EditProfileBottomBar
 import com.saeed.zanjan.receipt.presentation.components.ExitDialog
+import com.saeed.zanjan.receipt.presentation.components.TextShowDialog
 import com.saeed.zanjan.receipt.presentation.components.TopBar
 import com.saeed.zanjan.receipt.ui.theme.CustomColors
 import com.saeed.zanjan.receipt.ui.theme.NewReceiptCreatorTheme
@@ -77,8 +80,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun ProfileEditScreen(
     viewModel: ProfileEditViewModel,
-    navController:NavController
-){
+    navController: NavController
+) {
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
@@ -95,12 +98,13 @@ fun ProfileEditScreen(
     val requestStoragePermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean ->
-            hasStoragePermission = true
+        hasStoragePermission = true
 
     }
 
     val dataSaveStatus = viewModel.dataSaveStatus.value
     var openExitDialog by remember { mutableStateOf(false) }
+    var openJobTypeChangedDialog by remember { mutableStateOf(false) }
 
 
     var imageUri by remember { mutableStateOf<Uri?>(viewModel.avatar.value.toUri()) }
@@ -121,8 +125,10 @@ fun ProfileEditScreen(
         "قنادی",
         "سایر مشاغل",
     )
-    val launcher = rememberLauncherForActivityResult(contract =
-    ActivityResultContracts.GetContent()) { uri: Uri? ->
+    val launcher = rememberLauncherForActivityResult(
+        contract =
+        ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
         imageUri = uri
     }
 
@@ -139,7 +145,7 @@ fun ProfileEditScreen(
         if (openExitDialog) {
             ExitDialog(onDismiss = {
 
-                openExitDialog= false
+                openExitDialog = false
             },
                 onExitClicked = {
                     openExitDialog = false
@@ -150,320 +156,356 @@ fun ProfileEditScreen(
         }
 
 
-            Scaffold(
-                snackbarHost = { SnackbarHost(snackbarHostState) },
-                containerColor = CustomColors.lightBlue,
-                topBar = {
-                    TopBar(
-                        onBackClicked = {
-                               if (dataSaveStatus)
-                                   navController.popBackStack()
-                               else
-                                   openExitDialog = true
-                        }
-                    )
-                },
-                bottomBar = {
-
-                    EditProfileBottomBar(cardClick = {
-                       coroutineScope.launch {
-                       val profileData=
-                           ProfileData(
-                               avatar = imageUri.toString(),
-                               companyName = companyName,
-                               companyPhone=companyPhone,
-                               companyAddress=companyAddress,
-                               companyLink=companyLink,
-                               companyRules=companyRules,
-                               jobType=jobType
-
-                           )
-                           viewModel.saveData(profileData = profileData,
-                               snackbarHostState=snackbarHostState)
-                       }
-                        navController.popBackStack()
-
-                    })
-                }
-            ) {
-
-                Card(
-                    modifier = Modifier
-                        .padding(
-                            start = 25.dp,
-                            end = 25.dp,
-                            top = it.calculateTopPadding(),
-                            bottom = 16.dp
-                        )
-                        .fillMaxSize(),
-                    shape = RoundedCornerShape(16.dp),
-                    colors = CardDefaults.cardColors(
-                        containerColor = Color.White,
-                        contentColor = CustomColors.lightBlue,
-                    )
-
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .padding(top = 16.dp, start = 16.dp, end = 16.dp)
-                            .verticalScroll(rememberScrollState()),
-                        verticalArrangement = Arrangement.spacedBy(20.dp)
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .padding(all=8.dp)
-                                .clickable {
-                                    if (!hasStoragePermission) {
-                                        requestStoragePermissionLauncher.
-                                        launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                                    } else {
-                                        launcher.launch("image/*")
-
-                                    }
-                                },
-                            contentAlignment = Alignment.BottomEnd
-
-                        ){
-                           /* Image(
-                                painter = painterResource(id = R.drawable.profile),
-                                contentDescription = null,
-                                modifier = Modifier
-                                    .size(70.dp)
-                                    .clip(CircleShape)
-                            )*/
-                            GlideImage(
-                                model = imageUri,
-                                loading = placeholder(R.drawable.receipt_app_icon),
-                                contentDescription = "",
-                                modifier = Modifier
-                                    .size(70.dp)
-                                    .clip(CircleShape),
-                                contentScale = ContentScale.Crop,
-                            )
-                            Card( modifier = Modifier
-                                .size(20.dp)
-                                .clip(CircleShape),
-                                colors = CardDefaults.cardColors(
-                                    containerColor = CustomColors.gray,
-                                    contentColor = CustomColors.gray
-                                )
-                            ){
-                                Icon(
-                                    painter = painterResource(R.drawable.edit_2),
-                                    contentDescription = "",
-                                    tint = Color.White,
-                                )
-                            }
-
-
-                        }
-
-
-                        Column {
-                            Text(
-                                modifier = Modifier,
-                                text = "نام مجموعه",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = CustomColors.bitterDarkPurple
-                            )
-                            OutlinedTextField(
-                                modifier = Modifier
-                                    .fillMaxWidth(),
-                                singleLine = true,
-                                value =companyName,
-                                shape = RoundedCornerShape(30.dp),
-                                onValueChange = { name ->
-                                    companyName=name
-                                },
-                                leadingIcon = {
-                                    Icon(
-                                        painter = painterResource(id = R.drawable.user),
-                                        tint = CustomColors.gray,
-                                        contentDescription = null
-                                    )
-                                },
-                                colors = TextFieldDefaults.outlinedTextFieldColors(
-                                    textColor = CustomColors.darkPurple,
-                                    containerColor = CustomColors.transparentLightGray,
-                                    cursorColor = CustomColors.lightBlue,
-                                    focusedBorderColor = CustomColors.lightBlue,
-                                    unfocusedBorderColor = CustomColors.lightGray
-                                )
-                            )
-
-                        }
-                        Column {
-                            Text(
-                                modifier = Modifier,
-                                text = "شماره تماس مجموعه",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = CustomColors.bitterDarkPurple
-                            )
-                            OutlinedTextField(
-                                modifier = Modifier
-                                    .fillMaxWidth(),
-                                singleLine = true,
-                                isError =false,
-                                shape = RoundedCornerShape(30.dp),
-                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
-                                value = companyPhone,
-                                onValueChange = { phone ->
-                                    companyPhone=phone
-                                },
-                                leadingIcon = {
-                                    Icon(
-                                        painter = painterResource(id = R.drawable.call),
-                                        tint = CustomColors.gray,
-                                        contentDescription = null
-                                    )
-                                },
-                                colors = TextFieldDefaults.outlinedTextFieldColors(
-                                    textColor = CustomColors.darkPurple,
-                                    containerColor = CustomColors.transparentLightGray,
-                                    cursorColor = CustomColors.lightBlue,
-                                    focusedBorderColor = CustomColors.lightBlue,
-                                    unfocusedBorderColor = CustomColors.lightGray
-                                )
-                            )
-
-                        }
-                        Column {
-                            Text(
-                                modifier = Modifier,
-                                text = "آدرس مجموعه",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = CustomColors.bitterDarkPurple
-                            )
-                            OutlinedTextField(
-                                modifier = Modifier
-                                    .fillMaxWidth(),
-                                value = companyAddress,
-                                singleLine = true,
-                                shape = RoundedCornerShape(30.dp),
-                                onValueChange = { address ->
-                                    companyAddress=address
-                                },
-                                leadingIcon = {
-                                    Icon(
-                                        painter = painterResource(id = R.drawable.location),
-                                        tint = CustomColors.gray,
-                                        contentDescription = null
-                                    )
-                                },
-                                colors = TextFieldDefaults.outlinedTextFieldColors(
-                                    textColor = CustomColors.darkPurple,
-                                    containerColor = CustomColors.transparentLightGray,
-                                    cursorColor = CustomColors.lightBlue,
-                                    focusedBorderColor = CustomColors.lightBlue,
-                                    unfocusedBorderColor = CustomColors.lightGray
-                                )
-                            )
-
-                        }
-                        Column {
-                            Text(
-                                modifier = Modifier,
-                                text = "لینک ارتباطی",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = CustomColors.bitterDarkPurple
-                            )
-                            OutlinedTextField(
-                                modifier = Modifier
-                                    .fillMaxWidth(),
-                                value = companyLink,
-                                singleLine = true,
-                                shape = RoundedCornerShape(30.dp),
-                                onValueChange = { link ->
-                                    companyLink=link
-                                },
-                                leadingIcon = {
-                                    Icon(
-                                        painter = painterResource(id = R.drawable.link),
-                                        tint = CustomColors.gray,
-                                        contentDescription = null
-                                    )
-                                },
-                                colors = TextFieldDefaults.outlinedTextFieldColors(
-                                    textColor = CustomColors.darkPurple,
-                                    containerColor = CustomColors.transparentLightGray,
-                                    cursorColor = CustomColors.lightBlue,
-                                    focusedBorderColor = CustomColors.lightBlue,
-                                    unfocusedBorderColor = CustomColors.lightGray
-                                )
-                            )
-
-                        }
-                        CustomDropdown(
-                            items =jobTypes,
-                            selectedItem = jobType,
-                            onItemSelected = { selected ->
-                                jobType = selected
-                            },
-                            label = jobType,
-                            modifier = Modifier.fillMaxWidth(),
-                            isError = false
-                        )
-                        Divider(
-                            color = CustomColors.lightGray,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(2.dp)
-                                .padding(horizontal = 5.dp)
-                        )
-
-                        Column {
-                            Text(
-                                modifier = Modifier,
-                                text = "قوانین(حد اکثر 5 خط)",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = CustomColors.bitterDarkPurple
-                            )
-                            OutlinedTextField(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(120.dp)
-                                    .clickable {
-
-                                    },
-                                singleLine = false,
-                                maxLines = 5,
-                                value = companyRules,
-                                shape = RoundedCornerShape(30.dp),
-                                onValueChange = { rules ->
-                                    companyRules=rules
-                                },
-                                leadingIcon = {
-                                    Icon(
-                                        painter = painterResource(id = R.drawable.about_us),
-                                        tint = CustomColors.gray,
-                                        contentDescription = null
-                                    )
-                                },
-                                colors = TextFieldDefaults.outlinedTextFieldColors(
-                                    textColor = CustomColors.darkPurple,
-                                    containerColor = CustomColors.transparentLightGray,
-                                    cursorColor = CustomColors.lightBlue,
-                                    focusedBorderColor = CustomColors.lightBlue,
-                                    unfocusedBorderColor = CustomColors.lightGray
-                                )
-                            )
-
-                        }
-                        Spacer(modifier = Modifier.size(90.dp))
-
+        Scaffold(
+            snackbarHost = { SnackbarHost(snackbarHostState) },
+            containerColor = CustomColors.lightBlue,
+            topBar = {
+                TopBar(
+                    onBackClicked = {
+                        if (dataSaveStatus)
+                            navController.popBackStack()
+                        else
+                            openExitDialog = true
                     }
-                }
+                )
+            },
+            bottomBar = {
 
+                EditProfileBottomBar(cardClick = {
+                    if (jobType != viewModel.jobType.value) {
+                        openJobTypeChangedDialog = true
+                    } else {
+                        coroutineScope.launch {
+                            val profileData =
+                                ProfileData(
+                                    avatar = imageUri.toString(),
+                                    companyName = companyName,
+                                    companyPhone = companyPhone,
+                                    companyAddress = companyAddress,
+                                    companyLink = companyLink,
+                                    companyRules = companyRules,
+                                    jobType = jobType
+
+                                )
+                            viewModel.saveData(
+                                profileData = profileData,
+                                snackbarHostState = snackbarHostState
+                            )
+                        }
+                        navController.popBackStack()
+                    }
+
+
+                })
+            }
+        ) {
+
+            if (openJobTypeChangedDialog) {
+                TextShowDialog(
+                    onDismiss = {
+                        coroutineScope.launch {
+                            val profileData =
+                                ProfileData(
+                                    avatar = imageUri.toString(),
+                                    companyName = companyName,
+                                    companyPhone = companyPhone,
+                                    companyAddress = companyAddress,
+                                    companyLink = companyLink,
+                                    companyRules = companyRules,
+                                    jobType = jobType
+
+                                )
+                            viewModel.saveData(
+                                profileData = profileData,
+                                snackbarHostState = snackbarHostState
+                            )
+                        }
+                        openJobTypeChangedDialog = false
+                        (context as? ComponentActivity)?.finish()
+
+                    },
+
+                    text = "در صورت تغییر عنوان شغلی لازم است برنامه را بسته و مجددا اجرا کنید.",
+                   modifier = Modifier
+                        .fillMaxWidth()
+                )
 
             }
 
 
 
+            Card(
+                modifier = Modifier
+                    .padding(
+                        start = 25.dp,
+                        end = 25.dp,
+                        top = it.calculateTopPadding(),
+                        bottom = 16.dp
+                    )
+                    .fillMaxSize(),
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = Color.White,
+                    contentColor = CustomColors.lightBlue,
+                )
+
+            ) {
+                Column(
+                    modifier = Modifier
+                        .padding(top = 16.dp, start = 16.dp, end = 16.dp)
+                        .verticalScroll(rememberScrollState()),
+                    verticalArrangement = Arrangement.spacedBy(20.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .padding(all = 8.dp)
+                            .clickable {
+                                if (!hasStoragePermission) {
+                                    requestStoragePermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                                } else {
+                                    launcher.launch("image/*")
+
+                                }
+                            },
+                        contentAlignment = Alignment.BottomEnd
+
+                    ) {
+                        /* Image(
+                             painter = painterResource(id = R.drawable.profile),
+                             contentDescription = null,
+                             modifier = Modifier
+                                 .size(70.dp)
+                                 .clip(CircleShape)
+                         )*/
+                        GlideImage(
+                            model = imageUri,
+                            loading = placeholder(R.drawable.receipt_app_icon),
+                            contentDescription = "",
+                            modifier = Modifier
+                                .size(70.dp)
+                                .clip(CircleShape),
+                            contentScale = ContentScale.Crop,
+                        )
+                        Card(
+                            modifier = Modifier
+                                .size(20.dp)
+                                .clip(CircleShape),
+                            colors = CardDefaults.cardColors(
+                                containerColor = CustomColors.gray,
+                                contentColor = CustomColors.gray
+                            )
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.edit_2),
+                                contentDescription = "",
+                                tint = Color.White,
+                            )
+                        }
+
+
+                    }
+
+
+                    Column {
+                        Text(
+                            modifier = Modifier,
+                            text = "نام مجموعه",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = CustomColors.bitterDarkPurple
+                        )
+                        OutlinedTextField(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            singleLine = true,
+                            value = companyName,
+                            shape = RoundedCornerShape(30.dp),
+                            onValueChange = { name ->
+                                companyName = name
+                            },
+                            leadingIcon = {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.user),
+                                    tint = CustomColors.gray,
+                                    contentDescription = null
+                                )
+                            },
+                            colors = TextFieldDefaults.outlinedTextFieldColors(
+                                textColor = CustomColors.darkPurple,
+                                containerColor = CustomColors.transparentLightGray,
+                                cursorColor = CustomColors.lightBlue,
+                                focusedBorderColor = CustomColors.lightBlue,
+                                unfocusedBorderColor = CustomColors.lightGray
+                            )
+                        )
+
+                    }
+                    Column {
+                        Text(
+                            modifier = Modifier,
+                            text = "شماره تماس مجموعه",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = CustomColors.bitterDarkPurple
+                        )
+                        OutlinedTextField(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            singleLine = true,
+                            isError = false,
+                            shape = RoundedCornerShape(30.dp),
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+                            value = companyPhone,
+                            onValueChange = { phone ->
+                                companyPhone = phone
+                            },
+                            leadingIcon = {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.call),
+                                    tint = CustomColors.gray,
+                                    contentDescription = null
+                                )
+                            },
+                            colors = TextFieldDefaults.outlinedTextFieldColors(
+                                textColor = CustomColors.darkPurple,
+                                containerColor = CustomColors.transparentLightGray,
+                                cursorColor = CustomColors.lightBlue,
+                                focusedBorderColor = CustomColors.lightBlue,
+                                unfocusedBorderColor = CustomColors.lightGray
+                            )
+                        )
+
+                    }
+                    Column {
+                        Text(
+                            modifier = Modifier,
+                            text = "آدرس مجموعه",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = CustomColors.bitterDarkPurple
+                        )
+                        OutlinedTextField(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            value = companyAddress,
+                            singleLine = true,
+                            shape = RoundedCornerShape(30.dp),
+                            onValueChange = { address ->
+                                companyAddress = address
+                            },
+                            leadingIcon = {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.location),
+                                    tint = CustomColors.gray,
+                                    contentDescription = null
+                                )
+                            },
+                            colors = TextFieldDefaults.outlinedTextFieldColors(
+                                textColor = CustomColors.darkPurple,
+                                containerColor = CustomColors.transparentLightGray,
+                                cursorColor = CustomColors.lightBlue,
+                                focusedBorderColor = CustomColors.lightBlue,
+                                unfocusedBorderColor = CustomColors.lightGray
+                            )
+                        )
+
+                    }
+                    Column {
+                        Text(
+                            modifier = Modifier,
+                            text = "لینک ارتباطی",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = CustomColors.bitterDarkPurple
+                        )
+                        OutlinedTextField(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            value = companyLink,
+                            singleLine = true,
+                            shape = RoundedCornerShape(30.dp),
+                            onValueChange = { link ->
+                                companyLink = link
+                            },
+                            leadingIcon = {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.link),
+                                    tint = CustomColors.gray,
+                                    contentDescription = null
+                                )
+                            },
+                            colors = TextFieldDefaults.outlinedTextFieldColors(
+                                textColor = CustomColors.darkPurple,
+                                containerColor = CustomColors.transparentLightGray,
+                                cursorColor = CustomColors.lightBlue,
+                                focusedBorderColor = CustomColors.lightBlue,
+                                unfocusedBorderColor = CustomColors.lightGray
+                            )
+                        )
+
+                    }
+                    CustomDropdown(
+                        items = jobTypes,
+                        selectedItem = jobType,
+                        onItemSelected = { selected ->
+                            jobType = selected
+                        },
+                        label = jobType,
+                        modifier = Modifier.fillMaxWidth(),
+                        isError = false
+                    )
+                    Divider(
+                        color = CustomColors.lightGray,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(2.dp)
+                            .padding(horizontal = 5.dp)
+                    )
+
+                    Column {
+                        Text(
+                            modifier = Modifier,
+                            text = "قوانین(حد اکثر 5 خط)",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = CustomColors.bitterDarkPurple
+                        )
+                        OutlinedTextField(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(120.dp)
+                                .clickable {
+
+                                },
+                            singleLine = false,
+                            maxLines = 5,
+                            value = companyRules,
+                            shape = RoundedCornerShape(30.dp),
+                            onValueChange = { rules ->
+                                companyRules = rules
+                            },
+                            leadingIcon = {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.about_us),
+                                    tint = CustomColors.gray,
+                                    contentDescription = null
+                                )
+                            },
+                            colors = TextFieldDefaults.outlinedTextFieldColors(
+                                textColor = CustomColors.darkPurple,
+                                containerColor = CustomColors.transparentLightGray,
+                                cursorColor = CustomColors.lightBlue,
+                                focusedBorderColor = CustomColors.lightBlue,
+                                unfocusedBorderColor = CustomColors.lightGray
+                            )
+                        )
+
+                    }
+                    Spacer(modifier = Modifier.size(90.dp))
+
+                }
+            }
+
+
+        }
+
 
     }
-
-
-
 
 
 }

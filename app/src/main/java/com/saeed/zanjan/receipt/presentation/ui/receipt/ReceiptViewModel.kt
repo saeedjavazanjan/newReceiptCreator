@@ -31,24 +31,30 @@ class ReceiptViewModel
     val blueToothConnectionClass: BlueToothConnectionClass
 ) : ViewModel() {
 
-    val receiptCategory = sharedPreferences.getInt("JOB_SUBJECT",-1)
+    val receiptCategory = sharedPreferences.getInt("JOB_SUBJECT", -1)
+    val avatar = sharedPreferences.getString("AVATAR_URI", "")!!
+    val companyName = sharedPreferences.getString("COMPANY", "")!!
+    val companyPhone = sharedPreferences.getString("COMPANY_PHONE", "")!!
+    val rules = sharedPreferences.getString("COMPANY_RULES", "")!!
+
+
     val loading = mutableStateOf(false)
     val deleteState = mutableStateOf(false)
     val otpCode = mutableStateOf(0)
 
     val currentReceipt = mutableStateOf(GeneralReceipt())
-    var data:MutableList<MutableMap<String?,Any?>?>?=null
+    var data: MutableList<MutableMap<String?, Any?>?>? = null
 
     fun shareReceiptImage(
         picture: Picture,
         context: Context,
         snackbarHostState: SnackbarHostState
-    ){
+    ) {
         shareReceipt.shareReceipt(
-            picture,context
+            picture, context
         ).onEach { dataState ->
             dataState.loading.let {
-                loading.value=it
+                loading.value = it
             }
             dataState.error?.let {
                 snackbarHostState.showSnackbar(it, duration = SnackbarDuration.Short)
@@ -56,7 +62,6 @@ class ReceiptViewModel
 
         }.launchIn(viewModelScope)
     }
-
 
 
     fun getReceiptById(
@@ -100,14 +105,14 @@ class ReceiptViewModel
         ).onEach { dataState ->
 
             dataState.loading.let {
-                loading.value=it
+                loading.value = it
             }
             dataState.data?.let {
-                snackbarHostState.showSnackbar(it,duration = SnackbarDuration.Short)
+                snackbarHostState.showSnackbar(it, duration = SnackbarDuration.Short)
             }
 
             dataState.error?.let {
-                snackbarHostState.showSnackbar(it,duration = SnackbarDuration.Short)
+                snackbarHostState.showSnackbar(it, duration = SnackbarDuration.Short)
 
             }
 
@@ -118,7 +123,7 @@ class ReceiptViewModel
     fun paymentSendMessage(
         snackbarHostState: SnackbarHostState,
         generalReceipt: GeneralReceipt,
-        payedAmount:String
+        payedAmount: String
     ) {
         sendSms.paymentSendSMS(
             generalReceipt,
@@ -126,21 +131,20 @@ class ReceiptViewModel
         ).onEach { dataState ->
 
             dataState.loading.let {
-                loading.value=it
+                loading.value = it
             }
             dataState.data?.let {
-                snackbarHostState.showSnackbar(it,duration = SnackbarDuration.Short)
+                snackbarHostState.showSnackbar(it, duration = SnackbarDuration.Short)
             }
 
             dataState.error?.let {
-                snackbarHostState.showSnackbar(it,duration = SnackbarDuration.Short)
+                snackbarHostState.showSnackbar(it, duration = SnackbarDuration.Short)
 
             }
 
         }.launchIn(viewModelScope)
 
     }
-
 
 
     fun deleteReceipt(
@@ -157,11 +161,11 @@ class ReceiptViewModel
                 loading.value = it
             }
             dataState.data?.let {
-                snackbarHostState.showSnackbar(it,duration = SnackbarDuration.Short)
-                deleteState.value=true
+                snackbarHostState.showSnackbar(it, duration = SnackbarDuration.Short)
+                deleteState.value = true
             }
             dataState.error?.let {
-                snackbarHostState.showSnackbar(it,duration = SnackbarDuration.Short)
+                snackbarHostState.showSnackbar(it, duration = SnackbarDuration.Short)
 
             }
 
@@ -170,65 +174,63 @@ class ReceiptViewModel
     }
 
 
-    fun print(context: Context,snackbarHostState: SnackbarHostState){
-        blueToothConnectionClass.intentPrint(currentReceipt.value, context = context).onEach { dataState ->
+    fun print(context: Context, snackbarHostState: SnackbarHostState) {
+        blueToothConnectionClass.intentPrint(currentReceipt.value, context = context)
+            .onEach { dataState ->
+
+                dataState.loading.let {
+                    loading.value = it
+                }
+                dataState.data?.let {
+                    snackbarHostState.showSnackbar(it)
+
+                }
+                dataState.error?.let {
+                    snackbarHostState.showSnackbar(it)
+                }
+
+            }.launchIn(viewModelScope)
+    }
+
+    fun generateAndSendOtpPassword(snackbarHostState: SnackbarHostState) {
+
+        otpCode.value = createFourDigitNumber()
+
+        sendSms.sendOtpSms(currentReceipt.value, otpCode.value).onEach { dataState ->
 
             dataState.loading.let {
-                loading.value=it
+                loading.value = it
             }
             dataState.data?.let {
-                snackbarHostState.showSnackbar(it)
+
 
             }
             dataState.error?.let {
                 snackbarHostState.showSnackbar(it)
             }
 
-        }.launchIn(viewModelScope)
-    }
-
-    fun generateAndSendOtpPassword(snackbarHostState: SnackbarHostState){
-
-        otpCode.value=createFourDigitNumber()
-
-        sendSms.sendOtpSms(currentReceipt.value,otpCode.value).onEach { dataState ->
-
-        dataState.loading.let {
-            loading.value=it
-        }
-            dataState.data?.let {
-
-
-            }
-        dataState.error?.let {
-            snackbarHostState.showSnackbar(it)
-        }
-
 
         }.launchIn(viewModelScope)
 
 
-
     }
+
     fun createFourDigitNumber(): Int {
-        var fourDigitNumber  = ""
-        val rangeList = {(0..9).random()}
+        var fourDigitNumber = ""
+        val rangeList = { (0..9).random() }
 
-        while(fourDigitNumber.length < 4)
-        {
+        while (fourDigitNumber.length < 4) {
             val num = rangeList().toString()
-            if (!fourDigitNumber.contains(num)) fourDigitNumber +=num
+            if (!fourDigitNumber.contains(num)) fourDigitNumber += num
         }
 
         return fourDigitNumber.toInt()
     }
 
-    fun restartState(){
+    fun restartState() {
 
-        deleteState.value=false
+        deleteState.value = false
     }
-
-
 
 
 }

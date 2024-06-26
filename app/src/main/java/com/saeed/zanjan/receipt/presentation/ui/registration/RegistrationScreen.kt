@@ -139,7 +139,11 @@ fun RegistrationScreen(
             TextShowDialog(onDismiss = {
                                  isRulesDialogVisible=false
                                         },
-                text = stringResource(id = R.string.rules) )
+                text = stringResource(id = R.string.rules) ,
+               modifier = Modifier.fillMaxWidth().height(500.dp)
+
+
+            )
         }
 
         Scaffold(
