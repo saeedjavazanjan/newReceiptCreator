@@ -31,16 +31,25 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
+import com.bumptech.glide.integration.compose.placeholder
 import com.saeed.zanjan.receipt.R
 import com.saeed.zanjan.receipt.domain.models.GeneralReceipt
 import com.saeed.zanjan.receipt.ui.theme.CustomColors
 
+@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun ReceiptCardForShare(
     modifier: Modifier,
     receiptCategory: Int?,
+    companyName:String,
+    avatar:String,
+    companyPhone:String,
+    rules:String,
     generalReceipt: GeneralReceipt
 ) {
     Card(
@@ -65,12 +74,14 @@ fun ReceiptCardForShare(
                     modifier = Modifier.padding(start = 30.dp, end = 30.dp)
 
                 ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.receipt_app_icon),
-                        contentDescription = null,
+                    GlideImage(
+                        model = avatar,
+                        loading = placeholder(R.drawable.receipt_app_icon),
+                        contentDescription = "",
                         modifier = Modifier
                             .size(40.dp)
-                            .clip(CircleShape)
+                            .clip(CircleShape),
+                        contentScale = ContentScale.Crop,
                     )
                     Spacer(modifier = Modifier.size(15.dp))
 
@@ -78,7 +89,7 @@ fun ReceiptCardForShare(
                         modifier = Modifier
                             .padding(1.dp)
                             .align(Alignment.CenterVertically),
-                        text = "وب واژگان",
+                        text = companyName,
                         style = MaterialTheme.typography.bodyMedium,
                         color = CustomColors.bitterDarkPurple
                     )
@@ -352,7 +363,7 @@ fun ReceiptCardForShare(
                             .padding(1.dp)
                             .fillMaxWidth()
                             .align(Alignment.Start),
-                        text = "خرابی به عهده مشتری\nخرابی به عهده مشتری\nخرابی به عهده مشتری\nخرابی به عهده مشتری",
+                        text = rules,
                         style = MaterialTheme.typography.bodySmall,
                         color = CustomColors.darkPurple
                     )
@@ -378,7 +389,7 @@ fun ReceiptCardForShare(
                         modifier = Modifier
                             .padding(1.dp)
                             .align(Alignment.CenterHorizontally),
-                        text = "0215455555",
+                        text = "شماره تماس: $companyPhone",
                         style = MaterialTheme.typography.bodySmall,
                         color = CustomColors.bitterDarkPurple
                     )
@@ -770,7 +781,7 @@ fun ConfectioneryItems(
                     modifier = Modifier
                         .padding(1.dp)
                         .align(Alignment.Start),
-                    text = it,
+                    text = "$it کیلو گرم",
                     style = MaterialTheme.typography.bodySmall,
                     color = CustomColors.darkPurple
                 )

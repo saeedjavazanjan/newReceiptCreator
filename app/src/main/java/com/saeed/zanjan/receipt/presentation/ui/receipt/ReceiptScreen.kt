@@ -65,6 +65,8 @@ import com.saeed.zanjan.receipt.presentation.components.TopBar
 import com.saeed.zanjan.receipt.presentation.navigation.Screen
 import com.saeed.zanjan.receipt.ui.theme.CustomColors
 import com.saeed.zanjan.receipt.ui.theme.NewReceiptCreatorTheme
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -244,14 +246,23 @@ fun ReceiptScreen(
 
     LaunchedEffect(newSaved) {
         if (newSaved) {
-            snackbarHostState.showSnackbar("با موفقیت ذخیره شد", duration = SnackbarDuration.Short)
+            val job=coroutineScope.launch {
+                snackbarHostState.showSnackbar("با موفقیت ذخیره شد", duration = SnackbarDuration.Indefinite)
+
+            }
+            delay(1000)
+            job.cancel()
             openSendSmsDialog.value = true
         }
         if (newUpdate) {
-            snackbarHostState.showSnackbar(
-                "با موفقیت به روز رسانی  شد",
-                duration = SnackbarDuration.Short
-            )
+            val job=coroutineScope.launch {
+                snackbarHostState.showSnackbar(
+                    "با موفقیت به روز رسانی  شد",
+                    duration = SnackbarDuration.Short
+                )
+            }
+            delay(1000)
+            job.cancel()
         }
 
         if (paymentChanged) {
@@ -517,6 +528,10 @@ fun ReceiptScreen(
                         .fillMaxSize()
                         .padding(10.dp),
                     receiptCategory = receiptCategory,
+                    companyName=viewModel.companyName,
+                    avatar=viewModel.avatar,
+                    rules=viewModel.rules,
+                    companyPhone=viewModel.companyPhone,
                     generalReceipt = currentReceipt.value
                 )
 

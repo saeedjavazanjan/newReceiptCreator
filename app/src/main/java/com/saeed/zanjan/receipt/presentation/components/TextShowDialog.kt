@@ -27,7 +27,8 @@ import com.saeed.zanjan.receipt.ui.theme.CustomColors
 @Composable
 fun TextShowDialog(
     onDismiss:()->Unit,
-    text:String
+    text:String,
+    modifier: Modifier
 ) {
     Dialog(onDismissRequest = { onDismiss() }) {
         Surface(
@@ -40,8 +41,7 @@ fun TextShowDialog(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Column(
-                    modifier = Modifier
-                        .fillMaxWidth().height(500.dp)
+                    modifier = modifier
                         .verticalScroll(rememberScrollState())
                 ) {
                     Text(text = text,

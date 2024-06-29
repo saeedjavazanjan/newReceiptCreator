@@ -171,7 +171,7 @@ class HomeViewModel
                 loading.value = it
             }
             dataState.data?.let {
-                snackbarHostState.showSnackbar(it)
+                snackbarHostState.showSnackbar("در پوشه دانلودها ذخیره شد.")
             }
             dataState.error?.let {
                 snackbarHostState.showSnackbar(it)
@@ -187,6 +187,7 @@ class HomeViewModel
          paymentConnection = payment.connect {
             connectionSucceed {
                 bazarConnectionState.value=true
+                getUserSubscribes(context)
             }
             connectionFailed { throwable ->
                 Toast.makeText(context,throwable.message.toString(), Toast.LENGTH_SHORT).show()
@@ -249,21 +250,6 @@ class HomeViewModel
 
                 if(purchasedProducts.isNotEmpty()){
                     calculateExpireTime(purchasedProducts.last())
-                /*    purchasedProducts.forEach {pInfo->
-                        userPurchaseInfo.add(
-                            UserPurchaseInfo(
-                                orderId = pInfo.orderId,
-                                purchaseToken = pInfo.purchaseToken,
-                                payload = pInfo.payload,
-                                packageName = pInfo.packageName,
-                                purchaseState = pInfo.purchaseState,
-                                purchaseTime = pInfo.purchaseTime,
-                                productId = pInfo.productId,
-                                originalJson = pInfo.originalJson,
-                                dataSignature = pInfo.dataSignature
-                            )
-                        )
-                    }*/
 
                 }
 

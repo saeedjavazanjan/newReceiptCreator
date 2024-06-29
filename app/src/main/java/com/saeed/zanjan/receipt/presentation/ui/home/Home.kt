@@ -1,9 +1,13 @@
 package com.saeed.zanjan.receipt.presentation.ui.home
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.content.pm.PackageManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivityResultRegistryOwner
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -54,6 +58,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import com.saeed.zanjan.receipt.R
 import com.saeed.zanjan.receipt.domain.models.GeneralReceipt
 import com.saeed.zanjan.receipt.presentation.components.AddReceiptCard
@@ -88,6 +93,26 @@ fun Home(
 
     val loading = viewModel.loading.value
     val receiptsList = viewModel.receiptList
+
+
+    var hasStoragePermission by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        hasStoragePermission = ContextCompat.checkSelfPermission(
+            context, Manifest.permission.WRITE_EXTERNAL_STORAGE,
+
+            ) == PackageManager.PERMISSION_GRANTED
+    }
+
+    val requestStoragePermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        hasStoragePermission = true
+
+    }
+
+
+
 
     val leftTime=viewModel.expireTime
     val bazarConnectionState=viewModel.bazarConnectionState.value
@@ -159,6 +184,7 @@ fun Home(
         viewModel.getDataFromSharedPreferences()
         viewModel.getListOfReceipts(snackbarHostState)
             viewModel.connectToBazar(context)
+
        // viewModel.downloadDb(snackbarHostState)
     }
 
@@ -223,10 +249,16 @@ fun Home(
                                                         openSubscribeDialog=true
                                                 }
                                                 4->{
-                                                    if(leftTime.value>0)
-                                                    viewModel.exportExcel(snackbarHostState)
-                                                    else
+                                                    if(leftTime.value>0) {
+                                                        if (!hasStoragePermission) {
+                                                            requestStoragePermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                                                        } else {
+                                                            viewModel.exportExcel(snackbarHostState)
+                                                        }
+                                                    }else{
                                                         openSubscribeDialog=true
+
+                                                    }
                                                 }
                                                 5->{
                                                     if(leftTime.value>0)
@@ -364,7 +396,10 @@ fun Home(
                     TextShowDialog(onDismiss = {
                                                openAboutUsDialog=false
                                                },
-                        text = stringResource(id = R.string.about_us))
+                        text = stringResource(id = R.string.about_us),
+                        modifier = Modifier.fillMaxWidth()
+
+                    )
                     
                 }
                 
