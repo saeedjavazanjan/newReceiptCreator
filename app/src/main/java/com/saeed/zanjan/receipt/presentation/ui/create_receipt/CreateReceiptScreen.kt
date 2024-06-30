@@ -99,6 +99,11 @@ fun CreateReceiptScreen(
     val openStatusDialog = remember { mutableStateOf(false) }
     val openExitDialog = remember { mutableStateOf(false) }
 
+    LaunchedEffect(Unit){
+        viewModel.getDataFromSharedPreferences()
+    }
+
+
     DisposableEffect(Unit) {
         onDispose {
             viewModel.restartState()
@@ -556,7 +561,7 @@ fun CreateReceiptScreen(
                                 .height(2.dp)
                                 .padding(horizontal = 5.dp)
                         )
-                        when (viewModel.receiptCategory) {
+                        when (viewModel.receiptCategory.value) {
                             0 -> {
                                 RepairFields(
                                     productProblem = productProblem!!,

@@ -19,21 +19,26 @@ import javax.inject.Inject
 class CreateReceiptViewModel
 @Inject constructor(
     val receiptQueryInDatabase: ReceiptQueryInDatabase,
-    sharedPreferences: SharedPreferences,
+    val sharedPreferences: SharedPreferences,
 ) : ViewModel() {
+    val receiptCategory = mutableStateOf(-1)
 
-    val receiptCategory=sharedPreferences.getInt("JOB_SUBJECT",-1)
+
 
     val loading = mutableStateOf(false)
     val dataSaveStatus = mutableStateOf(false)
     val savedReceiptId= mutableStateOf(-1L)
 
+    fun getDataFromSharedPreferences(){
+
+         receiptCategory.value=sharedPreferences.getInt("JOB_SUBJECT",-1)
+    }
 
     fun saveInDatabase(
         generalReceipt: GeneralReceipt,
         snackbarHostState: SnackbarHostState,
     ) {
-        receiptQueryInDatabase.saveRepairReceipt(generalReceipt,receiptCategory).onEach { dataState ->
+        receiptQueryInDatabase.saveRepairReceipt(generalReceipt,receiptCategory.value).onEach { dataState ->
 
             dataState.loading.let {
                 loading.value = it

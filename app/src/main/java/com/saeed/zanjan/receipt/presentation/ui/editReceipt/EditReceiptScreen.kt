@@ -87,6 +87,12 @@ fun EditReceiptScreen(
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
     val currentReceipt by viewModel.currentReceipt.collectAsState()
+
+    LaunchedEffect(Unit){
+        viewModel.getDataFromSharedPreferences()
+    }
+
+
     if(receiptId != -1){
         LaunchedEffect(key1 = currentReceipt){
             viewModel.getReceiptById(
@@ -608,7 +614,7 @@ fun EditReceiptScreen(
                                 .height(2.dp)
                                 .padding(horizontal = 5.dp)
                         )
-                        when (viewModel.receiptCategory) {
+                        when (viewModel.receiptCategory.value) {
                             0 -> {
                                 RepairFields(
                                     productProblem = productProblem!!,

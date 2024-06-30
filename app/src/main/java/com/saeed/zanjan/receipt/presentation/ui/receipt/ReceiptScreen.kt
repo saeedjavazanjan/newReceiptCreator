@@ -80,7 +80,7 @@ fun ReceiptScreen(
     statusChanged: Boolean = false,
     paymentChanged: Boolean = false,
 ) {
-    val receiptCategory = viewModel.receiptCategory
+    val receiptCategory = viewModel.receiptCategory.value
 
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
@@ -108,7 +108,7 @@ fun ReceiptScreen(
     var btScanStatus by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
-
+        viewModel.getDataFromSharedPreferences()
             hasSmsPermission = ContextCompat.checkSelfPermission(
                 context,
                 Manifest.permission.SEND_SMS
@@ -528,10 +528,10 @@ fun ReceiptScreen(
                         .fillMaxSize()
                         .padding(10.dp),
                     receiptCategory = receiptCategory,
-                    companyName=viewModel.companyName,
-                    avatar=viewModel.avatar,
-                    rules=viewModel.rules,
-                    companyPhone=viewModel.companyPhone,
+                    companyName=viewModel.companyName.value,
+                    avatar=viewModel.avatar.value,
+                    rules=viewModel.rules.value,
+                    companyPhone=viewModel.companyPhone.value,
                     generalReceipt = currentReceipt.value
                 )
 
