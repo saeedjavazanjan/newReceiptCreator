@@ -5,19 +5,15 @@ import android.content.SharedPreferences
 import android.widget.Toast
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.saeed.zanjan.receipt.domain.models.OtpData
 import com.saeed.zanjan.receipt.domain.models.RegistrationInfo
 import com.saeed.zanjan.receipt.interactor.Backup
 import com.saeed.zanjan.receipt.interactor.UserRegistration
-import com.saeed.zanjan.receipt.network.RetrofitService
 import com.saeed.zanjan.receipt.utils.ConnectivityManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -171,14 +167,14 @@ constructor(
                 loading.value=it
             }
             dataState.data?.let{
-                successLogin.value=true
+              //  successLogin.value=true
                 fillCustomersTable(snackbarHostState)
 
             }
             dataState.error?.let {
-                successLogin.value=true
-
-             //   snackbarHostState.showSnackbar(it)
+              //  successLogin.value=true
+//TODO error of backup
+                snackbarHostState.showSnackbar(it)
 
             }
 
@@ -193,8 +189,11 @@ constructor(
                     loading.value=it
                 }
                 dataState.data?.let {
-                    if(it)
+                    if(it){
+                        successLogin.value=true
                         databaseSaved.value=true
+                    }
+
                     else{
                         databaseSaved.value=false
                         loading.value=false

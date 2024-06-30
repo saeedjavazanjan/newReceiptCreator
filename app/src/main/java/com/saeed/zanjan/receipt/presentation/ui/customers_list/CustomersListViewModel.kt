@@ -24,7 +24,6 @@ class CustomersListViewModel
        private val sharedPreferences: SharedPreferences
    ):ViewModel() {
 
-    val receiptCategory = sharedPreferences.getInt("JOB_SUBJECT",-1)
     val loading = mutableStateOf(false)
     var customersList= mutableStateOf( mutableListOf<Customer>())
 

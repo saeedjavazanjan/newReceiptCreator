@@ -29,7 +29,7 @@ class ProfileEditViewModel
 
     val loading= mutableStateOf(false)
     val dataSaveStatus = mutableStateOf(false)
-
+    val dataUpdated= mutableStateOf(false)
 
     val avatar= mutableStateOf("")
     val companyName= mutableStateOf("")
@@ -39,10 +39,9 @@ class ProfileEditViewModel
     val companyRules= mutableStateOf("")
     val jobType= mutableStateOf("")
 
-    init {
-    getDataFromSharedPreferences()
-
-    }
+init {
+   // getDataFromSharedPreferences()
+}
 
 
     fun getDataFromSharedPreferences(){
@@ -110,7 +109,7 @@ class ProfileEditViewModel
                 loading.value=it
             }
             dataState.data?.let {
-
+                dataUpdated.value=true
                 snackbarHostState.showSnackbar(it)
 
             }
@@ -172,5 +171,6 @@ class ProfileEditViewModel
     }
     fun restartState(){
         dataSaveStatus.value=false
+        dataUpdated.value=false
     }
 }

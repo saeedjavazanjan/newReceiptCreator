@@ -31,11 +31,21 @@ class ReceiptViewModel
     val blueToothConnectionClass: BlueToothConnectionClass
 ) : ViewModel() {
 
-    val receiptCategory = sharedPreferences.getInt("JOB_SUBJECT", -1)
-    val avatar = sharedPreferences.getString("AVATAR_URI", "")!!
-    val companyName = sharedPreferences.getString("COMPANY", "")!!
-    val companyPhone = sharedPreferences.getString("COMPANY_PHONE", "")!!
-    val rules = sharedPreferences.getString("COMPANY_RULES", "")!!
+    val receiptCategory = mutableStateOf(-1)
+    val avatar= mutableStateOf("")
+    val companyName= mutableStateOf("")
+    val companyPhone= mutableStateOf("")
+    val rules= mutableStateOf("")
+    fun getDataFromSharedPreferences(){
+        receiptCategory.value = sharedPreferences.getInt("JOB_SUBJECT",-1)
+        avatar.value=sharedPreferences.getString("AVATAR_URI","")!!
+        companyName.value=sharedPreferences.getString("COMPANY","")!!
+        companyPhone.value=sharedPreferences.getString("COMPANY_PHONE","")!!
+        rules.value=sharedPreferences.getString("COMPANY_RULES","")!!
+    }
+
+
+
 
 
     val loading = mutableStateOf(false)
@@ -72,7 +82,7 @@ class ReceiptViewModel
 
         listOfReceipts.getReceiptById(
             receiptId,
-            receiptCategory
+            receiptCategory.value
         ).onEach { dataState ->
 
             dataState.loading.let {
@@ -88,7 +98,7 @@ class ReceiptViewModel
 
         }.catch {
             loading.value = false
-            snackbarHostState.showSnackbar(it.message.toString() ?: "خطای ناشناخته")
+            snackbarHostState.showSnackbar(it.message.toString())
         }.launchIn(viewModelScope)
 
 
@@ -101,7 +111,7 @@ class ReceiptViewModel
     ) {
         sendSms.receiptSendSMS(
             generalReceipt,
-            receiptCategory
+            receiptCategory.value
         ).onEach { dataState ->
 
             dataState.loading.let {
@@ -154,7 +164,7 @@ class ReceiptViewModel
 
         receiptQueryInDatabase.deleteReceipt(
             receiptId,
-            receiptCategory
+            receiptCategory.value
         ).onEach { dataState ->
 
             dataState.loading.let {

@@ -89,6 +89,7 @@ fun ProfileEditScreen(
     var hasStoragePermission by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
+        viewModel.getDataFromSharedPreferences()
         hasStoragePermission = ContextCompat.checkSelfPermission(
             context, Manifest.permission.WRITE_EXTERNAL_STORAGE,
 
@@ -103,6 +104,7 @@ fun ProfileEditScreen(
     }
 
     val dataSaveStatus = viewModel.dataSaveStatus.value
+  //  val dataUpdated by remember { mutableStateOf(viewModel.dataUpdated.value) }
     var openExitDialog by remember { mutableStateOf(false) }
     var openJobTypeChangedDialog by remember { mutableStateOf(false) }
 
@@ -125,6 +127,8 @@ fun ProfileEditScreen(
         "قنادی",
         "سایر مشاغل",
     )
+
+
     val launcher = rememberLauncherForActivityResult(
         contract =
         ActivityResultContracts.GetContent()
@@ -192,7 +196,9 @@ fun ProfileEditScreen(
                                 snackbarHostState = snackbarHostState
                             )
                         }
-                        navController.popBackStack()
+
+                            navController.popBackStack()
+
                     }
 
 
@@ -220,8 +226,10 @@ fun ProfileEditScreen(
                                 snackbarHostState = snackbarHostState
                             )
                         }
-                        openJobTypeChangedDialog = false
-                        (context as? ComponentActivity)?.finish()
+                            openJobTypeChangedDialog = false
+                            (context as? ComponentActivity)?.finish()
+
+
 
                     },
 
