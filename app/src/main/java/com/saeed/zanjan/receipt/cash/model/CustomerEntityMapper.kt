@@ -15,7 +15,6 @@ class CustomerEntityMapper:DomainMapper<CustomerEntity,Customer> {
     }
 
 
-    //TODO check we don't use this function
     override fun mapFromDomainModel(domainModel: Customer): CustomerEntity {
         return CustomerEntity(
             domainModel.id,

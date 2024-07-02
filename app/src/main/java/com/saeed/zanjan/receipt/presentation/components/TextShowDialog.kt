@@ -28,7 +28,8 @@ import com.saeed.zanjan.receipt.ui.theme.CustomColors
 fun TextShowDialog(
     onDismiss:()->Unit,
     text:String,
-    modifier: Modifier
+    modifier: Modifier,
+    buttonClicked:()->Unit={onDismiss()}
 ) {
     Dialog(onDismissRequest = { onDismiss() }) {
         Surface(
@@ -52,7 +53,7 @@ fun TextShowDialog(
                 Spacer(modifier = Modifier.size(10.dp))
                 TextButton(
                     onClick = {
-                        onDismiss()
+                              buttonClicked()
                     },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = CustomColors.lightBlue

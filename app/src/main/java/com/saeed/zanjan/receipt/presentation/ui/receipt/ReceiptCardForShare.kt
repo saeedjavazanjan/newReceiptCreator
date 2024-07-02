@@ -735,7 +735,7 @@ fun ConfectioneryItems(
                 style = MaterialTheme.typography.bodySmall,
                 color = CustomColors.bitterDarkPurple
             )
-            generalReceipt.confectioneryDescription?.let {
+            generalReceipt.confectioneryOrderSpecification?.let {
                 Text(
                     modifier = Modifier
                         .padding(1.dp)
@@ -756,7 +756,7 @@ fun ConfectioneryItems(
                 style = MaterialTheme.typography.bodySmall,
                 color = CustomColors.bitterDarkPurple
             )
-            generalReceipt.confectioneryOrderSpecification?.let {
+            generalReceipt.confectioneryDescription?.let {
                 Text(
                     modifier = Modifier
                         .padding(1.dp)
@@ -831,26 +831,6 @@ fun OtherJobsItems(
                 color = CustomColors.bitterDarkPurple
             )
             generalReceipt.otherJobsDescription?.let {
-                Text(
-                    modifier = Modifier
-                        .padding(1.dp)
-                        .align(Alignment.Start),
-                    text = it,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = CustomColors.darkPurple
-                )
-            }
-        }
-        Column {
-            Text(
-                modifier = Modifier
-                    .padding(1.dp)
-                    .align(Alignment.Start),
-                text = "وزن",
-                style = MaterialTheme.typography.bodySmall,
-                color = CustomColors.bitterDarkPurple
-            )
-            generalReceipt.confectioneryOrderWeight?.let {
                 Text(
                     modifier = Modifier
                         .padding(1.dp)

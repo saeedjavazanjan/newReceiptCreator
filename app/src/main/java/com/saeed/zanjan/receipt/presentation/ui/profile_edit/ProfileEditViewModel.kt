@@ -7,11 +7,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bumptech.glide.load.engine.executor.GlideExecutor.UncaughtThrowableStrategy.LOG
+import com.saeed.zanjan.receipt.domain.models.GeneralReceipt
 import com.saeed.zanjan.receipt.domain.models.ProfileData
 import com.saeed.zanjan.receipt.interactor.UserRegistration
 import com.saeed.zanjan.receipt.network.model.LoginResponse
 import com.saeed.zanjan.receipt.utils.ConnectivityManager
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
@@ -31,6 +35,26 @@ class ProfileEditViewModel
     val dataSaveStatus = mutableStateOf(false)
     val dataUpdated= mutableStateOf(false)
 
+
+ /*   private val _companyName = MutableStateFlow("")
+    val companyName: StateFlow<String> = _companyName.asStateFlow()
+
+    private val _companyPhone = MutableStateFlow("")
+    val companyPhone: StateFlow<String> = _companyPhone.asStateFlow()
+
+    private val _companyAddress = MutableStateFlow("")
+    val companyAddress: StateFlow<String> = _companyAddress.asStateFlow()
+
+    private val _companyLink = MutableStateFlow("")
+    val companyLink: StateFlow<String> = _companyLink.asStateFlow()
+
+    private val _companyRules = MutableStateFlow("")
+    val companyRules: StateFlow<String> = _companyRules.asStateFlow()
+
+    private val _jobType = MutableStateFlow("")
+    val jobType: StateFlow<String> = _jobType.asStateFlow()
+    */
+
     val avatar= mutableStateOf("")
     val companyName= mutableStateOf("")
     val companyPhone= mutableStateOf("")
@@ -47,7 +71,6 @@ init {
     fun getDataFromSharedPreferences(){
         avatar.value=sharedPreferences.getString("AVATAR_URI","")!!
         companyName.value=sharedPreferences.getString("COMPANY","")!!
-        // due to the first version company phone key is channel link and not changed
         companyPhone.value=sharedPreferences.getString("COMPANY_PHONE","")!!
         companyAddress.value=sharedPreferences.getString("ADDRESS","")!!
         companyLink.value=sharedPreferences.getString("CHANNEL_LINK","")!!

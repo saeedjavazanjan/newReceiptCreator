@@ -31,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.core.content.ContextCompat
 import com.saeed.zanjan.receipt.ui.theme.CustomColors
 
@@ -64,7 +65,12 @@ fun SendSmsDialog(
 
 
 
-    Dialog(onDismissRequest =  onDismiss ) {
+    Dialog(onDismissRequest = {
+       DialogProperties(
+            dismissOnBackPress = false,
+            dismissOnClickOutside = false
+        )
+    } ) {
         Surface(
             modifier = Modifier.widthIn(max = 400.dp),
             shape = RoundedCornerShape(8.dp)

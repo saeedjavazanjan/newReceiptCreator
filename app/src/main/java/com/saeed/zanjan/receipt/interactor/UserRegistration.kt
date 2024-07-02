@@ -42,6 +42,9 @@ class UserRegistration(
                 if (response.isSuccessful){
                     emit(DataState.success(response.body()))
 
+                }else if (response.code()==429){
+                    emit(DataState.error("خظا!! بعد از چند دقیقه مجددا تلاش کنید"))
+
                 }
                 else {
 
@@ -81,7 +84,10 @@ class UserRegistration(
                 val response =retrofitService.login(otpDataDtoMapper.mapFromDomainModel(otpData))
                 if (response.isSuccessful)
                     emit(DataState.success(response.body()))
-                else {
+                else if (response.code()==429){
+                    emit(DataState.error("خطا!! بعد از چند دقیقه مجددا تلاش کنید"))
+
+                }  else {
 
                     try {
                         val errMsg = response.errorBody()?.string()?.let {
@@ -197,7 +203,6 @@ class UserRegistration(
     }
 
 
-//todo currect token
     fun updateUserData(
         isNetworkAvailable: Boolean,
         profileData: ProfileData
