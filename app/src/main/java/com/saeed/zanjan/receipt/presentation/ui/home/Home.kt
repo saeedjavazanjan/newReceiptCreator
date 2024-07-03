@@ -2,7 +2,9 @@ package com.saeed.zanjan.receipt.presentation.ui.home
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivityResultRegistryOwner
@@ -61,6 +63,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import com.saeed.zanjan.receipt.R
 import com.saeed.zanjan.receipt.domain.models.GeneralReceipt
+import com.saeed.zanjan.receipt.presentation.components.AboutUsDialog
 import com.saeed.zanjan.receipt.presentation.components.AddReceiptCard
 import com.saeed.zanjan.receipt.presentation.components.CustomAcceptDialog
 import com.saeed.zanjan.receipt.presentation.components.HomeTopBar
@@ -147,7 +150,6 @@ fun Home(
             premiumIcon = painterResource(id = R.drawable.star)
 
         ),
-        //TODO dilog for save location
         NavigationItem(
             title = "دریافت خروجی Excel",
             icon = painterResource(id = R.drawable.excel),
@@ -392,14 +394,20 @@ fun Home(
                 }
                 
                 if(openAboutUsDialog){
-                    
-                    TextShowDialog(onDismiss = {
-                                               openAboutUsDialog=false
-                                               },
-                        text = stringResource(id = R.string.about_us),
-                        modifier = Modifier.fillMaxWidth()
-
+                    AboutUsDialog(
+                        onDismiss = {  openAboutUsDialog=false },
+                        description = stringResource(id = R.string.about_us),
+                        telegramLink = stringResource(id = R.string.telegram) ,
+                        gmail =  stringResource(id = R.string.gmail),
+                        intentToGmail = {gmail->
+                                   viewModel.goToGmail(context,gmail)
+                        },
+                        intentToTelegram = {tLink->
+                          viewModel.goToTelegram(context,tLink)
+                        },
+                        modifier =Modifier.fillMaxWidth()
                     )
+
                     
                 }
                 

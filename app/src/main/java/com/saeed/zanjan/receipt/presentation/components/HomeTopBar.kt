@@ -175,7 +175,10 @@ fun HomeTopBar(
                             }
 
                         },
-                        //  label = { Text("جستجو") },
+                          label = { Text("جستجوی نام،تلفن،شماره رسیدو..",
+                              style = MaterialTheme.typography.labelSmall,
+                              color = CustomColors.lightBlue
+                          ) },
                         // isError = (phone.isEmpty() || phone.length < 11) && sendOtpClicked,
 
                         singleLine = true,

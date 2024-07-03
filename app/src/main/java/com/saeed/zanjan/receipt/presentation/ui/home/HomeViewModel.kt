@@ -19,6 +19,7 @@ import com.saeed.zanjan.receipt.bazar.UserPurchaseInfo
 import com.saeed.zanjan.receipt.interactor.ExportExcelFile
 import com.saeed.zanjan.receipt.interactor.ListOfReceipts
 import com.saeed.zanjan.receipt.interactor.RequestPersonalPanel
+import com.saeed.zanjan.receipt.utils.ConnectivityManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import ir.cafebazaar.poolakey.Connection
 import ir.cafebazaar.poolakey.Payment
@@ -39,8 +40,10 @@ class HomeViewModel
     private val lisOfReceipts: ListOfReceipts,
     private val backup: Backup,
     private val exportExcelFile: ExportExcelFile,
-    private val requestPersonalPanel: RequestPersonalPanel
-) : ViewModel() {
+    private val requestPersonalPanel: RequestPersonalPanel,
+    private val connectivityManager: ConnectivityManager,
+
+    ) : ViewModel() {
 
 
     val receiptCategory = mutableStateOf(-1)
@@ -147,14 +150,29 @@ class HomeViewModel
         context.startActivity(intent)
     }
 
-    //TODO storage permissin
+
+    fun goToTelegram(context:Context,url:String){
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.data = Uri.parse(url)
+        context.startActivity(intent)
+    }
+    fun goToGmail(context:Context,recipientEmail:String){
+        val intent = Intent(Intent.ACTION_SENDTO).apply {
+            data = Uri.parse("mailto:")
+            putExtra(Intent.EXTRA_EMAIL, arrayOf(recipientEmail))
+        }
+        context.startActivity(intent)
+
+    }
     fun uploadBackUpOfDatabase(snackbarHostState: SnackbarHostState) {
-        backup.backupDb().onEach { dataState ->
+        backup.backupDb(
+            isNetworkAvailable = connectivityManager.isNetworkAvailable.value
+        ).onEach { dataState ->
             dataState.loading.let {
                 loading.value = it
             }
             dataState.data?.let {
-                snackbarHostState.showSnackbar("done")
+                snackbarHostState.showSnackbar(it)
             }
             dataState.error?.let {
                 snackbarHostState.showSnackbar(it)
@@ -164,7 +182,6 @@ class HomeViewModel
 
     }
 
-    //TODO storage permissin
     fun exportExcel(snackbarHostState: SnackbarHostState) {
         exportExcelFile.databaseExport(receiptCategory.value).onEach { dataState ->
             dataState.loading.let {

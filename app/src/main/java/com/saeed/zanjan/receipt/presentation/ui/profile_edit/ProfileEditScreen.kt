@@ -40,6 +40,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -89,12 +90,14 @@ fun ProfileEditScreen(
     var hasStoragePermission by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
-        viewModel.getDataFromSharedPreferences()
         hasStoragePermission = ContextCompat.checkSelfPermission(
             context, Manifest.permission.WRITE_EXTERNAL_STORAGE,
 
             ) == PackageManager.PERMISSION_GRANTED
     }
+
+    viewModel.getDataFromSharedPreferences()
+
 
     val requestStoragePermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
@@ -108,6 +111,13 @@ fun ProfileEditScreen(
     var openExitDialog by remember { mutableStateOf(false) }
     var openJobTypeChangedDialog by remember { mutableStateOf(false) }
 
+  // val imageUri by viewModel.avatar.collectAsState()
+  //  val companyName by viewModel.companyName.collectAsState()
+  //  val companyPhone by viewModel.companyPhone.collectAsState()
+ //   val companyAddress by viewModel.companyAddress.collectAsState()
+  //  val companyLink by viewModel.companyLink.collectAsState()
+ //   val jobType by viewModel.jobType.collectAsState()
+ //   val companyRules by viewModel.companyRules.collectAsState()
 
     var imageUri by remember { mutableStateOf<Uri?>(viewModel.avatar.value.toUri()) }
     var companyName by remember { mutableStateOf(viewModel.companyName.value) }
@@ -116,6 +126,7 @@ fun ProfileEditScreen(
     var companyLink by remember { mutableStateOf(viewModel.companyLink.value) }
     var jobType by remember { mutableStateOf(viewModel.jobType.value) }
     var companyRules by remember { mutableStateOf(viewModel.companyRules.value) }
+
     val jobTypes = listOf(
         "تعمیرات موبایل",
         "تعمیرات کامپیوتر",
@@ -209,6 +220,15 @@ fun ProfileEditScreen(
             if (openJobTypeChangedDialog) {
                 TextShowDialog(
                     onDismiss = {
+
+                                openJobTypeChangedDialog=false
+
+                    },
+
+                    text = "در صورت تغییر عنوان شغلی لازم است برنامه را بسته و مجددا اجرا کنید.",
+                   modifier = Modifier
+                        .fillMaxWidth(),
+                    buttonClicked = {
                         coroutineScope.launch {
                             val profileData =
                                 ProfileData(
@@ -226,16 +246,10 @@ fun ProfileEditScreen(
                                 snackbarHostState = snackbarHostState
                             )
                         }
-                            openJobTypeChangedDialog = false
-                            (context as? ComponentActivity)?.finish()
+                        openJobTypeChangedDialog = false
+                        (context as? ComponentActivity)?.finish()
 
-
-
-                    },
-
-                    text = "در صورت تغییر عنوان شغلی لازم است برنامه را بسته و مجددا اجرا کنید.",
-                   modifier = Modifier
-                        .fillMaxWidth()
+                    }
                 )
 
             }
@@ -328,6 +342,7 @@ fun ProfileEditScreen(
                             value = companyName,
                             shape = RoundedCornerShape(30.dp),
                             onValueChange = { name ->
+                                if(name.length<20)
                                 companyName = name
                             },
                             leadingIcon = {
@@ -363,6 +378,8 @@ fun ProfileEditScreen(
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
                             value = companyPhone,
                             onValueChange = { phone ->
+                                if(phone.length<12)
+
                                 companyPhone = phone
                             },
                             leadingIcon = {
@@ -396,6 +413,7 @@ fun ProfileEditScreen(
                             singleLine = true,
                             shape = RoundedCornerShape(30.dp),
                             onValueChange = { address ->
+                                if(address.length<500)
                                 companyAddress = address
                             },
                             leadingIcon = {
@@ -429,6 +447,7 @@ fun ProfileEditScreen(
                             singleLine = true,
                             shape = RoundedCornerShape(30.dp),
                             onValueChange = { link ->
+                                if(link.length<100)
                                 companyLink = link
                             },
                             leadingIcon = {
@@ -481,10 +500,11 @@ fun ProfileEditScreen(
 
                                 },
                             singleLine = false,
-                            maxLines = 5,
+                            maxLines = 6,
                             value = companyRules,
                             shape = RoundedCornerShape(30.dp),
                             onValueChange = { rules ->
+                                if(rules.length<101)
                                 companyRules = rules
                             },
                             leadingIcon = {

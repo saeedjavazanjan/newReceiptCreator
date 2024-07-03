@@ -1,6 +1,8 @@
 package com.saeed.zanjan.receipt.presentation.ui.registration
 
 import android.annotation.SuppressLint
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -37,6 +39,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -57,7 +60,10 @@ fun RegistrationScreen(
     viewModel: RegistrationViewModel,
     navigateToHome: () -> Unit
 ) {
-
+    val snackbarHostState = remember { SnackbarHostState() }
+    val coroutineScope= rememberCoroutineScope()
+    val context= LocalContext.current
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     val loading = viewModel.loading.value
     val registerRequestState = viewModel.registerRequestState.value
@@ -241,6 +247,8 @@ fun RegistrationScreen(
                         onClick = {
                             // Sign In button clicked
                             sendOtpClicked = true
+                            keyboardController!!.hide()
+
                             if (phone.isEmpty() || phone.length < 11 || phone.length > 11) {
                                 coroutineScope.launch {
                                     snackbarHostState.showSnackbar("شماره تلفن را به درستی وارد کنید")
@@ -315,7 +323,7 @@ fun RegistrationScreen(
                     OutlinedTextField(
                         value = phone,
                         onValueChange = { phoneNumber ->
-                            if (phoneNumber.length <= 11)
+                            if (phoneNumber.length <= 12)
                                 phone = phoneNumber
                         },
                         label = { Text("شماره تلفن") },
@@ -335,8 +343,8 @@ fun RegistrationScreen(
                     OutlinedTextField(
                         value = companyLink,
                         onValueChange = {
-                            if (it.length <= 20)
-                                companyLink = it
+                            if (it.length <= 100)
+                            companyLink = it
 
                         },
                         label = { Text("لینک ارتباطی") },
@@ -387,7 +395,7 @@ fun RegistrationScreen(
                         enabled = !countdownEnabled,
                         onClick = {
                             sendOtpClicked = true
-
+                            keyboardController!!.hide()
                             if (phone.isEmpty() || phone.length < 11) {
                                 coroutineScope.launch {
                                     snackbarHostState.showSnackbar("شماره تلفن را به درستی وارد کنید")
@@ -427,6 +435,19 @@ fun RegistrationScreen(
                         )
                     }
                 }
+            }
+        }
+    }
+    var lastBackPressedTime by remember { mutableStateOf(0L) }
+
+    BackHandler {
+        val currentTime = System.currentTimeMillis()
+        if (currentTime - lastBackPressedTime < 2000) {
+            (context as? ComponentActivity)?.finish()
+        } else {
+            lastBackPressedTime = currentTime
+            coroutineScope.launch {
+                snackbarHostState.showSnackbar("برای خروج مجددا کلیک کنید")
             }
         }
     }

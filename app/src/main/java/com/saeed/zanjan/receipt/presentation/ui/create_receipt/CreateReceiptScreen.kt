@@ -650,7 +650,7 @@ fun CreateReceiptScreen(
                                     photoNumber = photoNumber!!,
                                     photoSize = photoSize!!,
                                     photoNumberSetValue = {
-                                        phoneNumber = it
+                                        photoNumber = it
                                     },
                                     photoSizeSetValue = {
                                         photoSize = it

@@ -15,7 +15,6 @@ class CustomerEntityMapper:DomainMapper<CustomerEntity,Customer> {
     }
 
 
-    //TODO check we don't use this function
     override fun mapFromDomainModel(domainModel: Customer): CustomerEntity {
         return CustomerEntity(
             domainModel.id,
@@ -36,8 +35,14 @@ class CustomerEntityMapper:DomainMapper<CustomerEntity,Customer> {
     }
 
     fun calculateDept(totalAmount: String?, payedAmount: String?): Int {
-        val totalAmountInteger = totalAmount!!.replace(",", "").toInt()
-        val payedAmountInteger = payedAmount!!.replace(",", "").toInt()
-        return totalAmountInteger - payedAmountInteger
+
+        if(totalAmount=="***"||payedAmount=="***"){
+            return 0
+        }else{
+            val totalAmountInteger = totalAmount!!.replace(",", "").toInt()
+            val payedAmountInteger = payedAmount!!.replace(",", "").toInt()
+            return totalAmountInteger - payedAmountInteger
+        }
+
     }
 }

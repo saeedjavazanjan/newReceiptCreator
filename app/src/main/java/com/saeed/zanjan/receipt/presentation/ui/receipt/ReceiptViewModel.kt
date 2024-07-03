@@ -15,6 +15,7 @@ import com.saeed.zanjan.receipt.interactor.ReceiptQueryInDatabase
 import com.saeed.zanjan.receipt.interactor.SendSms
 import com.saeed.zanjan.receipt.interactor.ShareReceipt
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -171,7 +172,7 @@ class ReceiptViewModel
                 loading.value = it
             }
             dataState.data?.let {
-                snackbarHostState.showSnackbar(it, duration = SnackbarDuration.Short)
+            snackbarHostState.showSnackbar(it, duration = SnackbarDuration.Short)
                 deleteState.value = true
             }
             dataState.error?.let {

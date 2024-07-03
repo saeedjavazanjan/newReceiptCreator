@@ -161,19 +161,21 @@ constructor(
     }
 
     fun downloadDb(snackbarHostState: SnackbarHostState){
-        backup.downloadDatabase().onEach { dataState ->
+        backup.downloadDatabase(
+            isNetworkAvailable = connectivityManager.isNetworkAvailable.value,
+
+            ).onEach { dataState ->
 
             dataState.loading.let {
                 loading.value=it
             }
             dataState.data?.let{
-              //  successLogin.value=true
                 fillCustomersTable(snackbarHostState)
+                successLogin.value=true
 
             }
             dataState.error?.let {
-              //  successLogin.value=true
-//TODO error of backup
+                successLogin.value=true
                 snackbarHostState.showSnackbar(it)
 
             }
@@ -190,7 +192,6 @@ constructor(
                 }
                 dataState.data?.let {
                     if(it){
-                        successLogin.value=true
                         databaseSaved.value=true
                     }
 
