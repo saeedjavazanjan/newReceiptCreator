@@ -24,7 +24,7 @@ import com.saeed.zanjan.receipt.cash.model.TailoringEntity
         ConfectioneryEntity::class,
         OtherJobsEntity::class,
         CustomerEntity::class],
-    version = 3
+    version = 2
 )
 abstract class AppDatabase : RoomDatabase() {
 
@@ -36,6 +36,22 @@ abstract class AppDatabase : RoomDatabase() {
         val DATABASE_NAME: String = "receipt.sqlite"
         val MIGRATION_1_2 = object : Migration(1, 2) {
             override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(
+                    """
+                    CREATE TABLE IF NOT EXISTS `customer` (
+                        `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                        `name` TEXT,
+                        `phone` TEXT,
+                        `prepayment` TEXT,
+                        `cost` TEXT
+                    )
+                """.trimIndent()
+                )
+
+
+
+
+
                 //repairs
                 // Create the new table
                 database.execSQL(
@@ -62,6 +78,13 @@ abstract class AppDatabase : RoomDatabase() {
                     """
                     INSERT INTO `repairs_new` (`id`, `status`, `name`, `phone`, `loanerName`, `loanerProblems`, `Risks`, `deliveryTime`, `receiptTime`, `accessories`, `cost`, `prepayment`)
                     SELECT `id`, `status`, `name`, `phone`, `loanerName`, `loanerProblems`, `Risks`, `deliveryTime`, `receiptTime`, `accessories`, `cost`, `prepayment`
+                    FROM `repairs`
+                """.trimIndent()
+                )
+                database.execSQL(
+                    """
+                    INSERT INTO `customer` (`id`, `name`, `phone`, `prepayment`, `cost`)
+                    SELECT `id`, `name`, `phone`, `prepayment`, `cost`
                     FROM `repairs`
                 """.trimIndent()
                 )

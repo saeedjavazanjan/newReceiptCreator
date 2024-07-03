@@ -129,9 +129,10 @@ class SendSms(
     ):Int{
         try{
             getDataFromSharedPreferences()
-        val massageText ="مجموعا مبلغ  " +payedAmount +" تومان" +" توسط " +generalReceipt.name+ " به " +companyName.value+" پرداخت شده است."+
+        val massageText ="مجموعا مبلغ  " +payedAmount +" تومان" +" توسط "+
+                generalReceipt.name+ " به " +companyName.value+" بابت رسید شماره "+
+                generalReceipt.id+" پرداخت شده است."+
                     System.getProperty("line.separator") +
-                    "شماره رسید:" + generalReceipt.id+ System.getProperty("line.separator") +
                     link.value
             val parts = smsManager.divideMessage(massageText)
             smsManager.sendMultipartTextMessage(

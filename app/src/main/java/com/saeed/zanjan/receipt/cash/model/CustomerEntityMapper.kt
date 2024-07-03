@@ -35,8 +35,14 @@ class CustomerEntityMapper:DomainMapper<CustomerEntity,Customer> {
     }
 
     fun calculateDept(totalAmount: String?, payedAmount: String?): Int {
-        val totalAmountInteger = totalAmount!!.replace(",", "").toInt()
-        val payedAmountInteger = payedAmount!!.replace(",", "").toInt()
-        return totalAmountInteger - payedAmountInteger
+
+        if(totalAmount=="***"||payedAmount=="***"){
+            return 0
+        }else{
+            val totalAmountInteger = totalAmount!!.replace(",", "").toInt()
+            val payedAmountInteger = payedAmount!!.replace(",", "").toInt()
+            return totalAmountInteger - payedAmountInteger
+        }
+
     }
 }
