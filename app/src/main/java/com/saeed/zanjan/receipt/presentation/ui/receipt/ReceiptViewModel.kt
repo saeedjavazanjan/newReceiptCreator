@@ -1,13 +1,25 @@
 package com.saeed.zanjan.receipt.presentation.ui.receipt
 
+import android.R.attr.textColor
+import android.R.attr.textSize
 import android.content.Context
 import android.content.SharedPreferences
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Paint
 import android.graphics.Picture
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.dantsu.escposprinter.EscPosCharsetEncoding
+import com.dantsu.escposprinter.EscPosPrinter
+import com.dantsu.escposprinter.EscPosPrinterCommands
+import com.dantsu.escposprinter.connection.bluetooth.BluetoothPrintersConnections
+import com.dantsu.escposprinter.exceptions.EscPosConnectionException
+import com.dantsu.escposprinter.textparser.PrinterTextParserImg
+import com.saeed.zanjan.receipt.R
 import com.saeed.zanjan.receipt.domain.models.GeneralReceipt
 import com.saeed.zanjan.receipt.interactor.BlueToothConnectionClass
 import com.saeed.zanjan.receipt.interactor.ListOfReceipts
@@ -15,11 +27,12 @@ import com.saeed.zanjan.receipt.interactor.ReceiptQueryInDatabase
 import com.saeed.zanjan.receipt.interactor.SendSms
 import com.saeed.zanjan.receipt.interactor.ShareReceipt
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import java.io.ByteArrayOutputStream
 import javax.inject.Inject
+
 
 @HiltViewModel
 class ReceiptViewModel
@@ -39,10 +52,10 @@ class ReceiptViewModel
     val rules= mutableStateOf("")
     fun getDataFromSharedPreferences(){
         receiptCategory.value = sharedPreferences.getInt("JOB_SUBJECT",-1)
-        avatar.value=sharedPreferences.getString("AVATAR_URI","")!!
+        avatar.value=sharedPreferences.getString("LOGO_PATH","")!!
         companyName.value=sharedPreferences.getString("COMPANY","")!!
         companyPhone.value=sharedPreferences.getString("COMPANY_PHONE","")!!
-        rules.value=sharedPreferences.getString("COMPANY_RULES","")!!
+        rules.value=sharedPreferences.getString("RULES","")!!
     }
 
 
@@ -185,23 +198,6 @@ class ReceiptViewModel
     }
 
 
-    fun print(context: Context, snackbarHostState: SnackbarHostState) {
-        blueToothConnectionClass.intentPrint(currentReceipt.value, context = context)
-            .onEach { dataState ->
-
-                dataState.loading.let {
-                    loading.value = it
-                }
-                dataState.data?.let {
-                    snackbarHostState.showSnackbar(it)
-
-                }
-                dataState.error?.let {
-                    snackbarHostState.showSnackbar(it)
-                }
-
-            }.launchIn(viewModelScope)
-    }
 
     fun generateAndSendOtpPassword(snackbarHostState: SnackbarHostState) {
 
@@ -242,6 +238,47 @@ class ReceiptViewModel
 
         deleteState.value = false
     }
+    fun print(context: Context, snackbarHostState: SnackbarHostState) {
+
+
+           blueToothConnectionClass.intentPrint(currentReceipt.value, context = context)
+               .onEach { dataState ->
+
+                   dataState.loading.let {
+                       loading.value = it
+                   }
+                   dataState.data?.let {
+                       snackbarHostState.showSnackbar(it)
+
+                   }
+                   dataState.error?.let {
+                       snackbarHostState.showSnackbar(it)
+                   }
+
+               }.launchIn(viewModelScope)
+    }
+
+
+  /*  fun printReceipt(context:Context,picture: Picture,snackbarHostState: SnackbarHostState){
+        blueToothConnectionClass.intentPrint(picture,currentReceipt.value, context = context)
+            .onEach { dataState ->
+
+                dataState.loading.let {
+                    loading.value = it
+                }
+                dataState.data?.let {
+                    snackbarHostState.showSnackbar(it)
+
+                }
+                dataState.error?.let {
+                    snackbarHostState.showSnackbar(it)
+                }
+
+            }.launchIn(viewModelScope)
+
+
+
+    }*/
 
 
 }

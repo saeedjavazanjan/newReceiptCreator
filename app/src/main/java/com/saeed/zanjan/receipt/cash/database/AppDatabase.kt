@@ -123,6 +123,13 @@ abstract class AppDatabase : RoomDatabase() {
                     FROM `tailoring`
                 """.trimIndent()
                 )
+                database.execSQL(
+                    """
+                    INSERT INTO `customer` (`id`, `name`, `phone`, `prepayment`, `cost`)
+                    SELECT `id`, `name`, `phone`, `prepayment`, `cost`
+                    FROM `tailoring`
+                """.trimIndent()
+                )
 
                 // Remove the old table
                 database.execSQL("DROP TABLE `tailoring`")
@@ -159,7 +166,13 @@ abstract class AppDatabase : RoomDatabase() {
                     FROM `jewelry`
                 """.trimIndent()
                 )
-
+                database.execSQL(
+                    """
+                    INSERT INTO `customer` (`id`, `name`, `phone`, `prepayment`, `cost`)
+                    SELECT `id`, `name`, `phone`, `prepayment`, `cost`
+                    FROM `jewelry`
+                """.trimIndent()
+                )
                 // Remove the old table
                 database.execSQL("DROP TABLE `jewelry`")
 
@@ -194,7 +207,13 @@ abstract class AppDatabase : RoomDatabase() {
                     FROM `photography`
                 """.trimIndent()
                 )
-
+                database.execSQL(
+                    """
+                    INSERT INTO `customer` (`id`, `name`, `phone`, `prepayment`, `cost`)
+                    SELECT `id`, `name`, `phone`, `prepayment`, `cost`
+                    FROM `photography`
+                """.trimIndent()
+                )
                 // Remove the old table
                 database.execSQL("DROP TABLE `photography`")
 
@@ -229,7 +248,13 @@ abstract class AppDatabase : RoomDatabase() {
                     FROM `laundry`
                 """.trimIndent()
                 )
-
+                database.execSQL(
+                    """
+                    INSERT INTO `customer` (`id`, `name`, `phone`, `prepayment`, `cost`)
+                    SELECT `id`, `name`, `phone`, `prepayment`, `cost`
+                    FROM `laundry`
+                """.trimIndent()
+                )
                 // Remove the old table
                 database.execSQL("DROP TABLE `laundry`")
 
@@ -265,7 +290,13 @@ abstract class AppDatabase : RoomDatabase() {
                     FROM `confectionery`
                 """.trimIndent()
                 )
-
+                database.execSQL(
+                    """
+                    INSERT INTO `customer` (`id`, `name`, `phone`, `prepayment`, `cost`)
+                    SELECT `id`, `name`, `phone`, `prepayment`, `cost`
+                    FROM `confectionery`
+                """.trimIndent()
+                )
                 // Remove the old table
                 database.execSQL("DROP TABLE `confectionery`")
 
@@ -300,7 +331,13 @@ abstract class AppDatabase : RoomDatabase() {
                     FROM `otherJobs`
                 """.trimIndent()
                 )
-
+                database.execSQL(
+                    """
+                    INSERT INTO `customer` (`id`, `name`, `phone`, `prepayment`, `cost`)
+                    SELECT `id`, `name`, `phone`, `prepayment`, `cost`
+                    FROM `otherJobs`
+                """.trimIndent()
+                )
                 // Remove the old table
                 database.execSQL("DROP TABLE `otherJobs`")
 

@@ -70,7 +70,7 @@ class HomeViewModel
 
     fun getDataFromSharedPreferences(){
          receiptCategory.value = sharedPreferences.getInt("JOB_SUBJECT",-1)
-         avatar.value=sharedPreferences.getString("AVATAR_URI","")!!
+         avatar.value=sharedPreferences.getString("LOGO_PATH","")!!
          companyName.value=sharedPreferences.getString("COMPANY","")!!
     }
 

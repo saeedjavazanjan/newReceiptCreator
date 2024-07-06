@@ -381,16 +381,11 @@ fun Home(
                                     }else{
                                         snackbarHostState.showSnackbar("ارتباط شما با برنامه بازار برقرار نیست")
                                     }
-
-
                                 }
-
                             },
                             leftTime = leftTime,
                             context
                         )
-
-
                 }
                 
                 if(openAboutUsDialog){

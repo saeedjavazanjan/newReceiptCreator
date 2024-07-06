@@ -69,12 +69,12 @@ init {
 
 
     fun getDataFromSharedPreferences(){
-        avatar.value=sharedPreferences.getString("AVATAR_URI","")!!
+        avatar.value=sharedPreferences.getString("LOGO_PATH","")!!
         companyName.value=sharedPreferences.getString("COMPANY","")!!
         companyPhone.value=sharedPreferences.getString("COMPANY_PHONE","")!!
         companyAddress.value=sharedPreferences.getString("ADDRESS","")!!
         companyLink.value=sharedPreferences.getString("CHANNEL_LINK","")!!
-        companyRules.value=sharedPreferences.getString("COMPANY_RULES","")!!
+        companyRules.value=sharedPreferences.getString("RULES","")!!
         jobType.value=
             when( sharedPreferences.getInt("JOB_SUBJECT",0)){
                 0->{ "تعمیرات موبایل"}
@@ -97,12 +97,12 @@ init {
         snackbarHostState: SnackbarHostState
     ) {
         try {
-            editor.putString("AVATAR_URI", profileData.avatar )
+            editor.putString("LOGO_PATH", profileData.avatar )
                 .putString("COMPANY", profileData.companyName )
                 .putString("ADDRESS",profileData.companyAddress )
                 .putString("COMPANY_PHONE", profileData.companyPhone )
                 .putString("CHANNEL_LINK", profileData.companyLink)
-                .putString("COMPANY_RULES", profileData.companyRules)
+                .putString("RULES", profileData.companyRules)
                 .putInt("JOB_SUBJECT", getIdOfJob(profileData.jobType))
                 .commit()
             dataSaveStatus.value=true

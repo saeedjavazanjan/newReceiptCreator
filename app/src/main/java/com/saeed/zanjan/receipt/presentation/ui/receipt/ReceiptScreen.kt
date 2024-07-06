@@ -87,6 +87,7 @@ fun ReceiptScreen(
     val context = LocalContext.current
     val view = LocalView.current
     val picture = remember { Picture() }
+    val printPicture = remember { Picture() }
 
     var currentReceipt = viewModel.currentReceipt
 
@@ -234,6 +235,7 @@ fun ReceiptScreen(
 
 
     }
+
 
 
 
@@ -494,7 +496,38 @@ fun ReceiptScreen(
                     code = viewModel.otpCode.value
                 )
             }
+            Column(
+                modifier = Modifier
+                    .background(CustomColors.lightBlue)
+                    .fillMaxSize()
+                    .padding(start = 10.dp, end = 10.dp)
+                    .drawWithCache {
+                        // Example that shows how to redirect rendering to an Android Picture and then
+                        // draw the picture into the original destination
+                        val width = this.size.width.toInt()
+                        val height = this.size.height.toInt()
+                        onDrawWithContent {
+                            val pictureCanvas =
+                                androidx.compose.ui.graphics.Canvas(
+                                    printPicture.beginRecording(
+                                        width,
+                                        height
+                                    )
+                                )
+                            draw(this, this.layoutDirection, pictureCanvas, this.size) {
+                                this@onDrawWithContent.drawContent()
+                            }
+                            printPicture.endRecording()
 
+                            drawIntoCanvas { canvas -> canvas.nativeCanvas.drawPicture(picture) }
+                        }
+                    }
+            ) {
+               ReceiptCardForPrint(
+               generalReceipt = currentReceipt.value
+               )
+
+            }
 
             Column(
                 modifier = Modifier

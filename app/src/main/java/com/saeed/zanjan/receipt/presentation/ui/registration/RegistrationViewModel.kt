@@ -27,6 +27,8 @@ constructor(
     private val userRegistration: UserRegistration,
     private val connectivityManager: ConnectivityManager,
     private val sharedPreferences: SharedPreferences,
+    private val editor: SharedPreferences.Editor,
+
     private val backup: Backup,
 
     ):ViewModel() {
@@ -51,12 +53,12 @@ constructor(
         getDataFromSharedPreferences()
     }
     fun getDataFromSharedPreferences(){
-        avatar.value=sharedPreferences.getString("AVATAR_URI","")!!
+        avatar.value=sharedPreferences.getString("LOGO_PATH","")!!
         companyName.value=sharedPreferences.getString("COMPANY","")!!
         phone.value=sharedPreferences.getString("PHONE","")!!
         companyAddress.value=sharedPreferences.getString("ADDRESS","")!!
         companyLink.value=sharedPreferences.getString("CHANNEL_LINK","")!!
-        companyRules.value=sharedPreferences.getString("COMPANY_RULES","")!!
+        companyRules.value=sharedPreferences.getString("RULES","")!!
         jobType.value=
             when( sharedPreferences.getInt("JOB_SUBJECT",0)){
                 0->{ "تعمیرات موبایل"}

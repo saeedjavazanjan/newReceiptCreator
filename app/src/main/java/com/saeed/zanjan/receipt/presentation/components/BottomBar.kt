@@ -107,7 +107,7 @@ fun BottomBar(
                         contentDescription = null
                     )
                 }
-                Button(
+               /* Button(
                     contentPadding = PaddingValues(0.dp),
                     modifier = Modifier
                         .clip(CircleShape)
@@ -126,7 +126,7 @@ fun BottomBar(
                         tint = CustomColors.darkPurple,
                         contentDescription = null
                     )
-                }
+                }*/
                 Button(
                     contentPadding = PaddingValues(0.dp),
                     modifier = Modifier

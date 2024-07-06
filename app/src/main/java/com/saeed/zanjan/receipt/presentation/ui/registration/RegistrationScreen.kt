@@ -270,7 +270,7 @@ fun RegistrationScreen(
                         },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(56.dp),
+                            .padding(bottom = 16.dp, start = 16.dp, end = 16.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = CustomColors.darkBlue
                         )

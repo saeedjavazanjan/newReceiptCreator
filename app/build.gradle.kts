@@ -127,5 +127,8 @@ dependencies {
     //animation
     implementation ("androidx.compose.animation:animation:1.3.0")
 
+    //termal printer
+    implementation ("com.github.DantSu:ESCPOS-ThermalPrinter-Android:3.3.0")
+
 
 }
