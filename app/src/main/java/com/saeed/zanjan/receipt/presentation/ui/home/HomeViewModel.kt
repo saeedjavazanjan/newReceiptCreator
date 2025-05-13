@@ -268,6 +268,7 @@ class HomeViewModel
             purchaseSucceed { purchaseEntity ->
                 Toast.makeText(context, "خرید با موفقیت انجام شد", Toast.LENGTH_SHORT).show()
                 purchaseBuyState.value = true
+
             }
             purchaseCanceled {
                 Toast.makeText(context, "خرید لغو شد", Toast.LENGTH_SHORT).show()

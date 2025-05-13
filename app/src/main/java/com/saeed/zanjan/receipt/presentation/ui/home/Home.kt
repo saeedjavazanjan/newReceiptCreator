@@ -561,7 +561,7 @@ fun checkSubscribeState(
     return if (leftTime <= 0L && !trialIsAvailable) {
         Log.i("TRIAL","1")
         1
-    }else if (trialIsAvailable) {
+    }else if (trialIsAvailable && leftTime <= 0L) {
         Log.i("TRIAL","2")
         2
     } else {
