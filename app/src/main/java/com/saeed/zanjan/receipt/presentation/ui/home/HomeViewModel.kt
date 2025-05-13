@@ -42,18 +42,16 @@ class HomeViewModel
     private val exportExcelFile: ExportExcelFile,
     private val requestPersonalPanel: RequestPersonalPanel,
     private val connectivityManager: ConnectivityManager,
-
-    ) : ViewModel() {
-
-
+) : ViewModel() {
     val receiptCategory = mutableStateOf(-1)
-    val avatar= mutableStateOf("")
-    val companyName= mutableStateOf("")
+    val avatar = mutableStateOf("")
+    val companyName = mutableStateOf("")
+    val trialIsAvailable = mutableStateOf(false)
     val loading = mutableStateOf(false)
     val receiptList: MutableState<List<GeneralReceipt>> = mutableStateOf(ArrayList())
     val databaseSaved = mutableStateOf(false)
-    val bazarConnectionState= mutableStateOf(false)
-    val purchaseBuyState= mutableStateOf(false)
+    val bazarConnectionState = mutableStateOf(false)
+    val purchaseBuyState = mutableStateOf(false)
 
     //bazar
     val localSecurityCheck = SecurityCheck.Enable(
@@ -63,17 +61,16 @@ class HomeViewModel
         localSecurityCheck = localSecurityCheck
     )
     lateinit var payment: Payment
-    lateinit var paymentConnection:Connection
-    val expireTime= mutableStateOf(0L)
-    var userPurchaseInfo= mutableListOf<UserPurchaseInfo>()
+    lateinit var paymentConnection: Connection
+    val expireTime = mutableStateOf(0L)
+    var userPurchaseInfo = mutableListOf<UserPurchaseInfo>()
 
 
-    fun getDataFromSharedPreferences(){
-         receiptCategory.value = sharedPreferences.getInt("JOB_SUBJECT",-1)
-         avatar.value=sharedPreferences.getString("LOGO_PATH","")!!
-         companyName.value=sharedPreferences.getString("COMPANY","")!!
+    fun getDataFromSharedPreferences() {
+        receiptCategory.value = sharedPreferences.getInt("JOB_SUBJECT", -1)
+        avatar.value = sharedPreferences.getString("LOGO_PATH", "")!!
+        companyName.value = sharedPreferences.getString("COMPANY", "")!!
     }
-
 
 
     fun getListOfReceipts(
@@ -151,12 +148,13 @@ class HomeViewModel
     }
 
 
-    fun goToTelegram(context:Context,url:String){
+    fun goToTelegram(context: Context, url: String) {
         val intent = Intent(Intent.ACTION_VIEW)
         intent.data = Uri.parse(url)
         context.startActivity(intent)
     }
-    fun goToGmail(context:Context,recipientEmail:String){
+
+    fun goToGmail(context: Context, recipientEmail: String) {
         val intent = Intent(Intent.ACTION_SENDTO).apply {
             data = Uri.parse("mailto:")
             putExtra(Intent.EXTRA_EMAIL, arrayOf(recipientEmail))
@@ -164,6 +162,7 @@ class HomeViewModel
         context.startActivity(intent)
 
     }
+
     fun uploadBackUpOfDatabase(snackbarHostState: SnackbarHostState) {
         backup.backupDb(
             isNetworkAvailable = connectivityManager.isNetworkAvailable.value
@@ -199,36 +198,58 @@ class HomeViewModel
     }
 
 
-    fun connectToBazar(context: Context){
+    fun connectToBazar(context: Context) {
         payment = Payment(context = context, config = paymentConfiguration)
-         paymentConnection = payment.connect {
+        paymentConnection = payment.connect {
             connectionSucceed {
-                bazarConnectionState.value=true
+                bazarConnectionState.value = true
                 getUserSubscribes(context)
+                checkTrialSubscribtion(context)
             }
             connectionFailed { throwable ->
-                Toast.makeText(context,throwable.message.toString(), Toast.LENGTH_SHORT).show()
-                bazarConnectionState.value=false
+                Toast.makeText(context, throwable.message.toString(), Toast.LENGTH_SHORT).show()
+                bazarConnectionState.value = false
 
             }
             disconnected {
-                bazarConnectionState.value=false
+                bazarConnectionState.value = false
 
 
             }
         }
 
+    }
 
+    private fun checkTrialSubscribtion(context: Context) {
+        payment.checkTrialSubscription {
+            checkTrialSubscriptionSucceed { it ->
+                if (it.isAvailable) {
+                    trialIsAvailable.value = true
+                    Log.i("TRIAL",it.toString())
+
+                } else {
+                    trialIsAvailable.value = false
+                    Log.i("TRIAL",it.toString())
+
+                }
+
+            }
+
+            checkTrialSubscriptionFailed { throwable ->
+                Toast.makeText(context,"عدم برقراری ارتباط با بازار", Toast.LENGTH_SHORT).show()
+                Log.e("TRIAL", throwable.message.toString())
+            }
+        }
     }
 
     fun buySubscribe(
-        activityResultRegistry:ActivityResultRegistry,
-        productID:String,
-        payload:String,
+        activityResultRegistry: ActivityResultRegistry,
+        productID: String,
+        payload: String,
         context: Context
-    ){
+    ) {
         val purchaseRequest = PurchaseRequest(
-            productId =productID,
+            productId = productID,
             payload = payload
         )
 
@@ -237,83 +258,82 @@ class HomeViewModel
             request = purchaseRequest
         ) {
             purchaseFlowBegan {
-                Toast.makeText(context,"ارتباط با بازار...", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "ارتباط با بازار...", Toast.LENGTH_SHORT).show()
 
             }
             failedToBeginFlow { throwable ->
-                Toast.makeText(context,throwable.message.toString(), Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, throwable.message.toString(), Toast.LENGTH_SHORT).show()
 
             }
             purchaseSucceed { purchaseEntity ->
-                Toast.makeText(context,"خرید با موفقیت انجام شد", Toast.LENGTH_SHORT).show()
-                purchaseBuyState.value=true
+                Toast.makeText(context, "خرید با موفقیت انجام شد", Toast.LENGTH_SHORT).show()
+                purchaseBuyState.value = true
             }
             purchaseCanceled {
-                Toast.makeText(context,"خرید لغو شد", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "خرید لغو شد", Toast.LENGTH_SHORT).show()
             }
             purchaseFailed { throwable ->
-                Toast.makeText(context,throwable.message.toString(), Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, throwable.message.toString(), Toast.LENGTH_SHORT).show()
 
             }
         }
 
     }
-
 
 
     fun getUserSubscribes(context: Context) {
         payment.getSubscribedProducts {
             querySucceed { purchasedProducts ->
 
-                if(purchasedProducts.isNotEmpty()){
+                if (purchasedProducts.isNotEmpty()) {
                     calculateExpireTime(purchasedProducts.last())
 
                 }
 
 
-
-
             }
             queryFailed { throwable ->
-                Toast.makeText(context,throwable.message.toString(), Toast.LENGTH_SHORT).show()
-                Log.i("BAZAR","faild")
+                Toast.makeText(context, throwable.message.toString(), Toast.LENGTH_SHORT).show()
+                Log.i("BAZAR", "faild")
 
             }
         }
     }
 
-    fun calculateExpireTime(purchaseInfo: PurchaseInfo) {
+    private fun calculateExpireTime(purchaseInfo: PurchaseInfo) {
         val currentTime = System.currentTimeMillis()
-             val leftTime =
-                if (purchaseInfo.productId == "1month") {
-                    (purchaseInfo.purchaseTime + 2592000000L - currentTime) / 86400000
-                }else if (purchaseInfo.productId == "3month") {
-                    (purchaseInfo.purchaseTime + 2592000000L * 3 - currentTime) / 86400000
-                } else if (purchaseInfo.productId == "6month") {
-                    (purchaseInfo.purchaseTime + 2592000000L * 6 - currentTime) / 86400000
-                }  else {
-                    (purchaseInfo.purchaseTime + 300000 - currentTime)/1000
-                }
-        if(leftTime>=0){
-            expireTime.value=leftTime
-        }else{
-            expireTime.value=0
+        val leftTime =
+            if (purchaseInfo.productId == "trial_subscription") {
+                (purchaseInfo.purchaseTime + 2592000000L - currentTime) / 86400000
+            }else if (purchaseInfo.productId == "1month") {
+                (purchaseInfo.purchaseTime + 2592000000L - currentTime) / 86400000
+            } else if (purchaseInfo.productId == "3month") {
+                (purchaseInfo.purchaseTime + 2592000000L * 3 - currentTime) / 86400000
+            } else if (purchaseInfo.productId == "6month") {
+                (purchaseInfo.purchaseTime + 2592000000L * 6 - currentTime) / 86400000
+            } else {
+                (purchaseInfo.purchaseTime + 300000 - currentTime) / 1000
+            }
+        if (leftTime >= 0) {
+            expireTime.value = leftTime
+        } else {
+            expireTime.value = 0
         }
     }
 
 
-    fun restartState(){
-        bazarConnectionState.value=false
-        purchaseBuyState.value=false
+    fun restartState() {
+        bazarConnectionState.value = false
+        purchaseBuyState.value = false
         paymentConnection.disconnect()
 
     }
 
 
-    fun requestPanel(snackbarHostState: SnackbarHostState){
+    fun requestPanel(snackbarHostState: SnackbarHostState) {
         requestPersonalPanel.requestPanel().onEach { dataState ->
             dataState.loading.let {
-                loading.value=it
+                loading.value = it
             }
             dataState.data?.let {
                 snackbarHostState.showSnackbar(it)

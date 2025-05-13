@@ -51,6 +51,7 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.DialogWindowProvider
 import com.saeed.zanjan.receipt.ui.theme.CustomColors
 import com.saeed.zanjan.receipt.ui.theme.NewReceiptCreatorTheme
@@ -65,7 +66,11 @@ fun SubscribeDialog(
 ) {
 
 
-    Dialog(onDismissRequest = onDismiss) {
+    Dialog(
+        properties = DialogProperties(
+            dismissOnClickOutside = true
+        ),
+        onDismissRequest = onDismiss) {
         Surface(
             modifier = Modifier.widthIn(max = 500.dp),
             shape = RoundedCornerShape(16.dp)
@@ -86,6 +91,7 @@ fun SubscribeDialog(
                         Column(
                             verticalArrangement = Arrangement.Center,
                         ) {
+
                             TextButton(
                                 modifier = Modifier.padding(5.dp),
                                 onClick = {

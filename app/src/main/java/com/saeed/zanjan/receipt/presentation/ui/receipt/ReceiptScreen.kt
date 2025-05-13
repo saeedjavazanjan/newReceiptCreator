@@ -110,10 +110,10 @@ fun ReceiptScreen(
 
     LaunchedEffect(Unit) {
         viewModel.getDataFromSharedPreferences()
-            hasSmsPermission = ContextCompat.checkSelfPermission(
-                context,
-                Manifest.permission.SEND_SMS
-            ) == PackageManager.PERMISSION_GRANTED
+        hasSmsPermission = ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.SEND_SMS
+        ) == PackageManager.PERMISSION_GRANTED
 
         hasStoragePermission = ContextCompat.checkSelfPermission(
             context, Manifest.permission.WRITE_EXTERNAL_STORAGE,
@@ -248,8 +248,11 @@ fun ReceiptScreen(
 
     LaunchedEffect(newSaved) {
         if (newSaved) {
-            val job=coroutineScope.launch {
-                snackbarHostState.showSnackbar("با موفقیت ذخیره شد", duration = SnackbarDuration.Indefinite)
+            val job = coroutineScope.launch {
+                snackbarHostState.showSnackbar(
+                    "با موفقیت ذخیره شد",
+                    duration = SnackbarDuration.Indefinite
+                )
 
             }
             delay(1000)
@@ -257,7 +260,7 @@ fun ReceiptScreen(
             openSendSmsDialog.value = true
         }
         if (newUpdate) {
-            val job=coroutineScope.launch {
+            val job = coroutineScope.launch {
                 snackbarHostState.showSnackbar(
                     "با موفقیت به روز رسانی  شد",
                     duration = SnackbarDuration.Short
@@ -344,16 +347,27 @@ fun ReceiptScreen(
                             }
 
                             "share" -> {
-                                if (!hasStoragePermission) {
-                                    requestStoragePermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+
+                                    if (!hasStoragePermission) {
+                                        requestStoragePermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                                    } else {
+                                        viewModel.shareReceiptImage(
+                                            picture = picture,
+                                            context = context,
+                                            snackbarHostState = snackbarHostState
+                                        )
+
+                                    }
                                 } else {
                                     viewModel.shareReceiptImage(
                                         picture = picture,
                                         context = context,
                                         snackbarHostState = snackbarHostState
                                     )
-
                                 }
+
+
 
                             }
 
@@ -471,7 +485,7 @@ fun ReceiptScreen(
                     onAccept = {
                         if (!hasSmsPermission) {
                             requestSmsPermissionLauncher.launch(Manifest.permission.SEND_SMS)
-                        }else{
+                        } else {
                             viewModel.generateAndSendOtpPassword(snackbarHostState = snackbarHostState)
                             openOtpCodeShowDialog.value = true
                             openSendOtpCodeDialog.value = false
@@ -523,9 +537,9 @@ fun ReceiptScreen(
                         }
                     }
             ) {
-               ReceiptCardForPrint(
-               generalReceipt = currentReceipt.value
-               )
+                ReceiptCardForPrint(
+                    generalReceipt = currentReceipt.value
+                )
 
             }
 
@@ -561,10 +575,10 @@ fun ReceiptScreen(
                         .fillMaxSize()
                         .padding(10.dp),
                     receiptCategory = receiptCategory,
-                    companyName=viewModel.companyName.value,
-                    avatar=viewModel.avatar.value,
-                    rules=viewModel.rules.value,
-                    companyPhone=viewModel.companyPhone.value,
+                    companyName = viewModel.companyName.value,
+                    avatar = viewModel.avatar.value,
+                    rules = viewModel.rules.value,
+                    companyPhone = viewModel.companyPhone.value,
                     generalReceipt = currentReceipt.value
                 )
 

@@ -2,20 +2,14 @@ package com.saeed.zanjan.receipt.presentation.ui.home
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
+import android.os.Build
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivityResultRegistryOwner
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -23,12 +17,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -62,16 +52,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import com.saeed.zanjan.receipt.R
-import com.saeed.zanjan.receipt.domain.models.GeneralReceipt
 import com.saeed.zanjan.receipt.presentation.components.AboutUsDialog
 import com.saeed.zanjan.receipt.presentation.components.AddReceiptCard
 import com.saeed.zanjan.receipt.presentation.components.CustomAcceptDialog
 import com.saeed.zanjan.receipt.presentation.components.HomeTopBar
 import com.saeed.zanjan.receipt.presentation.components.ListOfReceipts
-import com.saeed.zanjan.receipt.presentation.components.ReceiptListCard
 import com.saeed.zanjan.receipt.presentation.components.StatusDialog
 import com.saeed.zanjan.receipt.presentation.components.SubscribeDialog
-import com.saeed.zanjan.receipt.presentation.components.TextShowDialog
+import com.saeed.zanjan.receipt.presentation.components.TrialSubscribeDialog
 import com.saeed.zanjan.receipt.presentation.navigation.Screen
 import com.saeed.zanjan.receipt.ui.theme.CustomColors
 import com.saeed.zanjan.receipt.ui.theme.NewReceiptCreatorTheme
@@ -85,16 +73,17 @@ fun Home(
     viewModel: HomeViewModel,
     navigateToReceiptScreen: (String) -> Unit,
     navigateToCreateReceiptScreen: () -> Unit,
-    navigateToProfileSetting:()->Unit,
-    navigateToCustomersList:()->Unit,
+    navigateToProfileSetting: () -> Unit,
+    navigateToCustomersList: () -> Unit,
 ) {
 
     val snackbarHostState = remember { SnackbarHostState() }
-    val coroutineScope= rememberCoroutineScope()
-    val context= LocalContext.current
-    val activityResultRegistry= LocalActivityResultRegistryOwner.current?.activityResultRegistry
+    val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
+    val activityResultRegistry = LocalActivityResultRegistryOwner.current?.activityResultRegistry
 
     val loading = viewModel.loading.value
+    val trialIsAvailable = viewModel.trialIsAvailable.value
     val receiptsList = viewModel.receiptList
 
 
@@ -115,11 +104,9 @@ fun Home(
     }
 
 
-
-
-    val leftTime=viewModel.expireTime
-    val bazarConnectionState=viewModel.bazarConnectionState.value
-    val purchaseBuyState=viewModel.purchaseBuyState
+    val leftTime = viewModel.expireTime
+    val bazarConnectionState = viewModel.bazarConnectionState.value
+    val purchaseBuyState = viewModel.purchaseBuyState
 
     val focusRequester = remember { FocusRequester() }
 
@@ -128,10 +115,11 @@ fun Home(
     var openAboutUsDialog by remember { mutableStateOf(false) }
     var openPersonalPanelDialog by remember { mutableStateOf(false) }
     var openSubscribeDialog by remember { mutableStateOf(false) }
+    var openTrialSubscribeDialog by remember { mutableStateOf(false) }
     var filtered by remember { mutableStateOf(false) }
 
-    val drawerState =rememberDrawerState(initialValue = DrawerValue.Closed )
-    val menuItems= listOf(
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val menuItems = listOf(
         NavigationItem(
             title = "تنظیمات پروفایل",
             icon = painterResource(id = R.drawable.settings)
@@ -147,30 +135,30 @@ fun Home(
         NavigationItem(
             title = "ارسال پیامک گروهی",
             icon = painterResource(id = R.drawable.group_1),
-            premiumIcon = painterResource(id = R.drawable.star)
+            //    premiumIcon = painterResource(id = R.drawable.star)
 
         ),
         NavigationItem(
             title = "دریافت خروجی Excel",
             icon = painterResource(id = R.drawable.excel),
-            premiumIcon = painterResource(id = R.drawable.star)
+            //   premiumIcon = painterResource(id = R.drawable.star)
         ),
         NavigationItem(
             title = "پشتیبان گیری",
             icon = painterResource(id = R.drawable.upload),
-            premiumIcon = painterResource(id = R.drawable.star)
+            //   premiumIcon = painterResource(id = R.drawable.star)
         ),
 
-        NavigationItem(
-            title = "خرید اشتراک",
-            icon = painterResource(id = R.drawable.credit_card)
-        ),
+         NavigationItem(
+             title = "خرید اشتراک",
+             icon = painterResource(id = R.drawable.credit_card)
+         ),
         NavigationItem(
             title = "پنل اختصاصی (به زودی)",
             icon = painterResource(id = R.drawable.personal_panel)
         ),
 
-    )
+        )
     var selectedItemIndex by rememberSaveable {
         mutableStateOf(0)
     }
@@ -185,22 +173,25 @@ fun Home(
     LaunchedEffect(Unit) {
         viewModel.getDataFromSharedPreferences()
         viewModel.getListOfReceipts(snackbarHostState)
-            viewModel.connectToBazar(context)
+        viewModel.connectToBazar(context)
 
-       // viewModel.downloadDb(snackbarHostState)
+        // viewModel.downloadDb(snackbarHostState)
     }
 
-    LaunchedEffect(key1 = purchaseBuyState.value){
-        if (bazarConnectionState){
+    LaunchedEffect(key1 = purchaseBuyState.value) {
+        if (bazarConnectionState) {
             viewModel.getUserSubscribes(context)
+
         }
     }
 
 
 
-    LaunchedEffect(key1 = viewModel.databaseSaved.value){
-       // viewModel.getListOfReceipts(snackbarHostState)
+    LaunchedEffect(key1 = viewModel.databaseSaved.value) {
+        // viewModel.getListOfReceipts(snackbarHostState)
+
     }
+
 
     DisposableEffect(Unit) {
         onDispose {
@@ -216,87 +207,101 @@ fun Home(
 
         ModalNavigationDrawer(
             drawerContent = {
-                            ModalDrawerSheet(
-                                modifier = Modifier.padding(end = 60.dp),
-                            ) {
-                                Spacer(modifier = Modifier.size(60.dp))
-                                menuItems.forEachIndexed{index,item->
-                                    NavigationDrawerItem(
-                                        colors=NavigationDrawerItemDefaults.colors(
-                                            selectedContainerColor = CustomColors.transparentBlue
-                                        ),
-                                        label = {
-                                                Text(text = item.title)
-                                                },
-                                        selected = index==selectedItemIndex ,
-                                        onClick = {
-                                            selectedItemIndex=index
-                                            coroutineScope.launch {
-                                                drawerState.close()
-                                            }
-                                            when (index){
-                                                0->{
-                                                    navigateToProfileSetting()
-                                                }
-                                                1->{
-                                                    openAboutUsDialog=true
-                                                }
-                                                2->{
-                                                  viewModel.commentOnApp(context)
-                                                }
-                                                3->{
-                                                    if(leftTime.value>0)
-                                                        navigateToCustomersList()
-                                                    else
-                                                        openSubscribeDialog=true
-                                                }
-                                                4->{
-                                                    if(leftTime.value>0) {
-                                                        if (!hasStoragePermission) {
-                                                            requestStoragePermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                                                        } else {
-                                                            viewModel.exportExcel(snackbarHostState)
-                                                        }
-                                                    }else{
-                                                        openSubscribeDialog=true
-
-                                                    }
-                                                }
-                                                5->{
-                                                    if(leftTime.value>0)
-                                                    viewModel.uploadBackUpOfDatabase(snackbarHostState)
-                                                    else
-                                                        openSubscribeDialog=true
-                                                }
-                                                6->{
-                                                   openSubscribeDialog=true
-                                                }
-                                                7->{
-                                                   openPersonalPanelDialog=true
-                                                }
-                                            }
-
-                                        },
-                                        icon={
-                                             Icon(painter =item.icon , contentDescription =item.title )
-                                        },
-                                        badge={
-                                            item.premiumIcon?.let {
-                                                Icon(painter = it,
-                                                tint=CustomColors.gold,
-                                                    contentDescription =null
-                                                ) }
-                                        },
-
-                                        modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
-                                    )
+                ModalDrawerSheet(
+                    modifier = Modifier.padding(end = 60.dp),
+                ) {
+                    Spacer(modifier = Modifier.size(60.dp))
+                    menuItems.forEachIndexed { index, item ->
+                        NavigationDrawerItem(
+                            colors = NavigationDrawerItemDefaults.colors(
+                                selectedContainerColor = CustomColors.transparentBlue
+                            ),
+                            label = {
+                                Text(text = item.title)
+                            },
+                            selected = index == selectedItemIndex,
+                            onClick = {
+                                selectedItemIndex = index
+                                coroutineScope.launch {
+                                    drawerState.close()
                                 }
-                            }
+                                when (index) {
+                                    0 -> {
+                                        navigateToProfileSetting()
+                                    }
+
+                                    1 -> {
+                                        openAboutUsDialog = true
+                                    }
+
+                                    2 -> {
+                                        viewModel.commentOnApp(context)
+                                    }
+
+                                    3 -> {
+                                        // if(leftTime.value>0)
+                                        navigateToCustomersList()
+                                        //   else
+                                        //   openSubscribeDialog=true
+                                    }
+
+                                    4 -> {
+                                        //   if(leftTime.value>0) {
+                                        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+                                            if (!hasStoragePermission) {
+                                                requestStoragePermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                                            } else {
+                                                viewModel.exportExcel(snackbarHostState)
+                                            }
+
+                                        } else {
+                                            viewModel.exportExcel(snackbarHostState)
+
+                                        }
+
+                                        //   }else{
+                                        //       openSubscribeDialog=true
+
+                                        //   }
+                                    }
+
+                                    5 -> {
+                                        //   if(leftTime.value>0)
+                                        viewModel.uploadBackUpOfDatabase(snackbarHostState)
+                                        //    else
+                                        //      openSubscribeDialog=true
+                                    }
+                                     6->{
+                                        openSubscribeDialog=true
+                                     }
+                                    7 -> {
+                                        openPersonalPanelDialog = true
+                                    }
+                                }
 
                             },
-            drawerState=drawerState
+                            icon = {
+                                Icon(painter = item.icon, contentDescription = item.title)
+                            },
+                            badge = {
+                                item.premiumIcon?.let {
+                                    Icon(
+                                        painter = it,
+                                        tint = CustomColors.gold,
+                                        contentDescription = null
+                                    )
+                                }
+                            },
 
-            ) {
+                            modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
+                        )
+                    }
+                }
+
+            },
+            drawerState = drawerState
+
+        ) {
             Scaffold(
                 snackbarHost = { SnackbarHost(snackbarHostState) },
                 topBar = {
@@ -339,7 +344,17 @@ fun Home(
                         modifier = Modifier
                             .background(Color.Transparent),
                         addButtonClicked = {
-                            navigateToCreateReceiptScreen()
+
+                            when(checkSubscribeState(
+                                trialIsAvailable = trialIsAvailable,
+                                leftTime = leftTime.value
+                            )){
+                                1->openSubscribeDialog=true
+                                2->openTrialSubscribeDialog = true
+                                else->navigateToCreateReceiptScreen()
+
+                            }
+
                         }
                     )
                 }
@@ -348,77 +363,99 @@ fun Home(
 
                 if (openFilterDialog) {
                     StatusDialog(onDismiss = {
-                        openFilterDialog=false
+                        openFilterDialog = false
 
                     },
 
-                        onStatusSelected = {stat->
-                            viewModel.filterReceipt(stat ,snackbarHostState)
-                            openFilterDialog=false
-                            filtered=true
+                        onStatusSelected = { stat ->
+                            viewModel.filterReceipt(stat, snackbarHostState)
+                            openFilterDialog = false
+                            filtered = true
                         }
                     )
                 }
 
-                if(openSubscribeDialog){
-                    if(bazarConnectionState){
+                if (openTrialSubscribeDialog) {
+                    TrialSubscribeDialog(
+                        onDismiss = {
+                            openTrialSubscribeDialog = false
+                        },
+                        buySubscribe = {
+                            coroutineScope.launch {
+                                if (bazarConnectionState) {
+                                    viewModel.buySubscribe(
+                                        activityResultRegistry!!,
+                                        productID = it, //"testSub",
+                                        payload = viewModel.companyName.value,
+                                        context = context
+                                    )
+                                } else {
+                                    snackbarHostState.showSnackbar("ارتباط شما با برنامه بازار برقرار نیست")
+                                }
+                            }
+                        }
+                    )
+                }
+
+                if (openSubscribeDialog) {
+                    if (bazarConnectionState) {
                         viewModel.getUserSubscribes(context)
                     }
 
-                        SubscribeDialog(
-                            onDismiss = {
-                                openSubscribeDialog=false
-                            },
-                            buySubscribe = {
-                                coroutineScope.launch {
-                                    if(bazarConnectionState){
-                                        viewModel.buySubscribe(
-                                            activityResultRegistry!!,
-                                            productID =it, //"testSub",
-                                            payload = viewModel.companyName.value,
-                                            context = context
-                                        )
-                                    }else{
-                                        snackbarHostState.showSnackbar("ارتباط شما با برنامه بازار برقرار نیست")
-                                    }
+                    SubscribeDialog(
+                        onDismiss = {
+                            openSubscribeDialog = false
+                        },
+                        buySubscribe = {
+                            coroutineScope.launch {
+                                if (bazarConnectionState) {
+                                    viewModel.buySubscribe(
+                                        activityResultRegistry!!,
+                                        productID = it, //"testSub",
+                                        payload = viewModel.companyName.value,
+                                        context = context
+                                    )
+                                } else {
+                                    snackbarHostState.showSnackbar("ارتباط شما با برنامه بازار برقرار نیست")
                                 }
-                            },
-                            leftTime = leftTime,
-                            context
-                        )
+                            }
+                        },
+                        leftTime = leftTime,
+                        context
+                    )
                 }
-                
-                if(openAboutUsDialog){
+
+                if (openAboutUsDialog) {
                     AboutUsDialog(
-                        onDismiss = {  openAboutUsDialog=false },
+                        onDismiss = { openAboutUsDialog = false },
                         description = stringResource(id = R.string.about_us),
-                        telegramLink = stringResource(id = R.string.telegram) ,
-                        gmail =  stringResource(id = R.string.gmail),
-                        intentToGmail = {gmail->
-                                   viewModel.goToGmail(context,gmail)
+                        telegramLink = stringResource(id = R.string.telegram),
+                        gmail = stringResource(id = R.string.gmail),
+                        intentToGmail = { gmail ->
+                            viewModel.goToGmail(context, gmail)
                         },
-                        intentToTelegram = {tLink->
-                          viewModel.goToTelegram(context,tLink)
+                        intentToTelegram = { tLink ->
+                            viewModel.goToTelegram(context, tLink)
                         },
-                        modifier =Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth()
                     )
 
-                    
+
                 }
-                
-                if(openPersonalPanelDialog){
+
+                if (openPersonalPanelDialog) {
                     CustomAcceptDialog(
-                        onDismiss = { openPersonalPanelDialog=false },
+                        onDismiss = { openPersonalPanelDialog = false },
                         onAccept = {
                             viewModel.requestPanel(snackbarHostState)
-                                   openPersonalPanelDialog=false
-                                   },
-                        title ="پنل اختصاصی" ,
+                            openPersonalPanelDialog = false
+                        },
+                        title = "پنل اختصاصی",
                         description = stringResource(id = R.string.personal_panel_description),
                         acceptText = "در خواست"
                     )
-                    
-                    
+
+
                 }
 
                 Column(
@@ -431,19 +468,19 @@ fun Home(
                             top = it.calculateTopPadding(),
                         )
                 ) {
-                    if(filtered){
+                    if (filtered) {
                         TextButton(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .align(Alignment.CenterHorizontally)
-                            ,
+                                .align(Alignment.CenterHorizontally),
                             onClick = {
                                 viewModel.getListOfReceipts(snackbarHostState)
-                                filtered=false
+                                filtered = false
                             },
                             border = BorderStroke(width = 2.dp, color = CustomColors.lightGray)
                         ) {
-                            Text(text = "حذف فیلتر",
+                            Text(
+                                text = "حذف فیلتر",
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = CustomColors.darkPurple
                             )
@@ -475,7 +512,6 @@ fun Home(
                                 color = CustomColors.gray
                             )
                         }
-
 
 
                     } else {
@@ -516,6 +552,24 @@ fun Home(
             }
         }
     }
+}
+
+fun checkSubscribeState(
+    leftTime: Long,
+    trialIsAvailable: Boolean
+): Int {
+    return if (leftTime <= 0L && !trialIsAvailable) {
+        Log.i("TRIAL","1")
+        1
+    }else if (trialIsAvailable) {
+        Log.i("TRIAL","2")
+        2
+    } else {
+        Log.i("TRIAL","0")
+
+        0
+    }
+
 }
 
 

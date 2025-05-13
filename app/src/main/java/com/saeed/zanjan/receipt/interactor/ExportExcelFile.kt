@@ -1,8 +1,11 @@
 package com.saeed.zanjan.receipt.interactor
 
+import android.content.ContentValues
 import android.content.Context
+import android.os.Build
 import android.os.Environment
 import android.provider.ContactsContract.Data
+import android.provider.MediaStore
 import android.util.Log
 import com.saeed.zanjan.receipt.cash.ReceiptDao
 import com.saeed.zanjan.receipt.cash.model.ConfectioneryEntityMapper
@@ -206,19 +209,44 @@ class ExportExcelFile(
             }
 
 
-            val folder =
+            val folder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                // برای اندروید 10 و بالاتر
+                context.contentResolver
+            } else {
+                // برای نسخه‌های پایین‌تر
                 Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+            }
 
-            if (!folder.exists()) {
-                folder.mkdirs()
+            // اگر از نسخه‌های جدیدتر استفاده می‌کنید
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                val contentValues = ContentValues().apply {
+                    put(MediaStore.MediaColumns.DISPLAY_NAME, "رسیدها${SimpleDateFormat("MM-dd-yyyy HH-mm", Locale.getDefault()).format(Date())}.xlsx")
+                    put(MediaStore.MediaColumns.MIME_TYPE, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+                    put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS)
+                }
+
+                val uri = context.contentResolver.insert(MediaStore.Files.getContentUri("external"), contentValues)
+                uri?.let {
+                    context.contentResolver.openOutputStream(it)?.use { outputStream ->
+                        workbook.write(outputStream)
+                    }
+                }
+            } else {
+                // برای نسخه‌های پایین‌تر از Android 10
+                val folder =
+                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+
+                if (!folder.exists()) {
+                    folder.mkdirs()
+                }
+                val dateFormat = SimpleDateFormat("MM-dd-yyyy HH-mm", Locale.getDefault())
+                val dateTime = dateFormat.format(Date())
+                val file = File(folder, "رسیدها${dateTime}.xlsx")
+                FileOutputStream(file).use { outputStream ->
+                    workbook.write(outputStream)
+                }
+                Log.i("STORAGEDD", file.path)
             }
-            val dateFormat = SimpleDateFormat("MM-dd-yyyy HH-mm", Locale.getDefault())
-            val dateTime = dateFormat.format(Date())
-            val file = File(folder, "رسیدها${dateTime}.xlsx")
-            FileOutputStream(file).use { outputStream ->
-                workbook.write(outputStream)
-            }
-            Log.i("STORAGEDD", file.path)
 
             workbook.close()
             return 1
@@ -273,19 +301,44 @@ class ExportExcelFile(
             }
 
 
-            val folder =
+            val folder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                // برای اندروید 10 و بالاتر
+                context.contentResolver
+            } else {
+                // برای نسخه‌های پایین‌تر
                 Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+            }
 
-            if (!folder.exists()) {
-                folder.mkdirs()
+            // اگر از نسخه‌های جدیدتر استفاده می‌کنید
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                val contentValues = ContentValues().apply {
+                    put(MediaStore.MediaColumns.DISPLAY_NAME, "رسیدها${SimpleDateFormat("MM-dd-yyyy HH-mm", Locale.getDefault()).format(Date())}.xlsx")
+                    put(MediaStore.MediaColumns.MIME_TYPE, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+                    put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS)
+                }
+
+                val uri = context.contentResolver.insert(MediaStore.Files.getContentUri("external"), contentValues)
+                uri?.let {
+                    context.contentResolver.openOutputStream(it)?.use { outputStream ->
+                        workbook.write(outputStream)
+                    }
+                }
+            } else {
+                // برای نسخه‌های پایین‌تر از Android 10
+                val folder =
+                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+
+                if (!folder.exists()) {
+                    folder.mkdirs()
+                }
+                val dateFormat = SimpleDateFormat("MM-dd-yyyy HH-mm", Locale.getDefault())
+                val dateTime = dateFormat.format(Date())
+                val file = File(folder, "رسیدها${dateTime}.xlsx")
+                FileOutputStream(file).use { outputStream ->
+                    workbook.write(outputStream)
+                }
+                Log.i("STORAGEDD", file.path)
             }
-            val dateFormat = SimpleDateFormat("MM-dd-yyyy HH-mm", Locale.getDefault())
-            val dateTime = dateFormat.format(Date())
-            val file = File(folder, "رسیدها${dateTime}.xlsx")
-            FileOutputStream(file).use { outputStream ->
-                workbook.write(outputStream)
-            }
-            Log.i("STORAGEDD", file.path)
 
             workbook.close()
             return 1
@@ -338,19 +391,44 @@ class ExportExcelFile(
             }
 
 
-            val folder =
+            val folder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                // برای اندروید 10 و بالاتر
+                context.contentResolver
+            } else {
+                // برای نسخه‌های پایین‌تر
                 Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+            }
 
-            if (!folder.exists()) {
-                folder.mkdirs()
+            // اگر از نسخه‌های جدیدتر استفاده می‌کنید
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                val contentValues = ContentValues().apply {
+                    put(MediaStore.MediaColumns.DISPLAY_NAME, "رسیدها${SimpleDateFormat("MM-dd-yyyy HH-mm", Locale.getDefault()).format(Date())}.xlsx")
+                    put(MediaStore.MediaColumns.MIME_TYPE, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+                    put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS)
+                }
+
+                val uri = context.contentResolver.insert(MediaStore.Files.getContentUri("external"), contentValues)
+                uri?.let {
+                    context.contentResolver.openOutputStream(it)?.use { outputStream ->
+                        workbook.write(outputStream)
+                    }
+                }
+            } else {
+                // برای نسخه‌های پایین‌تر از Android 10
+                val folder =
+                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+
+                if (!folder.exists()) {
+                    folder.mkdirs()
+                }
+                val dateFormat = SimpleDateFormat("MM-dd-yyyy HH-mm", Locale.getDefault())
+                val dateTime = dateFormat.format(Date())
+                val file = File(folder, "رسیدها${dateTime}.xlsx")
+                FileOutputStream(file).use { outputStream ->
+                    workbook.write(outputStream)
+                }
+                Log.i("STORAGEDD", file.path)
             }
-            val dateFormat = SimpleDateFormat("MM-dd-yyyy HH-mm", Locale.getDefault())
-            val dateTime = dateFormat.format(Date())
-            val file = File(folder, "رسیدها${dateTime}.xlsx")
-            FileOutputStream(file).use { outputStream ->
-                workbook.write(outputStream)
-            }
-            Log.i("STORAGEDD", file.path)
 
             workbook.close()
             return 1
@@ -403,19 +481,44 @@ class ExportExcelFile(
             }
 
 
-            val folder =
+            val folder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                // برای اندروید 10 و بالاتر
+                context.contentResolver
+            } else {
+                // برای نسخه‌های پایین‌تر
                 Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+            }
 
-            if (!folder.exists()) {
-                folder.mkdirs()
+            // اگر از نسخه‌های جدیدتر استفاده می‌کنید
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                val contentValues = ContentValues().apply {
+                    put(MediaStore.MediaColumns.DISPLAY_NAME, "رسیدها${SimpleDateFormat("MM-dd-yyyy HH-mm", Locale.getDefault()).format(Date())}.xlsx")
+                    put(MediaStore.MediaColumns.MIME_TYPE, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+                    put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS)
+                }
+
+                val uri = context.contentResolver.insert(MediaStore.Files.getContentUri("external"), contentValues)
+                uri?.let {
+                    context.contentResolver.openOutputStream(it)?.use { outputStream ->
+                        workbook.write(outputStream)
+                    }
+                }
+            } else {
+                // برای نسخه‌های پایین‌تر از Android 10
+                val folder =
+                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+
+                if (!folder.exists()) {
+                    folder.mkdirs()
+                }
+                val dateFormat = SimpleDateFormat("MM-dd-yyyy HH-mm", Locale.getDefault())
+                val dateTime = dateFormat.format(Date())
+                val file = File(folder, "رسیدها${dateTime}.xlsx")
+                FileOutputStream(file).use { outputStream ->
+                    workbook.write(outputStream)
+                }
+                Log.i("STORAGEDD", file.path)
             }
-            val dateFormat = SimpleDateFormat("MM-dd-yyyy HH-mm", Locale.getDefault())
-            val dateTime = dateFormat.format(Date())
-            val file = File(folder, "رسیدها${dateTime}.xlsx")
-            FileOutputStream(file).use { outputStream ->
-                workbook.write(outputStream)
-            }
-            Log.i("STORAGEDD", file.path)
 
             workbook.close()
             return 1
@@ -468,19 +571,44 @@ class ExportExcelFile(
             }
 
 
-            val folder =
+            val folder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                // برای اندروید 10 و بالاتر
+                context.contentResolver
+            } else {
+                // برای نسخه‌های پایین‌تر
                 Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+            }
 
-            if (!folder.exists()) {
-                folder.mkdirs()
+            // اگر از نسخه‌های جدیدتر استفاده می‌کنید
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                val contentValues = ContentValues().apply {
+                    put(MediaStore.MediaColumns.DISPLAY_NAME, "رسیدها${SimpleDateFormat("MM-dd-yyyy HH-mm", Locale.getDefault()).format(Date())}.xlsx")
+                    put(MediaStore.MediaColumns.MIME_TYPE, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+                    put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS)
+                }
+
+                val uri = context.contentResolver.insert(MediaStore.Files.getContentUri("external"), contentValues)
+                uri?.let {
+                    context.contentResolver.openOutputStream(it)?.use { outputStream ->
+                        workbook.write(outputStream)
+                    }
+                }
+            } else {
+                // برای نسخه‌های پایین‌تر از Android 10
+                val folder =
+                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+
+                if (!folder.exists()) {
+                    folder.mkdirs()
+                }
+                val dateFormat = SimpleDateFormat("MM-dd-yyyy HH-mm", Locale.getDefault())
+                val dateTime = dateFormat.format(Date())
+                val file = File(folder, "رسیدها${dateTime}.xlsx")
+                FileOutputStream(file).use { outputStream ->
+                    workbook.write(outputStream)
+                }
+                Log.i("STORAGEDD", file.path)
             }
-            val dateFormat = SimpleDateFormat("MM-dd-yyyy HH-mm", Locale.getDefault())
-            val dateTime = dateFormat.format(Date())
-            val file = File(folder, "رسیدها${dateTime}.xlsx")
-            FileOutputStream(file).use { outputStream ->
-                workbook.write(outputStream)
-            }
-            Log.i("STORAGEDD", file.path)
 
             workbook.close()
             return 1
@@ -533,21 +661,46 @@ class ExportExcelFile(
                 row.createCell(10).setCellValue(receipt.cost)
                 row.createCell(11).setCellValue(receipt.prepayment)
             }
-
-
-            val folder =
+            val folder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                // برای اندروید 10 و بالاتر
+                context.contentResolver
+            } else {
+                // برای نسخه‌های پایین‌تر
                 Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+            }
 
-            if (!folder.exists()) {
-                folder.mkdirs()
+            // اگر از نسخه‌های جدیدتر استفاده می‌کنید
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                val contentValues = ContentValues().apply {
+                    put(MediaStore.MediaColumns.DISPLAY_NAME, "رسیدها${SimpleDateFormat("MM-dd-yyyy HH-mm", Locale.getDefault()).format(Date())}.xlsx")
+                    put(MediaStore.MediaColumns.MIME_TYPE, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+                    put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS)
+                }
+
+                val uri = context.contentResolver.insert(MediaStore.Files.getContentUri("external"), contentValues)
+                uri?.let {
+                    context.contentResolver.openOutputStream(it)?.use { outputStream ->
+                        workbook.write(outputStream)
+                    }
+                }
+            } else {
+                // برای نسخه‌های پایین‌تر از Android 10
+                  val folder =
+                  Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+
+              if (!folder.exists()) {
+                  folder.mkdirs()
+              }
+              val dateFormat = SimpleDateFormat("MM-dd-yyyy HH-mm", Locale.getDefault())
+              val dateTime = dateFormat.format(Date())
+              val file = File(folder, "رسیدها${dateTime}.xlsx")
+              FileOutputStream(file).use { outputStream ->
+                  workbook.write(outputStream)
+              }
+              Log.i("STORAGEDD", file.path)
             }
-            val dateFormat = SimpleDateFormat("MM-dd-yyyy HH-mm", Locale.getDefault())
-            val dateTime = dateFormat.format(Date())
-            val file = File(folder, "رسیدها${dateTime}.xlsx")
-            FileOutputStream(file).use { outputStream ->
-                workbook.write(outputStream)
-            }
-            Log.i("STORAGEDD", file.path)
+
+
 
             workbook.close()
             return 1
@@ -600,19 +753,44 @@ class ExportExcelFile(
             }
 
 
-            val folder =
+            val folder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                // برای اندروید 10 و بالاتر
+                context.contentResolver
+            } else {
+                // برای نسخه‌های پایین‌تر
                 Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+            }
 
-            if (!folder.exists()) {
-                folder.mkdirs()
+            // اگر از نسخه‌های جدیدتر استفاده می‌کنید
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                val contentValues = ContentValues().apply {
+                    put(MediaStore.MediaColumns.DISPLAY_NAME, "رسیدها${SimpleDateFormat("MM-dd-yyyy HH-mm", Locale.getDefault()).format(Date())}.xlsx")
+                    put(MediaStore.MediaColumns.MIME_TYPE, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+                    put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS)
+                }
+
+                val uri = context.contentResolver.insert(MediaStore.Files.getContentUri("external"), contentValues)
+                uri?.let {
+                    context.contentResolver.openOutputStream(it)?.use { outputStream ->
+                        workbook.write(outputStream)
+                    }
+                }
+            } else {
+                // برای نسخه‌های پایین‌تر از Android 10
+                val folder =
+                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+
+                if (!folder.exists()) {
+                    folder.mkdirs()
+                }
+                val dateFormat = SimpleDateFormat("MM-dd-yyyy HH-mm", Locale.getDefault())
+                val dateTime = dateFormat.format(Date())
+                val file = File(folder, "رسیدها${dateTime}.xlsx")
+                FileOutputStream(file).use { outputStream ->
+                    workbook.write(outputStream)
+                }
+                Log.i("STORAGEDD", file.path)
             }
-            val dateFormat = SimpleDateFormat("MM-dd-yyyy HH-mm", Locale.getDefault())
-            val dateTime = dateFormat.format(Date())
-            val file = File(folder, "رسیدها${dateTime}.xlsx")
-            FileOutputStream(file).use { outputStream ->
-                workbook.write(outputStream)
-            }
-            Log.i("STORAGEDD", file.path)
 
             workbook.close()
             return 1

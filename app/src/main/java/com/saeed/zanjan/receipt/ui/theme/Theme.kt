@@ -57,7 +57,7 @@ private val LightColorScheme = lightColorScheme(
 
 @Composable
 fun NewReceiptCreatorTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    darkTheme: Boolean =false,// isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,
     displayProgressBar: Boolean,

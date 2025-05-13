@@ -79,7 +79,7 @@ object AppModule {
         client: OkHttpClient
     ): RetrofitService {
         return Retrofit.Builder()
-        //    .baseUrl("http://192.168.1.168:80/")
+          //  .baseUrl("http://192.168.1.167:5047/")
        //     .baseUrl("http://10.0.2.2:5047/")
             .baseUrl("https://receipt.devejumpgroup.ir/")
             .addConverterFactory(GsonConverterFactory.create(GsonBuilder().create()))

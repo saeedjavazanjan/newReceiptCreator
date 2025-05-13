@@ -504,7 +504,7 @@ fun ProfileEditScreen(
                             value = companyRules,
                             shape = RoundedCornerShape(30.dp),
                             onValueChange = { rules ->
-                                if(rules.length<101)
+                                if(rules.length < 5000)
                                 companyRules = rules
                             },
                             leadingIcon = {

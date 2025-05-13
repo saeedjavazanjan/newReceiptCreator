@@ -15,8 +15,8 @@ android {
         applicationId = "com.saeed.zanjan.receipt"
         minSdk = 26
         targetSdk = 34
-        versionCode = 7
-        versionName = "2.0"
+        versionCode = 9
+        versionName = "2.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -107,6 +107,8 @@ dependencies {
     kapt("androidx.room:room-compiler:$room_version")
     // optional - Kotlin Extensions and Coroutines support for Room
     implementation("androidx.room:room-ktx:$room_version")
+
+    //csv
     implementation ("com.opencsv:opencsv:5.5.2")
 
     //excell export
@@ -129,6 +131,10 @@ dependencies {
 
     //termal printer
     implementation ("com.github.DantSu:ESCPOS-ThermalPrinter-Android:3.3.0")
+    implementation(kotlin("script-runtime"))
 
+
+    // csv uploader
+    implementation ("com.github.saeedjavazanjan:uploadSqliteDbTableAsCsv:1.0.0")
 
 }
